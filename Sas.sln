@@ -1,0 +1,31 @@
+﻿ 
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sendbox", "Sendbox\Sendbox.vcxproj", "{273609FD-6428-4812-A276-928F481C48FE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sas", "Sas\Sas.vcxproj", "{E5FD82FE-A9B0-4F76-B3FA-67F00DE1193D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E5FD82FE-A9B0-4F76-B3FA-67F00DE1193D}.Debug|x64.ActiveCfg = Debug|x64
+		{E5FD82FE-A9B0-4F76-B3FA-67F00DE1193D}.Debug|x64.Build.0 = Debug|x64
+		{E5FD82FE-A9B0-4F76-B3FA-67F00DE1193D}.Release|x64.ActiveCfg = Release|x64
+		{E5FD82FE-A9B0-4F76-B3FA-67F00DE1193D}.Release|x64.Build.0 = Release|x64
+		{273609FD-6428-4812-A276-928F481C48FE}.Debug|x64.ActiveCfg = Debug|x64
+		{273609FD-6428-4812-A276-928F481C48FE}.Debug|x64.Build.0 = Debug|x64
+		{273609FD-6428-4812-A276-928F481C48FE}.Release|x64.ActiveCfg = Release|x64
+		{273609FD-6428-4812-A276-928F481C48FE}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {99EA1E79-33E0-4015-A400-8DA9FFA53A6F}
+	EndGlobalSection
+EndGlobal
