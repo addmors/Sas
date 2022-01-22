@@ -1,0 +1,3 @@
+[submodule "Sas/vendor/spdlog"]
+	path = Sas/vendor/spdlog
+	url = https://github.com/gabime/spdlog

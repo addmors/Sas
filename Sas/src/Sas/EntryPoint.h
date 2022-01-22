@@ -6,7 +6,13 @@
 
 	int main(int argc, char** argv) {
 
-		std::cout << "Whaaat??";
+
+		Sas::Log::Init();
+		
+		SS_CORE_WARN("Welcome To Sas Engine");
+		int a = 5;
+		SS_INFO("App Is Started {0}", a);
+
 		auto  app = Sas::CreateApplication();
 
 		app->Run();
