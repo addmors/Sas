@@ -26,7 +26,8 @@ project "Sas"
 	
 	includedirs
 	{
-		"%{prj.name}/vendor/spdlog/include;"
+		"%{prj.name}/vendor/spdlog/include;",
+		"%{prj.name}/src;"
 	}
 
 	filter "system:windows"
@@ -73,7 +74,7 @@ targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	includedirs
 	{
 		"Sas/vendor/spdlog/include;",
-		"Sas/src"
+		"Sas/src;"
 	}
 	
 	links {

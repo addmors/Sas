@@ -4,6 +4,9 @@
     <Filter Include="Sas">
       <UniqueIdentifier>{EC20880B-582A-887C-E1A5-9E7C4DAE937C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sas\Events">
+      <UniqueIdentifier>{500B4A95-3CC3-8BE2-A5CA-643E91A126D3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Sas\Aplication.h">
@@ -14,6 +17,9 @@
     </ClInclude>
     <ClInclude Include="src\Sas\EntryPoint.h">
       <Filter>Sas</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Events\Event.h">
+      <Filter>Sas\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Log.h">
       <Filter>Sas</Filter>
