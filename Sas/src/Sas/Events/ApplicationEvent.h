@@ -1,6 +1,5 @@
 #pragma once
-#include <sstream>
-#include "Sas\Core.h"
+
 #include "Sas\Events\Event.h"
 namespace Sas {
 	class SAS_API WindowResizeEvent : public Event

@@ -1,7 +1,7 @@
 #pragma once
-#include <sstream>
-#include "Sas\Core\MouseCodes.h"
 #include "Sas\Events\Event.h"
+#include "Sas\Core\MouseCodes.h"
+
 
 namespace Sas {
 	class SAS_API MouseMovedEvent : public Event {
@@ -12,6 +12,7 @@ namespace Sas {
 		std::string ToString() const override
 		{
 			std::stringstream ss;
+
 			ss << "MouseMovedEvent: " << m_MouseX << ", " << m_MouseY;
 			return ss.str();
 		}
