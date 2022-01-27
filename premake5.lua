@@ -7,8 +7,18 @@ workspace "Sas"
 		"Dist"
 
 	}
+	flags
+	{
+		"MultiProcessorCompile"
+	}
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+ 
+-- Include directories relative to root folder (solution directories)
+IncludeDir = {}
+IncludeDir["GLFW"] = "Sas/vendor/GLFW/include;"
+
+include "Sas/vendor/GLFW"
 
 project "Sas"
 	location "Sas"
@@ -19,6 +29,9 @@ project "Sas"
 	
 	objdir("bin-int/" .. outputdir .. "/%{prj.name}")
 
+	pchheader "ssph.h"
+	pchsource "Sas/src/ssph.cpp"
+
 	files{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp"
@@ -27,9 +40,14 @@ project "Sas"
 	includedirs
 	{
 		"%{prj.name}/src;",
-		"%{prj.name}/vendor/spdlog/include;"
+		"%{prj.name}/vendor/spdlog/include;",
+		"%{IncludeDir.GLFW}"
 	}
 
+	links {
+		"GLFW",
+		"opengl32.lib"	
+	}
 	filter "system:windows"
 		cppdialect "C++17"
 		staticruntime "On"
@@ -46,7 +64,7 @@ project "Sas"
 	}
 
 	filter "configurations:Debug"
-		defines "SS_DEBUG"
+		defines {"SS_DEBUG", "SS_ENABLE_ASSERTS"}
 		symbols "On"
 	
 	filter "configurations:Release"
@@ -94,7 +112,7 @@ targetdir("bin/" .. outputdir .. "/%{prj.name}")
 
 
 	filter "configurations:Debug"
-		defines "SS_DEBUG"
+		defines {"SS_DEBUG", "SS_ENABLE_ASSERTS"}
 		symbols "On"
 	
 	filter "configurations:Release"

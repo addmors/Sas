@@ -1,5 +1,4 @@
 #pragma once
-#include <sstream>
 #include "Sas\Events\Event.h"
 #include "Sas\Core\KeyCodes.h"
 namespace Sas {
