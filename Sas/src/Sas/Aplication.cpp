@@ -8,7 +8,7 @@ namespace Sas {
 
 	void Application::Run()
 	{
-
+		std::cout << 123;
 		while (m_Running){
 		
 			m_Window->OnUpdate();
