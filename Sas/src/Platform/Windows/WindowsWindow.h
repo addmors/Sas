@@ -2,6 +2,10 @@
 #include "Sas\Window.h"
 #include <GLFW/glfw3.h>
 
+#include "Sas\Events\ApplicationEvent.h"
+#include "Sas\Events\MouseEvent.h"
+#include "Sas\Events\KeyEvent.h"
+
 namespace Sas {
 	class SAS_API WindowsWindow : public  Window
 	{

@@ -1,8 +1,12 @@
 #pragma 
+
 #include "Core.h"
-#include "Events\Event.h"
+#include "Events/Event.h"
 #include "Window.h"
+
 namespace Sas {
+
+	class WindowCloseEvent;
 
 	class SAS_API Application
 	{
@@ -11,9 +15,10 @@ namespace Sas {
 		virtual ~Application();
 	
 		void Run();
-		
-	private:
+		void onEvent(Event& e);
 
+	private:
+		bool OnWindowClosed(WindowCloseEvent& e );
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 
