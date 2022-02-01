@@ -17,8 +17,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories relative to root folder (solution directories)
 IncludeDir = {}
 IncludeDir["GLFW"] = "Sas/vendor/GLFW/include;"
+IncludeDir["GLad"] = "Sas/vendor/GLad/include;"
 
 include "Sas/vendor/GLFW"
+include "Sas/vendor/GLAD"
+
 
 project "Sas"
 	location "Sas"
@@ -41,11 +44,14 @@ project "Sas"
 	{
 		"%{prj.name}/src;",
 		"%{prj.name}/vendor/spdlog/include;",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.GLad}"
+		
 	}
 
 	links {
 		"GLFW",
+		"GLad",
 		"opengl32.lib"	
 	}
 	filter "system:windows"
@@ -57,6 +63,7 @@ project "Sas"
 		{
 			"SS_PLATFORM_WINDOWS",
 			"SS_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 	postbuildcommands{
@@ -65,14 +72,17 @@ project "Sas"
 
 	filter "configurations:Debug"
 		defines {"SS_DEBUG", "SS_ENABLE_ASSERTS"}
+		buildoptions "/MDd"
 		symbols "On"
 	
 	filter "configurations:Release"
 		defines "SS_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 		filter "configurations:Dist"
 		defines "SS_DIST"
+		buildoptions "/MDd"
 		optimize "On"
 
 project "Sendbox"
@@ -113,12 +123,15 @@ targetdir("bin/" .. outputdir .. "/%{prj.name}")
 
 	filter "configurations:Debug"
 		defines {"SS_DEBUG", "SS_ENABLE_ASSERTS"}
+		buildoptions "/MDd"
 		symbols "On"
 	
 	filter "configurations:Release"
 		defines "SS_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 		filter "configurations:Dist"
 		defines "SS_DIST"
+		buildoptions "/MD"
 		optimize "On"

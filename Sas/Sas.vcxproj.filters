@@ -48,6 +48,12 @@
     <ClInclude Include="src\Sas\Events\MouseEvent.h">
       <Filter>Sas\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sas\Layer.h">
+      <Filter>Sas</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\LayerStack.h">
+      <Filter>Sas</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sas\Log.h">
       <Filter>Sas</Filter>
     </ClInclude>
@@ -62,6 +68,12 @@
       <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Sas\Aplication.cpp">
+      <Filter>Sas</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\Layer.cpp">
+      <Filter>Sas</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\LayerStack.cpp">
       <Filter>Sas</Filter>
     </ClCompile>
     <ClCompile Include="src\Sas\Log.cpp">
