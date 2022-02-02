@@ -18,9 +18,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"] = "Sas/vendor/GLFW/include;"
 IncludeDir["GLad"] = "Sas/vendor/GLad/include;"
+IncludeDir["ImGui"] = "Sas/vendor/imgui;"
 
 include "Sas/vendor/GLFW"
 include "Sas/vendor/GLAD"
+include "Sas/vendor/imgui"
 
 
 project "Sas"
@@ -45,13 +47,14 @@ project "Sas"
 		"%{prj.name}/src;",
 		"%{prj.name}/vendor/spdlog/include;",
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.GLad}"
-		
+		"%{IncludeDir.GLad}",
+		"%{IncludeDir.ImGui}",		
 	}
 
 	links {
 		"GLFW",
 		"GLad",
+		"ImGui",
 		"opengl32.lib"	
 	}
 	filter "system:windows"

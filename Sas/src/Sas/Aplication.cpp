@@ -1,12 +1,17 @@
 #include "ssph.h"
 #include "Aplication.h"
 #include "Events/ApplicationEvent.h"
+#include "glad\glad.h"
 
 
-
-#define BIND_EVENT_FUNC(x) std::bind(&Application::x, this, std::placeholders::_1)
 
 namespace Sas {
+
+	
+#define BIND_EVENT_FUNC(x) std::bind(&Application::x, this, std::placeholders::_1)
+	
+	Application* Application::s_Instanse = nullptr;
+
 	Application::~Application()
 	{
 	}
@@ -14,6 +19,9 @@ namespace Sas {
 	void Application::Run()
 	{
 		while (m_Running) {
+			
+			glClearColor(1, 0, 1, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
 			for (Layer* layer : m_LayerStack){
 				layer->OnUpdate();
 			}
@@ -26,7 +34,7 @@ namespace Sas {
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FUNC(OnWindowClosed));
-		SS_TRACE("{0}", e);
+		//SS_TRACE("{0}", e);
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
 			(*--it)->OnEvent(e);
@@ -38,11 +46,13 @@ namespace Sas {
 	void Application::PushLayer(Layer* layer)
 	{
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* layer)
 	{
 		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
 	}
 
 	bool Application::OnWindowClosed(WindowCloseEvent& e)
@@ -54,7 +64,9 @@ namespace Sas {
 
 	Application::Application()
 	{
+		SS_CORE_ASSERT(!s_Instanse, "App Is Already Exist");
 
+		s_Instanse = this;
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallBack(BIND_EVENT_FUNC(onEvent));
 	}

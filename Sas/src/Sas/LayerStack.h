@@ -1,7 +1,7 @@
 #pragma once
 #include "Sas\Core.h"
 #include "Sas\Layer.h"
-#include <vector>
+
 namespace Sas {
 
 	class SAS_API LayerStack

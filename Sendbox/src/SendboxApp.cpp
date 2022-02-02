@@ -18,6 +18,7 @@ public:
 
 	Sendbox() {
 		PushLayer(new ExampleLayer());
+		PushOverlay(new Sas::ImGuiLayer());
 	}
 	
 	~Sendbox() {
