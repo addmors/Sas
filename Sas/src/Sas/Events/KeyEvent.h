@@ -6,20 +6,22 @@ namespace Sas {
 	class SAS_API KeyEvent : public Event {
 	public:
 		KeyCode GetKeyKode() { return m_KeyCode; };
+		int GetMode() { return mode; };
 
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
-		KeyEvent(const KeyCode keycode)
-			:m_KeyCode(keycode) 
+		KeyEvent(const KeyCode keycode, const int mode)
+			:m_KeyCode(keycode), mode(mode)
 		{}
 		KeyCode m_KeyCode;
+		int mode;
 	};
 
 	class SAS_API KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(const KeyCode keycode, const uint16_t repeatCount)
-			: KeyEvent(keycode), m_RepeatCount(repeatCount) {}
+		KeyPressedEvent(const KeyCode keycode, const uint16_t repeatCount, const int mode)
+			: KeyEvent(keycode, mode), m_RepeatCount(repeatCount) {}
 
 		uint16_t GetRepeatCount() const { return m_RepeatCount; }
 
@@ -38,8 +40,8 @@ namespace Sas {
 	class SAS_API KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(const KeyCode keycode)
-			: KeyEvent(keycode) {}
+		KeyReleasedEvent(const KeyCode keycode, const int mode)
+			: KeyEvent(keycode, mode) {}
 
 		std::string ToString() const override
 		{
@@ -54,8 +56,8 @@ namespace Sas {
 	class SAS_API KeyTypedEvent : public KeyEvent
 	{
 	public:
-		KeyTypedEvent(const KeyCode keycode)
-			: KeyEvent(keycode) {}
+		KeyTypedEvent(const KeyCode keycode, const int mode)
+			: KeyEvent(keycode, mode) {}
 
 		std::string ToString() const override
 		{
