@@ -131,4 +131,6 @@ namespace Sas {
 		m_Data.vSync = enable;
 	};
 	bool WindowsWindow::IsVSync() const { return m_Data.vSync; };	
+
+
 }

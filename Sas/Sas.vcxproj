@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
     <ClInclude Include="src\Platform\OpenGL\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Sas\Aplication.h" />
     <ClInclude Include="src\Sas\Core.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="src\Sas\Events\KeyEvent.h" />
     <ClInclude Include="src\Sas\Events\MouseEvent.h" />
     <ClInclude Include="src\Sas\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Sas\Input.h" />
     <ClInclude Include="src\Sas\Layer.h" />
     <ClInclude Include="src\Sas\LayerStack.h" />
     <ClInclude Include="src\Sas\Log.h" />
@@ -175,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Sas\Aplication.cpp" />
     <ClCompile Include="src\Sas\ImGui\ImGuiLayer.cpp" />

@@ -23,6 +23,7 @@ namespace Sas {
 		inline void SetEventCallBack(const EventCallBackFn& func) override { m_Data.EventCallBack = func; };
 		void SetVSync(bool enable) override;
 		bool IsVSync() const override;
+		inline virtual void* GetNatieWindow() override { return m_Window; };
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void ShutDown();

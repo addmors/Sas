@@ -1,8 +1,8 @@
 #include "ssph.h"
 #include "Aplication.h"
 #include "Events/ApplicationEvent.h"
+#include "Input.h"
 #include "glad\glad.h"
-
 
 
 namespace Sas {
@@ -25,6 +25,8 @@ namespace Sas {
 			for (Layer* layer : m_LayerStack){
 				layer->OnUpdate();
 			}
+			//auto[x,y] = Input::GetMousePosition();
+			//SS_CORE_TRACE("{0},{1}", x,y);
 
 			m_Window->OnUpdate();
 		}; 

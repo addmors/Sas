@@ -1,15 +1,19 @@
 #include <SasPre.h>
-
 class ExampleLayer : public Sas::Layer {
 public:
 	ExampleLayer() : Layer("Example") {};
 	
 	void OnUpdate() override { 
-		SS_INFO("EXAMPLE::Update"); 
+		if (Sas::Input::IsKeyPressed(Sas::Key::Tab))
+			SS_CORE_TRACE("Key Tab Press");
 	}
 
 	void OnEvent(Sas::Event& e) override {
-		SS_TRACE("{0}", e);
+		
+		if (e.GetEventType() == Sas::EventType::KeyPressed) {
+			Sas::KeyPressedEvent& event = (Sas::KeyPressedEvent&)e;
+			SS_CORE_TRACE("{0}", (char)event.GetKeyKode());
+		}
 	};
 };
 
