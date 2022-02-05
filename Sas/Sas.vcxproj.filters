@@ -30,6 +30,9 @@
     <ClInclude Include="src\Platform\OpenGL\imgui_impl_opengl3_loader.h">
       <Filter>Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsInput.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>Platform\Windows</Filter>
     </ClInclude>
@@ -63,6 +66,9 @@
     <ClInclude Include="src\Sas\ImGui\ImGuiLayer.h">
       <Filter>Sas\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sas\Input.h">
+      <Filter>Sas</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sas\Layer.h">
       <Filter>Sas</Filter>
     </ClInclude>
@@ -81,6 +87,9 @@
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp">
       <Filter>Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>Platform\Windows</Filter>
