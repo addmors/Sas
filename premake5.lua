@@ -1,6 +1,7 @@
 workspace "Sas"
 	architecture "x64"
-	
+	startproject "Sendbox"
+
 	configurations {
 		"Debug",
 		"Release",
@@ -20,9 +21,12 @@ IncludeDir["GLFW"] = "Sas/vendor/GLFW/include;"
 IncludeDir["GLad"] = "Sas/vendor/GLad/include;"
 IncludeDir["ImGui"] = "Sas/vendor/imgui;"
 
-include "Sas/vendor/GLFW"
-include "Sas/vendor/GLAD"
-include "Sas/vendor/imgui"
+
+group "Dependencies"
+	include "Sas/vendor/GLFW"
+	include "Sas/vendor/GLAD"
+	include "Sas/vendor/imgui"
+group ""
 
 
 project "Sas"
