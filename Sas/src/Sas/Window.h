@@ -30,7 +30,7 @@ namespace Sas {
 		virtual void SetEventCallBack(const EventCallBackFn& call) = 0;
 		virtual void SetVSync(bool enable) = 0;
 		virtual bool IsVSync() const = 0;
-		virtual void* GetNatieWindow() = 0;
+		virtual void* GetNativeWindow() = 0;
 
 		static  Window* Create(const WindowProps& props = WindowProps());
 	};

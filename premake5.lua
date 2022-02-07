@@ -20,6 +20,8 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Sas/vendor/GLFW/include;"
 IncludeDir["GLad"] = "Sas/vendor/GLad/include;"
 IncludeDir["ImGui"] = "Sas/vendor/imgui;"
+IncludeDir["glm"] = "Sas/vendor/glm;"
+
 
 
 group "Dependencies"
@@ -44,7 +46,9 @@ project "Sas"
 
 	files{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl"		
 	}
 	
 	includedirs
@@ -54,6 +58,7 @@ project "Sas"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLad}",
 		"%{IncludeDir.ImGui}",		
+		"%{IncludeDir.glm}",		
 	}
 
 	links {
@@ -113,7 +118,8 @@ targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	{
 
 		"Sas/src;",
-		"Sas/vendor/spdlog/include;"
+		"Sas/vendor/spdlog/include;",
+		"%{IncludeDir.glm}"		
 	}
 	
 	links {

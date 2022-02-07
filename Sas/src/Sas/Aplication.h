@@ -6,9 +6,11 @@
 #include "LayerStack.h"
 #include "Sas/Events/Event.h"
 
+
 namespace Sas {
 
 	class WindowCloseEvent;
+	class ImGuiLayer;
 
 	class SAS_API Application
 	{
@@ -31,10 +33,13 @@ namespace Sas {
 	private:
 		bool OnWindowClosed(WindowCloseEvent& e );
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
+
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 	private:
 		static Application* s_Instanse;
+
 	};
 
 

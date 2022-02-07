@@ -4,6 +4,8 @@
 #include "Input.h"
 #include "glad\glad.h"
 
+#include "ImGui/ImGuiLayer.h"
+
 
 namespace Sas {
 
@@ -27,6 +29,13 @@ namespace Sas {
 			}
 			//auto[x,y] = Input::GetMousePosition();
 			//SS_CORE_TRACE("{0},{1}", x,y);
+
+			
+			m_ImGuiLayer->Begin();
+			for (Layer* layer : m_LayerStack) {
+				layer->OnImGuiRender();
+			}
+			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
 		}; 
@@ -71,6 +80,10 @@ namespace Sas {
 		s_Instanse = this;
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallBack(BIND_EVENT_FUNC(onEvent));
+
+		m_ImGuiLayer = new ImGuiLayer();
+
+		PushOverlay(m_ImGuiLayer);
 	}
 
 }
