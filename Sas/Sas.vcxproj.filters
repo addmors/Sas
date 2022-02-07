@@ -51,6 +51,9 @@
     <ClInclude Include="src\Platform\Windows\WindowsInput.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsInput.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
@@ -86,6 +89,9 @@
     </ClInclude>
     <ClInclude Include="src\Sas\Input.h">
       <Filter>src\Sas</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Input.h">
+      <Filter>Sas</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Layer.h">
       <Filter>src\Sas</Filter>
@@ -1354,6 +1360,9 @@
   <ItemGroup>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Platform\Windows</Filter>
