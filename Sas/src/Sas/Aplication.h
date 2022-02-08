@@ -35,6 +35,9 @@ namespace Sas {
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 
+
+		unsigned int  m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 	private:

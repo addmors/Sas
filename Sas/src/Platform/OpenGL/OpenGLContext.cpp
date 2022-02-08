@@ -18,6 +18,11 @@ namespace Sas {
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		SS_CORE_ASSERT(status, "Failed to Init GLAD!!");
+		SS_CORE_INFO("OpenGL: "); 
+		SS_CORE_INFO("\tVendor:  {0}", glGetString(GL_VENDOR));
+		SS_CORE_INFO("\tRederer: {0}", glGetString(GL_RENDERER));
+		SS_CORE_INFO("\tVersion: {0}", glGetString(GL_VERSION));
+
 	}
 
 	void OpenGLContext::SwapBuffers()
