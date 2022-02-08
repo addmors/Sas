@@ -1,10 +1,8 @@
 #pragma once
 #include "Sas\Window.h"
-#include <GLFW/glfw3.h>
+#include "Renderer/GraphicsContext.h"
 
-#include "Sas\Events\ApplicationEvent.h"
-#include "Sas\Events\MouseEvent.h"
-#include "Sas\Events\KeyEvent.h"
+#include <GLFW/glfw3.h>
 
 namespace Sas {
 	class SAS_API WindowsWindow : public  Window
@@ -29,6 +27,8 @@ namespace Sas {
 		virtual void ShutDown();
 
 		GLFWwindow* m_Window;
+
+		GraphicsContext* m_Context;
 
 		struct WindowData
 		{

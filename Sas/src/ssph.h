@@ -1,6 +1,7 @@
 #pragma once
 
 
+
 #include <memory>
 #include <utility>
 #include <algorithm>
@@ -12,6 +13,7 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include "Sas/Log.h"
 
 #ifdef SS_PLATFORM_WINDOWS 
 #include <Windows.h>

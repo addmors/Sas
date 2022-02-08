@@ -1,6 +1,12 @@
 #include "ssph.h"
 #include "WindowsWindow.h"
-#include "glad\glad.h"
+
+
+#include "Sas\Events\ApplicationEvent.h"
+#include "Sas\Events\MouseEvent.h"
+#include "Sas\Events\KeyEvent.h"
+
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Sas {
 	static bool is_GLFWInitialized = false;
@@ -25,6 +31,7 @@ namespace Sas {
 		m_Data.Width = props.Width;
 		m_Data.Title = props.Title;
 
+
 		SS_CORE_INFO("Create Window {0}, ({1}, {2})", props.Title, props.Width, props.Height);
 		
 		if (!is_GLFWInitialized) {
@@ -34,9 +41,10 @@ namespace Sas {
 			is_GLFWInitialized = true;
 		}
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		SS_CORE_ASSERT(status, "Failed to Init GLAD!!");
+
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
@@ -123,7 +131,7 @@ namespace Sas {
 
 	void WindowsWindow::OnUpdate() {
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enable) {

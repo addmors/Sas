@@ -3,6 +3,7 @@
 #include "Events/Event.h"
 #include "Sas\Log.h"
 
+
 namespace Sas {
 
 	struct  WindowProps

@@ -60,12 +60,13 @@ namespace Sas {
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
+		
 	}
 
 	void ImGuiLayer::OnImGuiRender()
 	{
 		static bool show = true; 
-		ImGui::ShowDemoWindow();
+		ImGui::ShowDemoWindow(); 
 	}
 
 	void ImGuiLayer::Begin() {
