@@ -1,7 +1,7 @@
 project "GLad"
 	kind "StaticLib"
 	language "C"
-	staticruntime "Off"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -14,9 +14,7 @@ project "GLad"
 	}
 
 	filter "system:windows"
-		 buildoptions { "-std=c11", "-lgdi32" , "/MT"}
             	systemversion "latest"
-            	staticruntime "On"
 	
 	includedirs {
 		"include"

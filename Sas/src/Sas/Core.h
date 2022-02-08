@@ -2,11 +2,15 @@
 
 
 #ifdef SS_PLATFORM_WINDOWS
+#if SS_DYNAMIC_LINK
 	#ifdef SS_BUILD_DLL
 		#define SAS_API __declspec(dllexport) 
 	#else
 		#define SAS_API __declspec(dllimport)
 	#endif
+#else
+	#define SAS_API
+#endif
 #else 
 	#error Sas omly support Windows;
 #endif
