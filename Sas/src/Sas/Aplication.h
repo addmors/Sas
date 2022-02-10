@@ -6,6 +6,8 @@
 #include "LayerStack.h"
 #include "Sas/Events/Event.h"
 
+#include "Renderer/Shader.h"
+#include "Renderer/Buffer.h"
 
 namespace Sas {
 
@@ -36,10 +38,14 @@ namespace Sas {
 		ImGuiLayer* m_ImGuiLayer;
 
 
-		unsigned int  m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		unsigned int  m_VertexArray;
 
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+		std::unique_ptr<Shader> m_Shader;
+		std::unique_ptr<IndexBuffer> m_IndexBuffer;
+		std::unique_ptr<VertexBuffer> m_VertexBuffer;
+		
 	private:
 		static Application* s_Instanse;
 

@@ -38,7 +38,7 @@ public:
 			else if (Sas::Input::IsKeyPressed(Sas::Key::Tab)) {
 				SS_CORE_TRACE("Key Tab Press(event)");
 			}
-			else SS_CORE_TRACE("{0}", (char)event.GetKeyKode());
+			else SS_CORE_TRACE("{0}", (char)event.GetKeyKode()); 
 		}
 	};
 };

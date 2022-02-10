@@ -25,8 +25,10 @@ namespace Sas {
 			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			m_Shader->Bind();
+
 			glBindVertexArray(m_VertexArray);
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr );
+			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack){
 				layer->OnUpdate();
@@ -92,24 +94,51 @@ namespace Sas {
 		glGenVertexArrays(1, &m_VertexArray);
 		glBindVertexArray(m_VertexArray);
 
-		glGenBuffers(1, &m_VertexBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
 
 		float vertices[9] = {
 		-.5f, -.5f, 0.0f,
 		 .5f, -.5f, 0.0f,
 		0.0f,  .5f, 0.0f,
 		};
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+
+		uint32_t index[3] = { 0,1,2 };
+
+		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
-		glGenBuffers(1, &m_IndexBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+		m_IndexBuffer.reset(IndexBuffer::Create(index, sizeof(index)/sizeof(uint32_t)));
 
-		unsigned int index[3] = { 0,1,2 };
+		std::string vertSourse = R"(
 
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index,GL_STATIC_DRAW);
+			#version 450 core
+			
+			layout(location = 0) in vec3 pos;
+			
+			out vec3 v_Pos;
+
+			void main(){
+				v_Pos = pos;
+				gl_Position = vec4(pos, 1.0);
+			}
+		)";
+
+		std::string fragSourse = R"(
+
+			#version 450 core
+			layout(location = 0) out vec4 color;
+			in vec3 v_Pos;
+			
+			void main(){
+				color = vec4(v_Pos*0.5 + 0.5, 1.0);
+			}
+		)";
+
+
+
+		m_Shader.reset(new Shader(vertSourse, fragSourse));
 	}
 
 }
