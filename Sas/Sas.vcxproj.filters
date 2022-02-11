@@ -13,9 +13,6 @@
     <Filter Include="src\Platform\Windows">
       <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Renderer">
-      <UniqueIdentifier>{73D1DFBF-5F34-6F64-08BA-A71AF4FB3AE7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Sas">
       <UniqueIdentifier>{83AD2FA9-EF8C-AE44-F8A4-391B640315A6}</UniqueIdentifier>
     </Filter>
@@ -27,6 +24,9 @@
     </Filter>
     <Filter Include="src\Sas\ImGui">
       <UniqueIdentifier>{EDF89282-59B9-0EB9-22F4-57368E735395}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Sas\Renderer">
+      <UniqueIdentifier>{89D4151A-75CD-346C-9EFF-19F18A571478}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
@@ -57,23 +57,14 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsInput.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sas\Renderer\Buffer.h">
-      <Filter>src\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sas\Renderer\GraphicsContext.h">
-      <Filter>src\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sas\Renderer\Renderer.h">
-      <Filter>src\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sas\Renderer\Shader.h">
-      <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Aplication.h">
       <Filter>src\Sas</Filter>
@@ -116,6 +107,21 @@
     </ClInclude>
     <ClInclude Include="src\Sas\Log.h">
       <Filter>src\Sas</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Renderer\Buffer.h">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Renderer\GraphicsContext.h">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Renderer\Renderer.h">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Renderer\Shader.h">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Renderer\VertexArray.h">
+      <Filter>src\Sas\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Window.h">
       <Filter>src\Sas</Filter>
@@ -1371,8 +1377,9 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sas\Renderer\VertexArray.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
+    <ClInclude Include="src\Sas\Renderer\RendererAPI.h" />
+    <ClInclude Include="src\Sas\Renderer\RendererComand.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1381,20 +1388,14 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexAttay.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Platform\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Sas\Renderer\Buffer.cpp">
-      <Filter>src\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Sas\Renderer\Renderer.cpp">
-      <Filter>src\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Sas\Renderer\Shader.cpp">
-      <Filter>src\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Sas\Aplication.cpp">
       <Filter>src\Sas</Filter>
@@ -1414,10 +1415,23 @@
     <ClCompile Include="src\Sas\Log.cpp">
       <Filter>src\Sas</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sas\Renderer\Buffer.cpp">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\Renderer\Renderer.cpp">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\Renderer\Shader.cpp">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\Renderer\VertexArray.cpp">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\ssph.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sas\Renderer\VertexArray.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexAttay.cpp" />
+    <ClCompile Include="src\Sas\Renderer\RendererAPI.cpp" />
+    <ClCompile Include="src\Sas\Renderer\RendererComand.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
   </ItemGroup>
 </Project>

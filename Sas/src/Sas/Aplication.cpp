@@ -4,8 +4,8 @@
 #include "Input.h"
 
 #include "ImGui/ImGuiLayer.h"
+#include "Sas/Renderer/Renderer.h"
 
-#include "glad\glad.h"
 
 
 
@@ -25,18 +25,22 @@ namespace Sas {
 	{
 		while (m_Running) {
 			
-			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
+			
+
+
+			RendererComand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+			RendererComand::Clear();
+
+			Renderer::BeginScene();
 
 			m_Shader2->Bind();
-			m_SquareVA->Bind();
-			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(m_SquareVA);
 
-			
-			
 			m_Shader->Bind();
-			m_VertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(m_VertexArray);
+
+			Renderer::EndScene();
+
 
 			for (Layer* layer : m_LayerStack){
 				layer->OnUpdate();
