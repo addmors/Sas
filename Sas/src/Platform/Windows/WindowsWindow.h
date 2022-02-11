@@ -1,6 +1,6 @@
 #pragma once
 #include "Sas\Window.h"
-#include "Renderer/GraphicsContext.h"
+#include "Sas/Renderer/GraphicsContext.h"
 
 #include <GLFW/glfw3.h>
 

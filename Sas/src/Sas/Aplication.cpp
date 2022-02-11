@@ -2,12 +2,37 @@
 #include "Aplication.h"
 #include "Events/ApplicationEvent.h"
 #include "Input.h"
-#include "glad\glad.h"
 
 #include "ImGui/ImGuiLayer.h"
 
+#include "glad\glad.h"
+
+
+
 
 namespace Sas {
+
+	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
+	{
+		switch (type)
+		{
+		case ShaderDataType::Float:    return GL_FLOAT;
+		case ShaderDataType::Float2:   return GL_FLOAT;
+		case ShaderDataType::Float3:   return GL_FLOAT;
+		case ShaderDataType::Float4:   return GL_FLOAT;
+		case ShaderDataType::Mat3:     return GL_FLOAT;
+		case ShaderDataType::Mat4:     return GL_FLOAT;
+		case ShaderDataType::Int:      return GL_INT;
+		case ShaderDataType::Int2:     return GL_INT;
+		case ShaderDataType::Int3:     return GL_INT;
+		case ShaderDataType::Int4:     return GL_INT;
+		case ShaderDataType::Bool:     return GL_BOOL;
+		}
+
+		SS_CORE_ASSERT(false, "Unknown ShaderDataType!");
+		return 0;
+	}
+
 
 	
 #define BIND_EVENT_FUNC(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -95,33 +120,51 @@ namespace Sas {
 		glBindVertexArray(m_VertexArray);
 
 
-		float vertices[9] = {
-		-.5f, -.5f, 0.0f,
-		 .5f, -.5f, 0.0f,
-		0.0f,  .5f, 0.0f,
+		float vertices[3 * 7] = {
+	   -0.5f, -0.8f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.8f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+		0.0f,  0.8f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 		};
 
 
-		uint32_t index[3] = { 0,1,2 };
+		uint32_t indices[3] = { 0,1,2 };
 
 		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+		BufferLayout layout = {
+			{ShaderDataType::Float3, "a_Position"},
+			{ShaderDataType::Float4, "a_Color"},
+		};
+		uint32_t index = 0;
+		m_VertexBuffer->SetLayout(layout);
 
-		m_IndexBuffer.reset(IndexBuffer::Create(index, sizeof(index)/sizeof(uint32_t)));
+			for (const auto& element : m_VertexBuffer->GetLayout()) {
+				glEnableVertexAttribArray(index);
+				glVertexAttribPointer(index,
+					element.Size/4, 
+					ShaderDataTypeToOpenGLBaseType(element.Type), 
+					element.Normalized ? GL_TRUE : GL_FALSE,
+					layout.GetStride(),
+					(const void*)element.Offset);
+				index++;
+			};
+		
+		m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices)/sizeof(uint32_t)));
 
 		std::string vertSourse = R"(
 
 			#version 450 core
 			
-			layout(location = 0) in vec3 pos;
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec4 a_Color;
 			
 			out vec3 v_Pos;
+			out vec4 v_Color;
 
 			void main(){
-				v_Pos = pos;
-				gl_Position = vec4(pos, 1.0);
+				v_Color = a_Color;
+				v_Pos = a_Position;
+				gl_Position = vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -130,9 +173,10 @@ namespace Sas {
 			#version 450 core
 			layout(location = 0) out vec4 color;
 			in vec3 v_Pos;
-			
+			in vec4 v_Color;
 			void main(){
-				color = vec4(v_Pos*0.5 + 0.5, 1.0);
+				color = vec4(v_Pos*0.5+0.5, 1.0);
+				//color = v_Color;
 			}
 		)";
 
