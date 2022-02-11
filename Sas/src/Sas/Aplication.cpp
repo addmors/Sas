@@ -12,29 +12,7 @@
 
 namespace Sas {
 
-	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
-	{
-		switch (type)
-		{
-		case ShaderDataType::Float:    return GL_FLOAT;
-		case ShaderDataType::Float2:   return GL_FLOAT;
-		case ShaderDataType::Float3:   return GL_FLOAT;
-		case ShaderDataType::Float4:   return GL_FLOAT;
-		case ShaderDataType::Mat3:     return GL_FLOAT;
-		case ShaderDataType::Mat4:     return GL_FLOAT;
-		case ShaderDataType::Int:      return GL_INT;
-		case ShaderDataType::Int2:     return GL_INT;
-		case ShaderDataType::Int3:     return GL_INT;
-		case ShaderDataType::Int4:     return GL_INT;
-		case ShaderDataType::Bool:     return GL_BOOL;
-		}
 
-		SS_CORE_ASSERT(false, "Unknown ShaderDataType!");
-		return 0;
-	}
-
-
-	
 #define BIND_EVENT_FUNC(x) std::bind(&Application::x, this, std::placeholders::_1)
 	
 	Application* Application::s_Instanse = nullptr;
@@ -50,9 +28,14 @@ namespace Sas {
 			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			m_Shader->Bind();
+			m_Shader2->Bind();
+			m_SquareVA->Bind();
+			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
-			glBindVertexArray(m_VertexArray);
+			
+			
+			m_Shader->Bind();
+			m_VertexArray->Bind();
 			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack){
@@ -107,7 +90,6 @@ namespace Sas {
 	Application::Application()
 	{
 		SS_CORE_ASSERT(!s_Instanse, "App Is Already Exist");
-
 		s_Instanse = this;
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallBack(BIND_EVENT_FUNC(onEvent));
@@ -116,10 +98,7 @@ namespace Sas {
 
 		PushOverlay(m_ImGuiLayer);
 
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
-
-
+		
 		float vertices[3 * 7] = {
 	   -0.5f, -0.8f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
 		0.5f, -0.8f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
@@ -129,27 +108,49 @@ namespace Sas {
 
 		uint32_t indices[3] = { 0,1,2 };
 
+		m_VertexArray.reset(VertexArray::Create());
+
 		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-		BufferLayout layout = {
+		m_VertexBuffer->SetLayout({
 			{ShaderDataType::Float3, "a_Position"},
 			{ShaderDataType::Float4, "a_Color"},
-		};
-		uint32_t index = 0;
-		m_VertexBuffer->SetLayout(layout);
+			});
+		m_VertexArray->AddVertexBufer(m_VertexBuffer);
 
-			for (const auto& element : m_VertexBuffer->GetLayout()) {
-				glEnableVertexAttribArray(index);
-				glVertexAttribPointer(index,
-					element.Size/4, 
-					ShaderDataTypeToOpenGLBaseType(element.Type), 
-					element.Normalized ? GL_TRUE : GL_FALSE,
-					layout.GetStride(),
-					(const void*)element.Offset);
-				index++;
-			};
-		
+
 		m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices)/sizeof(uint32_t)));
+		m_VertexArray->SetIndexBufer(m_IndexBuffer);
+
+
+
+		float sqvertices[3 * 4] = {
+	   -0.5f, -0.5f, 0.0f, 
+		0.5f, -0.5f, 0.0f, 
+		0.5f,  0.5f, 0.0f, 
+	   -0.5f,  0.5f, 0.0f 
+		};
+
+
+		m_SquareVA.reset(VertexArray::Create());
+		
+		std::shared_ptr<VertexBuffer> sqareVB;
+		sqareVB.reset(VertexBuffer::Create(sqvertices, sizeof(sqvertices)));
+		sqareVB->SetLayout({
+			{ShaderDataType::Float3, "a_Position"},
+			});
+
+		m_SquareVA->AddVertexBufer(sqareVB);
+
+
+
+		uint32_t sqindices[6] = { 0,1,2,2, 3,0};
+
+		std::shared_ptr<IndexBuffer> sqareIB; 
+		sqareIB.reset(IndexBuffer::Create(sqindices, sizeof(sqindices) / sizeof(uint32_t)));
+		
+		m_SquareVA->SetIndexBufer(sqareIB);
+
 
 		std::string vertSourse = R"(
 
@@ -157,7 +158,7 @@ namespace Sas {
 			
 			layout(location = 0) in vec3 a_Position;
 			layout(location = 1) in vec4 a_Color;
-			
+
 			out vec3 v_Pos;
 			out vec4 v_Color;
 
@@ -171,18 +172,47 @@ namespace Sas {
 		std::string fragSourse = R"(
 
 			#version 450 core
-			layout(location = 0) out vec4 color;
+			layout(location = 0) out vec4 color;			
 			in vec3 v_Pos;
 			in vec4 v_Color;
+
 			void main(){
-				color = vec4(v_Pos*0.5+0.5, 1.0);
-				//color = v_Color;
+				color = v_Color;
 			}
 		)";
 
 
-
 		m_Shader.reset(new Shader(vertSourse, fragSourse));
+
+
+		std::string vertSourse2 = R"(
+
+			#version 450 core
+			
+			layout(location = 0) in vec3 a_Position;
+			
+			out vec3 v_Pos;
+
+			void main(){
+				v_Pos = a_Position;
+				gl_Position = vec4(a_Position, 1.0);
+			}
+		)";
+
+		std::string fragSourse2 = R"(
+
+			#version 450 core
+			layout(location = 0) out vec4 color;
+			in vec3 v_Pos;
+
+
+
+			void main(){
+				color = vec4(v_Pos*0.5+0.5, 1.0);
+			}
+		)";
+
+		m_Shader2.reset(new Shader(vertSourse2, fragSourse2));
 	}
 
 }

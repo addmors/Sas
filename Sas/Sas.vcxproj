@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Sas\Renderer\Buffer.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="src\Sas\Layer.h" />
     <ClInclude Include="src\Sas\LayerStack.h" />
     <ClInclude Include="src\Sas\Log.h" />
+    <ClInclude Include="src\Sas\Renderer\VertexArray.h" />
     <ClInclude Include="src\Sas\Window.h" />
     <ClInclude Include="src\SasPre.h" />
     <ClInclude Include="src\ssph.h" />
@@ -588,6 +590,7 @@
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexAttay.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Sas\Renderer\Buffer.cpp" />
@@ -599,6 +602,7 @@
     <ClCompile Include="src\Sas\Layer.cpp" />
     <ClCompile Include="src\Sas\LayerStack.cpp" />
     <ClCompile Include="src\Sas\Log.cpp" />
+    <ClCompile Include="src\Sas\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\ssph.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
