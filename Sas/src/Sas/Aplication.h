@@ -9,7 +9,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/Buffer.h"
 #include "Renderer/VertexArray.h"
-
+#include "Renderer/OrthographicCamera.h"
 
 
 
@@ -52,6 +52,8 @@ namespace Sas {
 		std::shared_ptr<VertexArray> m_SquareVA;
 
 		std::shared_ptr<Shader> m_Shader2;
+		OrthographicCamera m_Camera;
+
 	private:
 		static Application* s_Instanse;
 

@@ -9,7 +9,6 @@
 
 
 
-
 namespace Sas {
 
 
@@ -31,15 +30,15 @@ namespace Sas {
 			RendererComand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 			RendererComand::Clear();
 
-			Renderer::BeginScene();
+			m_Camera.SetRotation(45.0f);
+			Renderer::BeginScene(m_Camera);
 
-			m_Shader2->Bind();
-			Renderer::Submit(m_SquareVA);
-
-			m_Shader->Bind();
-			Renderer::Submit(m_VertexArray);
+			
+			Renderer::Submit(m_Shader2,m_SquareVA);
+			Renderer::Submit(m_Shader,m_VertexArray);
 
 			Renderer::EndScene();
+
 
 
 			for (Layer* layer : m_LayerStack){
@@ -92,6 +91,7 @@ namespace Sas {
 	}
 
 	Application::Application()
+		:m_Camera(-1.6f, 1.6f, -0.9f,0.9f)
 	{
 		SS_CORE_ASSERT(!s_Instanse, "App Is Already Exist");
 		s_Instanse = this;
@@ -163,13 +163,15 @@ namespace Sas {
 			layout(location = 0) in vec3 a_Position;
 			layout(location = 1) in vec4 a_Color;
 
+			uniform mat4 u_ViewProjectionMatrix;
+ 
 			out vec3 v_Pos;
 			out vec4 v_Color;
 
 			void main(){
 				v_Color = a_Color;
 				v_Pos = a_Position;
-				gl_Position = vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjectionMatrix*vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -195,11 +197,13 @@ namespace Sas {
 			
 			layout(location = 0) in vec3 a_Position;
 			
+			uniform mat4 u_ViewProjectionMatrix;
+
 			out vec3 v_Pos;
 
 			void main(){
 				v_Pos = a_Position;
-				gl_Position = vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjectionMatrix * vec4(a_Position, 1.0);
 			}
 		)";
 

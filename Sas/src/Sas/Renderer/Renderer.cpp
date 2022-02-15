@@ -2,14 +2,20 @@
 #include "Renderer.h"
 
 namespace Sas {
-	void Renderer::BeginScene()
+
+	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
+
+	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
+		m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 	void Renderer::EndScene()
 	{
 	}
-	void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray)
+	void Renderer::Submit( const std::shared_ptr<Shader> shader, const std::shared_ptr<VertexArray>& vertexArray)
 	{
+		shader->Bind();
+		shader->SetMat4("u_ViewProjectionMatrix", m_SceneData->ViewProjectionMatrix);	
 		vertexArray->Bind();
 		RendererComand::DrawIndexed(vertexArray);
 	}

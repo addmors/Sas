@@ -57,6 +57,9 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
@@ -115,6 +118,12 @@
       <Filter>src\Sas\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Renderer\Renderer.h">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Renderer\RendererAPI.h">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Renderer\RendererComand.h">
       <Filter>src\Sas\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Renderer\Shader.h">
@@ -1377,15 +1386,16 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sas\Renderer\RendererAPI.h" />
-    <ClInclude Include="src\Sas\Renderer\RendererComand.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\Sas\Renderer\OrthographicCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexAttay.cpp">
@@ -1421,6 +1431,12 @@
     <ClCompile Include="src\Sas\Renderer\Renderer.cpp">
       <Filter>src\Sas\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sas\Renderer\RendererAPI.cpp">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\Renderer\RendererComand.cpp">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Sas\Renderer\Shader.cpp">
       <Filter>src\Sas\Renderer</Filter>
     </ClCompile>
@@ -1430,8 +1446,6 @@
     <ClCompile Include="src\ssph.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sas\Renderer\RendererAPI.cpp" />
-    <ClCompile Include="src\Sas\Renderer\RendererComand.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="src\Sas\Renderer\OrthographicCamera.cpp" />
   </ItemGroup>
 </Project>

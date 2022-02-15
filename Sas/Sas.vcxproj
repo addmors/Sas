@@ -26,19 +26,19 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -166,6 +166,7 @@
     <ClInclude Include="src\Sas\Log.h" />
     <ClInclude Include="src\Sas\Renderer\Buffer.h" />
     <ClInclude Include="src\Sas\Renderer\GraphicsContext.h" />
+    <ClInclude Include="src\Sas\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Sas\Renderer\Renderer.h" />
     <ClInclude Include="src\Sas\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Sas\Renderer\RendererComand.h" />
@@ -604,6 +605,7 @@
     <ClCompile Include="src\Sas\LayerStack.cpp" />
     <ClCompile Include="src\Sas\Log.cpp" />
     <ClCompile Include="src\Sas\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Sas\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Sas\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Sas\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Sas\Renderer\RendererComand.cpp" />
