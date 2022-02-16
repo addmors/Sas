@@ -5,13 +5,7 @@
 #include "Window.h"
 #include "LayerStack.h"
 #include "Sas/Events/Event.h"
-
-#include "Renderer/Shader.h"
-#include "Renderer/Buffer.h"
-#include "Renderer/VertexArray.h"
-#include "Renderer/OrthographicCamera.h"
-
-
+#include "Sas/Core/Timestep.h"
 
 namespace Sas {
 
@@ -38,22 +32,14 @@ namespace Sas {
 
 	private:
 		bool OnWindowClosed(WindowCloseEvent& e );
+
+	private:
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 
-
-		
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<IndexBuffer> m_IndexBuffer;
-		std::shared_ptr<VertexBuffer> m_VertexBuffer;
-		std::shared_ptr<VertexArray> m_VertexArray;
-		std::shared_ptr<VertexArray> m_SquareVA;
-
-		std::shared_ptr<Shader> m_Shader2;
-		OrthographicCamera m_Camera;
-
+		float m_LastFrameTime = 0.0f;
 	private:
 		static Application* s_Instanse;
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "Sas\Core.h"
+#include "Sas\Core\Timestep.h"
 #include "Sas\Events\Event.h"
 
 namespace Sas {
@@ -12,7 +13,7 @@ namespace Sas {
 
 		virtual void OnAttach() {};
 		virtual void OnDetach() {};
-		virtual void OnUpdate() {};
+		virtual void OnUpdate(Timestep ts) {};
 		virtual void OnImGuiRender() {};
 
 		virtual void OnEvent(Event& event) {};

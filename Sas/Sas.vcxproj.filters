@@ -1387,6 +1387,8 @@
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Renderer\OrthographicCamera.h" />
+    <ClInclude Include="src\Sas\Core\Timestep.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1447,5 +1449,7 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Sas\Renderer\OrthographicCamera.cpp" />
+    <ClCompile Include="src\Sas\Core\Timestep.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
   </ItemGroup>
 </Project>
