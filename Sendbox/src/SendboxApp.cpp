@@ -33,20 +33,21 @@ public:
 
 
 
-		float sqvertices[3 * 4] = {
-	   -0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.5f,  0.5f, 0.0f,
-	   -0.5f,  0.5f, 0.0f
+		float sqvertices[5 * 4] = {
+	   -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+		0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+	   -0.5f,  0.5f, 0.0f, 0.0f, 1.0f 
 		};
 
 
 		m_SquareVA.reset(Sas::VertexArray::Create());
 
-		std::shared_ptr<Sas::VertexBuffer> sqareVB;
+		Sas::Ref<Sas::VertexBuffer> sqareVB;
 		sqareVB.reset(Sas::VertexBuffer::Create(sqvertices, sizeof(sqvertices)));
 		sqareVB->SetLayout({
 			{Sas::ShaderDataType::Float3, "a_Position"},
+			{Sas::ShaderDataType::Float2, "a_TexCoord"},
 			});
 
 		m_SquareVA->AddVertexBufer(sqareVB);
@@ -55,7 +56,7 @@ public:
 
 		uint32_t sqindices[6] = { 0,1,2,2, 3,0 };
 
-		std::shared_ptr<Sas::IndexBuffer> sqareIB;
+		Sas::Ref<Sas::IndexBuffer> sqareIB;
 		sqareIB.reset(Sas::IndexBuffer::Create(sqindices, sizeof(sqindices) / sizeof(uint32_t)));
 
 		m_SquareVA->SetIndexBufer(sqareIB);
@@ -127,6 +128,48 @@ public:
 		)";
 
 		m_Shader2.reset(Sas::Shader::Create(vertSourse2, fragSourse2));
+
+
+		std::string vertTexShader = R"(
+
+			#version 450 core
+			
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec2 a_TexCoord;
+			
+			out vec2 v_TexCoord;
+			uniform mat4 u_ViewProjectionMatrix;
+			uniform mat4 u_Transform;
+
+				
+			void main(){
+				v_TexCoord = a_TexCoord;
+				gl_Position = u_ViewProjectionMatrix * u_Transform * vec4(a_Position, 1.0);
+			}
+		)";
+
+		std::string fragTexShader = R"(
+
+			#version 450 core
+			layout(location = 0) out vec4 color;
+
+			in vec2 v_TexCoord;
+			uniform vec3 u_Color;
+		
+			uniform sampler2D u_Texture;
+		
+
+
+			void main(){
+				color = texture(u_Texture,v_TexCoord);
+			}
+		)";
+
+		m_TextureShader.reset(Sas::Shader::Create(vertTexShader, fragTexShader));
+		m_Texture = Sas::Texture2D::Create("assets/textures/Checkerboard.png");
+
+		m_TextureShader->Bind();
+		m_TextureShader->SetInt("u_Texture", 0);
 	};
 	
 	void OnUpdate(Sas::Timestep ts) override { 
@@ -168,7 +211,8 @@ public:
 
 		glm::mat4 trans = glm::translate(glm::mat4(1.0f), pos);
 
-		Sas::Renderer::Submit(m_Shader, m_VertexArray, glm::mat4(1.0f));
+		//Submit Triangle
+		//Sas::Renderer::Submit(m_Shader, m_VertexArray, glm::mat4(1.0f));
 
 
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0));
@@ -186,7 +230,10 @@ public:
 			}
 		}
 		
-		
+		m_Texture->Bind();
+		Sas::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
+
 		Sas::Renderer::EndScene();
 
 
@@ -204,13 +251,14 @@ public:
 	};
 
 private:
-	std::shared_ptr<Sas::Shader> m_Shader;
-	std::shared_ptr<Sas::IndexBuffer> m_IndexBuffer;
-	std::shared_ptr<Sas::VertexBuffer> m_VertexBuffer;
-	std::shared_ptr<Sas::VertexArray> m_VertexArray;
-	std::shared_ptr<Sas::VertexArray> m_SquareVA;
+	Sas::Ref<Sas::Shader> m_Shader;
+	Sas::Ref<Sas::IndexBuffer> m_IndexBuffer;
+	Sas::Ref<Sas::VertexBuffer> m_VertexBuffer;
+	Sas::Ref<Sas::VertexArray> m_VertexArray;
+	Sas::Ref<Sas::VertexArray> m_SquareVA;
 
-	std::shared_ptr <Sas::Shader> m_Shader2;
+	Sas::Ref<Sas::Texture2D> m_Texture;
+	Sas::Ref<Sas::Shader> m_Shader2, m_TextureShader;
 	Sas::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPos;
 

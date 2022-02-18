@@ -21,6 +21,7 @@ IncludeDir["GLFW"] = "Sas/vendor/GLFW/include;"
 IncludeDir["GLad"] = "Sas/vendor/GLad/include;"
 IncludeDir["ImGui"] = "Sas/vendor/imgui;"
 IncludeDir["glm"] = "Sas/vendor/glm;"
+IncludeDir["stb_image"] = "Sas/vendor/stb_image;"
 
 
 
@@ -48,6 +49,8 @@ project "Sas"
 	files{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl"		
 	}
@@ -60,6 +63,7 @@ project "Sas"
 		"%{IncludeDir.GLad}",
 		"%{IncludeDir.ImGui}",		
 		"%{IncludeDir.glm}",		
+		"%{IncludeDir.stb_image}",		
 	}
 
 	links {

@@ -49,7 +49,7 @@ namespace Sas {
 	}
 
 
-	void OpenGLVertexArray::AddVertexBufer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
+	void OpenGLVertexArray::AddVertexBufer(const Ref<VertexBuffer>& vertexBuffer)
 	{
 
 		SS_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
@@ -120,7 +120,7 @@ namespace Sas {
 	}
 
 
-	void OpenGLVertexArray::SetIndexBufer(const std::shared_ptr<IndexBuffer>& indexBuffer) 
+	void OpenGLVertexArray::SetIndexBufer(const Ref<IndexBuffer>& indexBuffer) 
 	{
 			
 			glBindVertexArray(m_RendererID);
