@@ -7,4 +7,9 @@ namespace Sas {
 
 	RendererAPI* RendererComand::s_RendererAPI = new OpenGLRendererAPI;
 
+	void RendererComand::Init()
+	{
+		s_RendererAPI->Init();
+	}
+
 }

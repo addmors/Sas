@@ -166,10 +166,13 @@ public:
 		)";
 
 		m_TextureShader.reset(Sas::Shader::Create(vertTexShader, fragTexShader));
-		m_Texture = Sas::Texture2D::Create("assets/textures/Checkerboard.png");
-
 		m_TextureShader->Bind();
 		m_TextureShader->SetInt("u_Texture", 0);
+
+
+		m_Texture = Sas::Texture2D::Create("assets/textures/Checkerboard.png");
+		m_TextureShild = Sas::Texture2D::Create("assets/textures/Logoshild.png");
+
 	};
 	
 	void OnUpdate(Sas::Timestep ts) override { 
@@ -233,6 +236,9 @@ public:
 		m_Texture->Bind();
 		Sas::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
+		m_TextureShild->Bind();
+		Sas::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
 
 		Sas::Renderer::EndScene();
 
@@ -257,7 +263,7 @@ private:
 	Sas::Ref<Sas::VertexArray> m_VertexArray;
 	Sas::Ref<Sas::VertexArray> m_SquareVA;
 
-	Sas::Ref<Sas::Texture2D> m_Texture;
+	Sas::Ref<Sas::Texture2D> m_Texture, m_TextureShild;
 	Sas::Ref<Sas::Shader> m_Shader2, m_TextureShader;
 	Sas::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPos;
