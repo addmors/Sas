@@ -1,6 +1,6 @@
 #pragma once
-#include "Sas\Core.h"
-#include "Sas\Layer.h"
+#include "Sas\Core\Core.h"
+#include "Sas\Core\Layer.h"
 
 namespace Sas {
 

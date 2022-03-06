@@ -17,11 +17,14 @@ namespace Sas {
 	{
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		SS_CORE_ASSERT(status, "Failed to Init GLAD!!");
-		SS_CORE_INFO("OpenGL: "); 
-		SS_CORE_INFO("\tVendor:  {0}", glGetString(GL_VENDOR));
-		SS_CORE_INFO("\tRederer: {0}", glGetString(GL_RENDERER));
-		SS_CORE_INFO("\tVersion: {0}", glGetString(GL_VERSION));
+		SS_CORE_ASSERT(status, "Failed to initialize Glad!");
+
+		SS_CORE_INFO("OpenGL Info:");
+		SS_CORE_INFO("  Vendor: {0}", glGetString(GL_VENDOR));
+		SS_CORE_INFO("  Renderer: {0}", glGetString(GL_RENDERER));
+		SS_CORE_INFO("  Version: {0}", glGetString(GL_VERSION));
+
+		SS_CORE_ASSERT(GLVersion.major > 4 || (GLVersion.major == 4 && GLVersion.minor >= 5), "Hazel requires at least OpenGL version 4.5!");
 
 	}
 

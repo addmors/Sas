@@ -78,12 +78,6 @@
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sas\Aplication.h">
-      <Filter>src\Sas</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sas\Core.h">
-      <Filter>src\Sas</Filter>
-    </ClInclude>
     <ClInclude Include="src\Sas\Core\KeyCodes.h">
       <Filter>src\Sas\Core</Filter>
     </ClInclude>
@@ -92,9 +86,6 @@
     </ClInclude>
     <ClInclude Include="src\Sas\Core\Timestep.h">
       <Filter>src\Sas\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sas\EntryPoint.h">
-      <Filter>src\Sas</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Events\ApplicationEvent.h">
       <Filter>src\Sas\Events</Filter>
@@ -111,18 +102,6 @@
     <ClInclude Include="src\Sas\ImGui\ImGuiLayer.h">
       <Filter>src\Sas\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sas\Input.h">
-      <Filter>src\Sas</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sas\Layer.h">
-      <Filter>src\Sas</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sas\LayerStack.h">
-      <Filter>src\Sas</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sas\Log.h">
-      <Filter>src\Sas</Filter>
-    </ClInclude>
     <ClInclude Include="src\Sas\Renderer\Buffer.h">
       <Filter>src\Sas\Renderer</Filter>
     </ClInclude>
@@ -130,6 +109,9 @@
       <Filter>src\Sas\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Renderer\OrthographicCamera.h">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Renderer\OrthographicCameraController.h">
       <Filter>src\Sas\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Renderer\Renderer.h">
@@ -149,9 +131,6 @@
     </ClInclude>
     <ClInclude Include="src\Sas\Renderer\VertexArray.h">
       <Filter>src\Sas\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Sas\Window.h">
-      <Filter>src\Sas</Filter>
     </ClInclude>
     <ClInclude Include="src\SasPre.h">
       <Filter>src</Filter>
@@ -1407,6 +1386,14 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sas\Core\Aplication.h" />
+    <ClInclude Include="src\Sas\Core\Core.h" />
+    <ClInclude Include="src\Sas\Core\EntryPoint.h" />
+    <ClInclude Include="src\Sas\Core\Input.h" />
+    <ClInclude Include="src\Sas\Core\Layer.h" />
+    <ClInclude Include="src\Sas\Core\LayerStack.h" />
+    <ClInclude Include="src\Sas\Core\Log.h" />
+    <ClInclude Include="src\Sas\Renderer\Renderer2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1433,9 +1420,6 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sas\Aplication.cpp">
-      <Filter>src\Sas</Filter>
-    </ClCompile>
     <ClCompile Include="src\Sas\Core\Timestep.cpp">
       <Filter>src\Sas\Core</Filter>
     </ClCompile>
@@ -1445,19 +1429,13 @@
     <ClCompile Include="src\Sas\ImGui\ImGuiLayer.cpp">
       <Filter>src\Sas\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sas\Layer.cpp">
-      <Filter>src\Sas</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Sas\LayerStack.cpp">
-      <Filter>src\Sas</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Sas\Log.cpp">
-      <Filter>src\Sas</Filter>
-    </ClCompile>
     <ClCompile Include="src\Sas\Renderer\Buffer.cpp">
       <Filter>src\Sas\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Sas\Renderer\OrthographicCamera.cpp">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\Renderer\OrthographicCameraController.cpp">
       <Filter>src\Sas\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Sas\Renderer\Renderer.cpp">
@@ -1484,5 +1462,10 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sas\Core\Aplication.cpp" />
+    <ClCompile Include="src\Sas\Core\Layer.cpp" />
+    <ClCompile Include="src\Sas\Core\LayerStack.cpp" />
+    <ClCompile Include="src\Sas\Core\Log.cpp" />
+    <ClCompile Include="src\Sas\Renderer\Renderer2D.cpp" />
   </ItemGroup>
 </Project>

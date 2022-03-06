@@ -1,6 +1,6 @@
 #include "ssph.h"
 #include "WindowsInput.h"
-#include "Sas/Aplication.h"
+#include "Sas/Core/Aplication.h"
 #include "GLFW/glfw3.h"
 
 namespace Sas {

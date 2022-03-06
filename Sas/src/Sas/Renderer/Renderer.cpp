@@ -1,15 +1,23 @@
 #include "ssph.h"
 #include "Renderer.h"
+#include "Renderer2D.h"
 
 namespace Sas {
 
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
 
+	
+
 	void Renderer::Init()
 	{
 		RendererComand::Init();
+		Renderer2D::Init();
 	}
 
+	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
+	{
+		RendererComand::SetViewport(0, 0, width, height);
+	}
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
 		m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();

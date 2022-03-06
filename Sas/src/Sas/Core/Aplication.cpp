@@ -1,9 +1,9 @@
 #include "ssph.h"
 #include "Aplication.h"
-#include "Events/ApplicationEvent.h"
+#include "Sas/Events/ApplicationEvent.h"
 #include "Input.h"
 
-#include "ImGui/ImGuiLayer.h"
+#include "Sas/ImGui/ImGuiLayer.h"
 #include "Sas/Renderer/Renderer.h"
 
 
@@ -30,12 +30,14 @@ namespace Sas {
 			Timestep timestep{time - m_LastFrameTime};
 
 			m_LastFrameTime = time;
+			if(!m_Minimized){
+				for (Layer* layer : m_LayerStack) {
+					layer->OnUpdate(timestep);
+				}
 
-			for (Layer* layer : m_LayerStack){
-				layer->OnUpdate(timestep);
+
+				
 			}
-			
-			
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_LayerStack) {
 				layer->OnImGuiRender();
@@ -50,6 +52,8 @@ namespace Sas {
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FUNC(OnWindowClosed));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FUNC(OnWindowResize));
+
 		//SS_TRACE("{0}", e);
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
@@ -76,6 +80,17 @@ namespace Sas {
 		m_Running = false;
 
 		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		if (e.GetHeight() == 0 || e.GetWidth() == 0) {
+			m_Minimized = true;
+			return false;
+		}
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+		return false;
 	}
 
 	Application::Application()

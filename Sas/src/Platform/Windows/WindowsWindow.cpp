@@ -54,6 +54,7 @@ namespace Sas {
 			data.Height = height;
 			data.Width = width;
 			WindowResizeEvent event(width, height);
+			SS_CORE_WARN("{0}, {1}", width, height);
 			data.EventCallBack(event);
 			
 			});
@@ -68,8 +69,6 @@ namespace Sas {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			KeyTypedEvent event(character, 0);
 			data.EventCallBack(event);
-
-
 		});
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mode) {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);

@@ -1,5 +1,5 @@
 #pragma once
-#include "Sas/Input.h"
+#include "Sas/Core/Input.h"
 
 namespace Sas {
 	class WindowsInput : public Input {

@@ -5,11 +5,11 @@
 #include "Window.h"
 #include "LayerStack.h"
 #include "Sas/Events/Event.h"
+#include "Sas/Events/ApplicationEvent.h"
 #include "Sas/Core/Timestep.h"
 
 namespace Sas {
 
-	class WindowCloseEvent;
 	class ImGuiLayer;
 
 	class SAS_API Application
@@ -31,12 +31,14 @@ namespace Sas {
 		};
 
 	private:
-		bool OnWindowClosed(WindowCloseEvent& e );
+
+		bool OnWindowResize(WindowResizeEvent& e);
+		bool OnWindowClosed(WindowCloseEvent& e);
 
 	private:
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
-
+		bool m_Minimized = false;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 		float m_LastFrameTime = 0.0f;

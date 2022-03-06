@@ -1,7 +1,7 @@
 #pragma once
 #include "ssph.h"
-#include "Events/Event.h"
-#include "Sas\Log.h"
+#include "Sas/Events/Event.h"
+#include "Sas/Core/Log.h"
 
 
 namespace Sas {
