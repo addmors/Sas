@@ -15,5 +15,6 @@ private:
 	Sas::Ref<Sas::VertexArray> m_SquareVA;
 	Sas::Ref<Sas::Shader> m_FlatColor;
 	
+	Sas::Ref<Sas::Texture2D> m_CheckboardTexture;
 	glm::vec4 m_SquareColor = { 0.2f,0.3f,0.8f,1.0f};
 };

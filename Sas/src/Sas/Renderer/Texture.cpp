@@ -5,6 +5,22 @@
 #include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace Sas {
+
+
+
+	Ref<Sas::Texture2D> Texture2D::Create(uint32_t width, uint32_t height)
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None: SS_CORE_ASSERT(false, "RendererAPI::None is currently not supported "); return nullptr;
+		case RendererAPI::API::Vulcak: SS_CORE_ASSERT(false, "RendererAPI::Vulcak is currently not supported "); return nullptr;
+		case RendererAPI::API::DirectX: SS_CORE_ASSERT(false, "RendererAPI::DirectX is currently not supported "); return nullptr;
+		case RendererAPI::API::OpenGL: return CreateRef<OpenGLTexture2D>(width, height);
+		}
+		SS_CORE_ASSERT(false, "Unknown RendererAPI! ");
+		return nullptr;
+	}
+
 	Ref<Sas::Texture2D> Texture2D::Create(const std::string& path)
 	{
 		switch (Renderer::GetAPI())
@@ -17,4 +33,6 @@ namespace Sas {
 		SS_CORE_ASSERT(false, "Unknown RendererAPI! ");
 		return nullptr;
 	}
+
+
 }

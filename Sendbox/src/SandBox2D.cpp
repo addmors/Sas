@@ -12,8 +12,7 @@ SandBox2D::SandBox2D()
 
 void SandBox2D::OnAttach()
 {
-
-
+	m_CheckboardTexture = Sas::Texture2D::Create("assets/textures/Checkerboard.png");
 }
 
 void SandBox2D::OnDetach()
@@ -24,13 +23,16 @@ void SandBox2D::OnDetach()
 void SandBox2D::OnUpdate(Sas::Timestep ts)
 {
 	m_CameraController.OnUpdate(ts);
-	Sas::RendererComand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 
+	Sas::RendererComand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 	Sas::RendererComand::Clear();
+
 
 	Sas::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-	Sas::Renderer2D::DrawQuad({ 0.0f,0.0f }, { 1.0f,1.0f }, {0.8f,0.2f,0.3f,1.0f});
+	Sas::Renderer2D::DrawQuad({ -1.0f,0.0f }, { 1.0f,1.0f }, {0.8f,0.2f,0.3f,1.0f});
+	Sas::Renderer2D::DrawQuad({ -0.5f,-0.5f }, { 0.2f,0.2f }, {0.3f,0.2f,0.8f,1.0f});
+	Sas::Renderer2D::DrawQuad({ 0.0f,0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckboardTexture);
 	Sas::Renderer2D::EndScene();
 
 
