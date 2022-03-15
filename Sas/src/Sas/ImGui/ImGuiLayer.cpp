@@ -63,12 +63,7 @@ namespace Sas {
 		
 	}
 
-	void ImGuiLayer::OnImGuiRender()
-	{
-		static bool show = true; 
-		ImGui::ShowDemoWindow(); 
-	}
-
+	
 	void ImGuiLayer::Begin() {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();

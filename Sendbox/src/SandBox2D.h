@@ -16,5 +16,14 @@ private:
 	Sas::Ref<Sas::Shader> m_FlatColor;
 	
 	Sas::Ref<Sas::Texture2D> m_CheckboardTexture;
+	
+	struct ProfileRes
+	{
+		const char* Name;
+		float Time;
+	};
+
+
+	std::vector<ProfileRes> m_ProfileVector;
 	glm::vec4 m_SquareColor = { 0.2f,0.3f,0.8f,1.0f};
 };

@@ -8,6 +8,10 @@
 #include "Sas/Renderer/Shader.h"
 
 #include "SandBox2D.h"
+
+#include "GameLayer.h"
+
+
 class ExampleLayer : public Sas::Layer {
 public:
 	ExampleLayer() 
@@ -32,8 +36,7 @@ public:
 			});
 		m_VertexArray->AddVertexBufer(m_VertexBuffer);
 
-		Sas::Ref<Sas::IndexBuffer> m_IndexBuffer;
-		m_IndexBuffer.reset(Sas::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		Sas::Ref<Sas::IndexBuffer> m_IndexBuffer = Sas::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 		m_VertexArray->SetIndexBufer(m_IndexBuffer);
 
 
@@ -61,9 +64,8 @@ public:
 
 		uint32_t sqindices[6] = { 0,1,2,2, 3,0 };
 
-		Sas::Ref<Sas::IndexBuffer> sqareIB;
-		sqareIB.reset(Sas::IndexBuffer::Create(sqindices, sizeof(sqindices) / sizeof(uint32_t)));
-
+		Sas::Ref<Sas::IndexBuffer> sqareIB = Sas::IndexBuffer::Create(sqindices, sizeof(sqindices) / sizeof(uint32_t));
+		
 		m_SquareVA->SetIndexBufer(sqareIB);
 
 
@@ -214,7 +216,7 @@ public:
 
 	Sendbox() {
 		//PushLayer(new ExampleLayer());
-		PushLayer(new SandBox2D());
+		PushLayer(new GameLayer());
 
 	}
 	

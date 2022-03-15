@@ -17,13 +17,13 @@ namespace Sas {
 		return nullptr;
 	};
 
-	IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count) {
+	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count) {
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None: SS_CORE_ASSERT(false, "RendererAPI::None is currently not supported "); return nullptr;
 		case RendererAPI::API::Vulcak: SS_CORE_ASSERT(false, "RendererAPI::Vulcak is currently not supported "); return nullptr;
 		case RendererAPI::API::DirectX: SS_CORE_ASSERT(false, "RendererAPI::DirectX is currently not supported "); return nullptr;
-		case RendererAPI::API::OpenGL: return new OpenGLIndexBuffer(indices, count);
+		case RendererAPI::API::OpenGL: return  CreateRef<OpenGLIndexBuffer>(indices, count);
 		}
 		SS_CORE_ASSERT(false, "Unknown RendererAPI! ");
 		return nullptr;
