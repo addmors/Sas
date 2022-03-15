@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Sas/Core/Aplication.h"
+#include "Sas/Core/Application.h"
 #include "Sas/Core/Layer.h"
 #include "Sas/Core/Log.h"
 #include "Sas/Core/Timestep.h"
@@ -15,7 +15,7 @@
 //---------------EntryPoint------------------
 #include "Sas/Renderer/Renderer.h"
 #include "Sas/Renderer/Renderer2D.h"
-#include "Sas/Renderer/RendererComand.h"
+#include "Sas/Renderer/RenderCommand.h"
 
 #include "Sas/Renderer/Buffer.h"
 #include "Sas/Renderer/Shader.h"

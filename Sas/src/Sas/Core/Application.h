@@ -1,53 +1,49 @@
-#pragma once 
+#pragma once
 
-#include "Core.h"
+#include "Sas/Core/Core.h"
 
-#include "Window.h"
-#include "LayerStack.h"
+#include "Sas/Core/Window.h"
+#include "Sas/Core/LayerStack.h"
 #include "Sas/Events/Event.h"
 #include "Sas/Events/ApplicationEvent.h"
+
 #include "Sas/Core/Timestep.h"
+
+#include "Sas/ImGui/ImGuiLayer.h"
 
 namespace Sas {
 
-	class ImGuiLayer;
-
-	class SAS_API Application
+	class Application
 	{
 	public:
-		Application();	
+		Application();
 		virtual ~Application();
-		
-		void Run();
-		void onEvent(Event& e);
 
+		void Run();
+
+		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
-		
-		inline static Application& Get() { return *s_Instanse; };
-		inline Window& GetWindow() {
-			return *m_Window;
-		};
 
+		inline Window& GetWindow() { return *m_Window; }
+
+		inline static Application& Get() { return *s_Instance; }
 	private:
-
+		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
-		bool OnWindowClosed(WindowCloseEvent& e);
-
 	private:
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
-		bool m_Minimized = false;
 		bool m_Running = true;
+		bool m_Minimized = false;
 		LayerStack m_LayerStack;
 		float m_LastFrameTime = 0.0f;
 	private:
-		static Application* s_Instanse;
-
+		static Application* s_Instance;
 	};
 
-
-	//To be difene in CLIENT
+	// To be defined in CLIENT
 	Application* CreateApplication();
+
 }

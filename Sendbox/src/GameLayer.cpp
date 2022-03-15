@@ -49,14 +49,13 @@ void GameLayer::OnUpdate(Sas::Timestep ts)
 	}
 
 	// Render
-	Sas::RendererComand::SetClearColor({ 0.0f, 0.0f, 0.0f, 1 });
-	Sas::RendererComand::Clear();
+	Sas::RenderCommand::SetClearColor({ 0.0f, 0.0f, 0.0f, 1 });
+	Sas::RenderCommand::Clear();
 
 	Sas::Renderer2D::BeginScene(*m_Camera);
 	m_Level.OnRender();
 	Sas::Renderer2D::EndScene();
 }
-
 
 void GameLayer::OnImGuiRender()
 {
@@ -71,21 +70,17 @@ void GameLayer::OnImGuiRender()
 	case GameState::Play:
 	{
 		uint32_t playerScore = m_Level.GetPlayer().GetScore();
-		
-		auto pos = ImGui::GetWindowPos();
-		auto width = Application::Get().GetWindow().GetWidth();
-		auto height = Application::Get().GetWindow().GetHeight();
-		pos.x -= width * 0.5 - 100;
 		std::string scoreStr = std::string("Score: ") + std::to_string(playerScore);
-		ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, pos, 0xffffffff, scoreStr.c_str());
+		ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, ImGui::GetWindowPos(), 0xffffffff, scoreStr.c_str());
 		break;
 	}
 	case GameState::MainMenu:
 	{
-		ImGui::SetWindowPos("t", { 20,20 });
 		auto pos = ImGui::GetWindowPos();
 		auto width = Application::Get().GetWindow().GetWidth();
 		auto height = Application::Get().GetWindow().GetHeight();
+		pos.x += width * 0.5f - 300.0f;
+		pos.y += 50.0f;
 		if (m_Blink)
 			ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, pos, 0xffffffff, "Click to Play!");
 		break;
@@ -95,7 +90,8 @@ void GameLayer::OnImGuiRender()
 		auto pos = ImGui::GetWindowPos();
 		auto width = Application::Get().GetWindow().GetWidth();
 		auto height = Application::Get().GetWindow().GetHeight();
-		pos.x -= 250.0f;
+		pos.x += width * 0.5f - 300.0f;
+		pos.y += 50.0f;
 		if (m_Blink)
 			ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, pos, 0xffffffff, "Click to Play!");
 
@@ -108,7 +104,6 @@ void GameLayer::OnImGuiRender()
 	}
 	}
 }
-
 
 void GameLayer::OnEvent(Sas::Event& e)
 {
@@ -131,7 +126,6 @@ bool GameLayer::OnWindowResize(Sas::WindowResizeEvent& e)
 	CreateCamera(e.GetWidth(), e.GetHeight());
 	return false;
 }
-
 
 void GameLayer::CreateCamera(uint32_t width, uint32_t height)
 {

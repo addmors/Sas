@@ -152,7 +152,7 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
-    <ClInclude Include="src\Sas\Core\Aplication.h" />
+    <ClInclude Include="src\Sas\Core\Application.h" />
     <ClInclude Include="src\Sas\Core\Core.h" />
     <ClInclude Include="src\Sas\Core\EntryPoint.h" />
     <ClInclude Include="src\Sas\Core\Input.h" />
@@ -162,6 +162,7 @@
     <ClInclude Include="src\Sas\Core\Log.h" />
     <ClInclude Include="src\Sas\Core\MouseCodes.h" />
     <ClInclude Include="src\Sas\Core\Timestep.h" />
+    <ClInclude Include="src\Sas\Core\Window.h" />
     <ClInclude Include="src\Sas\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Sas\Events\Event.h" />
     <ClInclude Include="src\Sas\Events\KeyEvent.h" />
@@ -171,10 +172,10 @@
     <ClInclude Include="src\Sas\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Sas\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Sas\Renderer\OrthographicCameraController.h" />
+    <ClInclude Include="src\Sas\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Sas\Renderer\Renderer.h" />
     <ClInclude Include="src\Sas\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Sas\Renderer\RendererAPI.h" />
-    <ClInclude Include="src\Sas\Renderer\RendererComand.h" />
     <ClInclude Include="src\Sas\Renderer\Shader.h" />
     <ClInclude Include="src\Sas\Renderer\Texture.h" />
     <ClInclude Include="src\Sas\Renderer\VertexArray.h" />
@@ -606,7 +607,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexAttay.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="src\Sas\Core\Aplication.cpp" />
+    <ClCompile Include="src\Sas\Core\Application.cpp" />
     <ClCompile Include="src\Sas\Core\Layer.cpp" />
     <ClCompile Include="src\Sas\Core\LayerStack.cpp" />
     <ClCompile Include="src\Sas\Core\Log.cpp" />
@@ -616,10 +617,10 @@
     <ClCompile Include="src\Sas\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Sas\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Sas\Renderer\OrthographicCameraController.cpp" />
+    <ClCompile Include="src\Sas\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Sas\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Sas\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Sas\Renderer\RendererAPI.cpp" />
-    <ClCompile Include="src\Sas\Renderer\RendererComand.cpp" />
     <ClCompile Include="src\Sas\Renderer\Shader.cpp" />
     <ClCompile Include="src\Sas\Renderer\Texture.cpp" />
     <ClCompile Include="src\Sas\Renderer\VertexArray.cpp" />

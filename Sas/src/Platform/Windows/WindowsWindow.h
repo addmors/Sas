@@ -18,7 +18,7 @@ namespace Sas {
 		inline uint16_t GetHeight() const override { return m_Data.Height; };
 
 		inline uint16_t GetWidth() const override { return m_Data.Width; };
-		inline void SetEventCallBack(const EventCallBackFn& func) override { m_Data.EventCallBack = func; };
+		inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
 		void SetVSync(bool enable) override;
 		bool IsVSync() const override;
 		inline virtual void* GetNativeWindow() override { return m_Window; };
@@ -34,7 +34,7 @@ namespace Sas {
 		{
 			std::string Title;
 			uint16_t Height, Width;
-			EventCallBackFn EventCallBack;
+			EventCallbackFn EventCallback;
 			bool vSync;
 		};
 

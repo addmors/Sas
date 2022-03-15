@@ -4,7 +4,6 @@
 
 using namespace Sas;
 
-
 static glm::vec4 HSVtoRGB(const glm::vec3& hsv) {
 	int H = (int)(hsv.x * 360.0f);
 	double S = hsv.y;
@@ -75,7 +74,6 @@ void Level::Init()
 		CreatePillar(i, i * 10.0f);
 }
 
-
 void Level::OnUpdate(Sas::Timestep ts)
 {
 	m_Player.OnUpdate(ts);
@@ -97,7 +95,6 @@ void Level::OnUpdate(Sas::Timestep ts)
 		m_PillarTarget += 10.0f;
 	}
 }
-
 
 void Level::OnRender()
 {
@@ -126,7 +123,6 @@ void Level::OnImGuiRender()
 	m_Player.OnImGuiRender();
 }
 
-
 void Level::CreatePillar(int index, float offset)
 {
 	Pillar& pillar = m_Pillars[index];
@@ -141,7 +137,6 @@ void Level::CreatePillar(int index, float offset)
 	pillar.TopPosition.y = 10.0f - ((10.0f - center) * 0.2f) + gap * 0.5f;
 	pillar.BottomPosition.y = -10.0f - ((-10.0f - center) * 0.2f) - gap * 0.5f;
 }
-
 
 bool Level::CollisionTest()
 {

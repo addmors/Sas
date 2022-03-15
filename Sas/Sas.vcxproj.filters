@@ -120,9 +120,6 @@
     <ClInclude Include="src\Sas\Renderer\RendererAPI.h">
       <Filter>src\Sas\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sas\Renderer\RendererComand.h">
-      <Filter>src\Sas\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="src\Sas\Renderer\Shader.h">
       <Filter>src\Sas\Renderer</Filter>
     </ClInclude>
@@ -1386,7 +1383,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sas\Core\Aplication.h" />
     <ClInclude Include="src\Sas\Core\Core.h" />
     <ClInclude Include="src\Sas\Core\EntryPoint.h" />
     <ClInclude Include="src\Sas\Core\Input.h" />
@@ -1394,6 +1390,9 @@
     <ClInclude Include="src\Sas\Core\LayerStack.h" />
     <ClInclude Include="src\Sas\Core\Log.h" />
     <ClInclude Include="src\Sas\Renderer\Renderer2D.h" />
+    <ClInclude Include="src\Sas\Core\Application.h" />
+    <ClInclude Include="src\Sas\Core\Window.h" />
+    <ClInclude Include="src\Sas\Renderer\RenderCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1444,9 +1443,6 @@
     <ClCompile Include="src\Sas\Renderer\RendererAPI.cpp">
       <Filter>src\Sas\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sas\Renderer\RendererComand.cpp">
-      <Filter>src\Sas\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="src\Sas\Renderer\Shader.cpp">
       <Filter>src\Sas\Renderer</Filter>
     </ClCompile>
@@ -1462,10 +1458,11 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sas\Core\Aplication.cpp" />
     <ClCompile Include="src\Sas\Core\Layer.cpp" />
     <ClCompile Include="src\Sas\Core\LayerStack.cpp" />
     <ClCompile Include="src\Sas\Core\Log.cpp" />
     <ClCompile Include="src\Sas\Renderer\Renderer2D.cpp" />
+    <ClCompile Include="src\Sas\Core\Application.cpp" />
+    <ClCompile Include="src\Sas\Renderer\RenderCommand.cpp" />
   </ItemGroup>
 </Project>

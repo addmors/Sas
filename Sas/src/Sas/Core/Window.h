@@ -21,18 +21,18 @@ namespace Sas {
 
 	class SAS_API Window {
 	public:
-		using EventCallBackFn = std::function<void(Event&)>;
+		using EventCallbackFn = std::function<void(Event&)>;
 		virtual ~Window() {}
 		virtual void OnUpdate() = 0;
 
 		virtual uint16_t GetHeight() const = 0;
 		virtual uint16_t GetWidth() const = 0;
 
-		virtual void SetEventCallBack(const EventCallBackFn& call) = 0;
+		virtual  void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetVSync(bool enable) = 0;
 		virtual bool IsVSync() const = 0;
 		virtual void* GetNativeWindow() = 0;
 
-		static  Window* Create(const WindowProps& props = WindowProps());
+		static Scope<Window> Create(const WindowProps& props = WindowProps());
 	};
 }

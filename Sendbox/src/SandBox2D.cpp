@@ -59,8 +59,8 @@ void SandBox2D::OnUpdate(Sas::Timestep ts)
 	{
 		PROFILE_SCOPE("Sandbox2D clean");
 
-		Sas::RendererComand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-		Sas::RendererComand::Clear();
+		Sas::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+		Sas::RenderCommand::Clear();
 	}
 
 	Sas::Renderer2D::BeginScene(m_CameraController.GetCamera());
