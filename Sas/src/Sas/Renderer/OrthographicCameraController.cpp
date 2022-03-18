@@ -8,12 +8,13 @@ namespace Sas {
 
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
 		: m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
-	{
+	{	
 	}
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
 
+		SS_PROFILE_FUNCTION();
 		if (Input::IsKeyPressed(Key::A))
 		{
 			m_CameraPosition.x -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
@@ -58,7 +59,8 @@ namespace Sas {
 
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
-		
+
+		SS_PROFILE_FUNCTION();
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(SS_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizeEvent>(SS_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
@@ -66,13 +68,18 @@ namespace Sas {
 
 	void OrthographicCameraController::OnResize(float width, float height)
 	{
+
+		SS_PROFILE_FUNCTION();
+
 		m_AspectRatio = width / height;
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 	}
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
-		
+
+		SS_PROFILE_FUNCTION();
+
 		m_ZoomLevel -= e.GetYOffset() * 0.25f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
@@ -81,6 +88,9 @@ namespace Sas {
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
+
+		SS_PROFILE_FUNCTION();
+
 		OnResize((float)e.GetWidth(), (float)e.GetHeight());
 		return false;
 	}

@@ -13,7 +13,10 @@
 
 #include <unordered_map>
 #include <unordered_set>
+
 #include "Sas/Core/Log.h"
+#include "Sas/Debug/Instrumentor.h"
+
 
 #ifdef SS_PLATFORM_WINDOWS 
 #include <Windows.h>

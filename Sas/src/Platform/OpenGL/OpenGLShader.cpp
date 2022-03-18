@@ -19,6 +19,8 @@ namespace Sas {
 	}
 	OpenGLShader::OpenGLShader(const std::string& path)
 	{
+		SS_PROFILE_FUNCTION();
+
 		std::string source(ReadFile(path));
 		auto shaderSource = PreProcess(source);
 		Compile(shaderSource);
@@ -34,6 +36,7 @@ namespace Sas {
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertPath, const std::string& fragPath)
 		:m_Name(name)
 	{
+		SS_PROFILE_FUNCTION();
 		std::unordered_map<GLenum, std::string>  soucre;
 		soucre[GL_VERTEX_SHADER] = vertPath;
 		soucre[GL_FRAGMENT_SHADER] = fragPath;
@@ -44,6 +47,7 @@ namespace Sas {
 
 	std::string OpenGLShader::ReadFile(const std::string path)
 	{
+		SS_PROFILE_FUNCTION();
 		std::string result;
 		std::ifstream in(path, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
 		if (in)
@@ -71,6 +75,8 @@ namespace Sas {
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(std::string source)
 	{
+		SS_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		const char* typeToken = "#type";
@@ -96,6 +102,8 @@ namespace Sas {
 
 	void OpenGLShader::Compile(std::unordered_map<GLenum, std::string>& shaderSources)
 	{
+		SS_PROFILE_FUNCTION();
+
 		GLuint programm  = glCreateProgram();
 		std::vector<GLenum>  glShaderIDs;
 		for (auto& kv : shaderSources) 
@@ -165,61 +173,72 @@ namespace Sas {
 		}
 
 		// Always detach shaders after a successful link.
-		for (auto id : glShaderIDs)
+		for (auto id : glShaderIDs) {
 			glDetachShader(m_RendererID, id);
+			glDeleteShader(id);
+		}
 	}
 
 	OpenGLShader::~OpenGLShader()
 	{
+		SS_PROFILE_FUNCTION();
 		glDeleteProgram(m_RendererID);
 	}
 
 
 	void OpenGLShader::Bind() const
 	{
+
+		SS_PROFILE_FUNCTION();
 		glUseProgram(m_RendererID);
 	}
 
 	void OpenGLShader::Unbind() const
 	{
+
+		SS_PROFILE_FUNCTION();
 		glUseProgram(0);
 	}
 
 	void OpenGLShader::SetInt(const std::string& name, int value)
 	{
+		SS_PROFILE_FUNCTION();
 		UploadUniformInt(name, value);
 	}
 
 	void OpenGLShader::SetIntArray(const std::string& name, int* values, uint32_t count)
 	{
+		SS_PROFILE_FUNCTION();
 		UploadUniformIntArray(name, values, count);
 	}
 
 	void OpenGLShader::SetFloat(const std::string& name, float value)
 	{
-		
+		SS_PROFILE_FUNCTION();
 		UploadUniformFloat(name, value);
 	}
 
 	void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& value)
 	{
-		
+		SS_PROFILE_FUNCTION();
 		UploadUniformFloat2(name, value);
 	}
 
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
+		SS_PROFILE_FUNCTION();
 		UploadUniformFloat3(name, value);
 	}
 
 	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{
+		SS_PROFILE_FUNCTION();
 		UploadUniformFloat4(name, value);
 	}
 
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 	{
-		
+		SS_PROFILE_FUNCTION();
 		UploadUniformMat4(name, value);
 	}
 

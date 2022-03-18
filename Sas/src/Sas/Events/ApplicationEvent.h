@@ -24,6 +24,26 @@ namespace Sas {
 		unsigned int m_Width, m_Height;
 	};
 
+	class SAS_API WindowMovedEvent : public Event {
+		public:
+			WindowMovedEvent(unsigned int posx, unsigned int posy)
+				: m_PosX(posx), m_PosY(posy) {}
+
+			unsigned int GetPosX() const{return m_PosX;};
+			unsigned int GetPosY() const{return m_PosY;};
+			
+			std::string ToString() const override
+			{
+				std::stringstream ss;
+				ss << "WindowMovedEvent: " << m_PosX << ", " << m_PosY;
+				return ss.str();
+			};
+			EVENT_CLASS_TYPE(WindowMoved)
+			EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	private:
+		unsigned int m_PosX, m_PosY;
+	};
+
 	class SAS_API WindowCloseEvent : public Event {
 	public:
 		WindowCloseEvent() = default;

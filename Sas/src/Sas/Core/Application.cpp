@@ -15,6 +15,8 @@ namespace Sas {
 
 	Application::Application()
 	{
+		SS_PROFILE_FUNCTION();
+
 		SS_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 		m_Window = Window::Create();
@@ -28,21 +30,29 @@ namespace Sas {
 
 	Application::~Application()
 	{
+
+		SS_PROFILE_FUNCTION();
 		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
+		SS_PROFILE_FUNCTION();
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* layer)
 	{
+		SS_PROFILE_FUNCTION();
 		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e)
 	{
+		SS_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(SS_BIND_EVENT_FN(Application::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(SS_BIND_EVENT_FN(Application::OnWindowResize));
@@ -57,22 +67,34 @@ namespace Sas {
 
 	void Application::Run()
 	{
+
+		SS_PROFILE_FUNCTION();
+
 		while (m_Running)
 		{
+
+			SS_PROFILE_SCOPE("Run Loop");
 			float time = (float)glfwGetTime();
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
 			if (!m_Minimized)
 			{
-				for (Layer* layer : m_LayerStack)
-					layer->OnUpdate(timestep);
-			}
+				{
+					SS_PROFILE_SCOPE("Layer::OnUpdate");
+					for (Layer* layer : m_LayerStack)
+						layer->OnUpdate(timestep);
+					
+				}
+				{
+					SS_PROFILE_SCOPE("Layer::OnImGUIRender");
+					m_ImGuiLayer->Begin();
+					for (Layer* layer : m_LayerStack)
+						layer->OnImGuiRender();
+					m_ImGuiLayer->End();
+				}
 
-			m_ImGuiLayer->Begin();
-			for (Layer* layer : m_LayerStack)
-				layer->OnImGuiRender();
-			m_ImGuiLayer->End();
+			}
 
 			m_Window->OnUpdate();
 		}
@@ -86,6 +108,7 @@ namespace Sas {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		SS_PROFILE_FUNCTION();
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{
 			m_Minimized = true;

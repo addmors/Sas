@@ -69,37 +69,43 @@ void GameLayer::OnImGuiRender()
 	{
 	case GameState::Play:
 	{
+		auto posx = Application::Get().GetWindow().GetPosX() + 70;
+		auto posy = Application::Get().GetWindow().GetPosY() + 40;
+
 		uint32_t playerScore = m_Level.GetPlayer().GetScore();
 		std::string scoreStr = std::string("Score: ") + std::to_string(playerScore);
-		ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, ImGui::GetWindowPos(), 0xffffffff, scoreStr.c_str());
+		ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, { (float)posx,(float)posy }, 0xffffffff, scoreStr.c_str());
 		break;
 	}
 	case GameState::MainMenu:
 	{
-		auto pos = ImGui::GetWindowPos();
+		auto posx = Application::Get().GetWindow().GetPosX();
+		auto posy = Application::Get().GetWindow().GetPosY();
+
 		auto width = Application::Get().GetWindow().GetWidth();
 		auto height = Application::Get().GetWindow().GetHeight();
-		pos.x += width * 0.5f - 300.0f;
-		pos.y += 50.0f;
+		posx += width * 0.5f - 300.0f;
 		if (m_Blink)
-			ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, pos, 0xffffffff, "Click to Play!");
+			ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, {(float)posx,(float)posy}, 0xffffffff, "Click to Play!");
 		break;
 	}
 	case GameState::GameOver:
 	{
-		auto pos = ImGui::GetWindowPos();
+		
+		auto posx = Application::Get().GetWindow().GetPosX();
+		auto posy = Application::Get().GetWindow().GetPosY();
 		auto width = Application::Get().GetWindow().GetWidth();
 		auto height = Application::Get().GetWindow().GetHeight();
-		pos.x += width * 0.5f - 300.0f;
-		pos.y += 50.0f;
+		posx += width * 0.5f - 300.0f;
+		posy += 50.0f;
 		if (m_Blink)
-			ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, pos, 0xffffffff, "Click to Play!");
+			ImGui::GetForegroundDrawList()->AddText(m_Font, 120.0f, { (float)posx,(float)posy }, 0xffffffff, "Click to Play!");
 
-		pos.x += 200.0f;
-		pos.y += 150.0f;
+		posx += 200.0f;
+		posy += 150.0f;
 		uint32_t playerScore = m_Level.GetPlayer().GetScore();
 		std::string scoreStr = std::string("Score: ") + std::to_string(playerScore);
-		ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, pos, 0xffffffff, scoreStr.c_str());
+		ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, { (float)posx,(float)posy }, 0xffffffff, scoreStr.c_str());
 		break;
 	}
 	}

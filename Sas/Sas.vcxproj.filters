@@ -1393,6 +1393,7 @@
     <ClInclude Include="src\Sas\Core\Application.h" />
     <ClInclude Include="src\Sas\Core\Window.h" />
     <ClInclude Include="src\Sas\Renderer\RenderCommand.h" />
+    <ClInclude Include="src\Sas\Debug\Instrumentor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">

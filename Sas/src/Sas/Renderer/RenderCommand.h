@@ -9,6 +9,7 @@ namespace Sas {
 	public:
 		inline static void Init()
 		{
+			SS_PROFILE_FUNCTION();
 			s_RendererAPI->Init();
 		}
 

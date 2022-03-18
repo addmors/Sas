@@ -11,11 +11,13 @@ namespace Sas {
 		std::string Title;
 		uint16_t  Height;
 		uint16_t  Width;
+		uint16_t PosX;
+		uint16_t PosY;
 
 		WindowProps(const std::string& title = "Sas Engine",
 			uint16_t height = 720,
-			uint16_t width = 1280)
-			:Title(title),Height(height),Width(width)
+			uint16_t width = 1280, uint16_t posx = 100, uint16_t posy = 100)
+			:Title(title),Height(height),Width(width),PosX(posx),PosY(posy)
 		{};
 	};
 
@@ -27,6 +29,9 @@ namespace Sas {
 
 		virtual uint16_t GetHeight() const = 0;
 		virtual uint16_t GetWidth() const = 0;
+
+		virtual uint16_t GetPosX() const = 0;
+		virtual uint16_t GetPosY() const = 0;
 
 		virtual  void SetEventCallback(const EventCallbackFn& callback) = 0;
 		virtual void SetVSync(bool enable) = 0;

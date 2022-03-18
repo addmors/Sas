@@ -21,29 +21,39 @@ namespace Sas {
 
 
 	WindowsWindow::WindowsWindow(const WindowProps& props) {
+		SS_PROFILE_FUNCTION();
 		Init(props);
 	}
 
 	WindowsWindow::~WindowsWindow() {
+		SS_PROFILE_FUNCTION();
 		ShutDown();
 	};
 
 	void WindowsWindow::Init(const WindowProps& props) {
+		SS_PROFILE_FUNCTION();
 		m_Data.Height = props.Height;
 		m_Data.Width = props.Width;
+		m_Data.PosX = props.PosX;
+		m_Data.PosY = props.PosY;
 		m_Data.Title = props.Title;
 
-
-		SS_CORE_INFO("Create Window {0}, ({1}, {2})", props.Title, props.Width, props.Height);
+		SS_CORE_INFO("Create Window {0}, Size :({1}, {2},), Pos:({3}, {4}) ", props.Title, 
+			props.Width, props.Height,
+			props.PosX, props.PosY);
 		
 		if (!is_GLFWInitialized) {
+			SS_PROFILE_SCOPE("glfwCreateInit");
 			int success = glfwInit();
 			SS_CORE_ASSERT(success, "Could not  Init GLFW");
 			glfwSetErrorCallback(GLFWErrorCallback);
 			is_GLFWInitialized = true;
 		}
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
-
+		{
+			SS_PROFILE_SCOPE("glfwCreateWindow");
+			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
+		}
+		glfwSetWindowPos(m_Window, (int)props.PosX, (int)props.PosY);
 		m_Context = new OpenGLContext(m_Window);
 		m_Context->Init();
 
@@ -59,6 +69,14 @@ namespace Sas {
 			SS_CORE_WARN("{0}, {1}", width, height);
 			data.EventCallback(event);
 			
+			});
+		glfwSetWindowPosCallback(m_Window, [](GLFWwindow* window, int posx, int posy) {
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			data.PosX = posx;
+			data.PosY = posy;
+			WindowMovedEvent event(posx, posy);
+			SS_CORE_WARN("{0}, {1}", posx, posy);
+			data.EventCallback(event);
 			});
 
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) {
@@ -127,10 +145,14 @@ namespace Sas {
 	};
 
 	void WindowsWindow::ShutDown() {
+		SS_PROFILE_FUNCTION();
+
 		glfwDestroyWindow(m_Window);
 	};
 
 	void WindowsWindow::OnUpdate() {
+		SS_PROFILE_FUNCTION();
+
 		glfwPollEvents();
 		m_Context->SwapBuffers();
 	}

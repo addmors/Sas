@@ -163,6 +163,7 @@
     <ClInclude Include="src\Sas\Core\MouseCodes.h" />
     <ClInclude Include="src\Sas\Core\Timestep.h" />
     <ClInclude Include="src\Sas\Core\Window.h" />
+    <ClInclude Include="src\Sas\Debug\Instrumentor.h" />
     <ClInclude Include="src\Sas\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Sas\Events\Event.h" />
     <ClInclude Include="src\Sas\Events\KeyEvent.h" />

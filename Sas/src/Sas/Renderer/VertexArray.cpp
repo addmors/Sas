@@ -6,6 +6,7 @@
 namespace Sas {
 	Ref<VertexArray> VertexArray::Create()
 	{
+
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None: SS_CORE_ASSERT(false, "RendererAPI::None is currently not supported "); return nullptr;

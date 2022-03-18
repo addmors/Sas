@@ -1,14 +1,15 @@
 #include <SasPre.h>
 #include <Sas/Core/EntryPoint.h>
 
-#include "GameLayer.h"
+#include "SandBox2D.h"
+
 
 class Sandbox : public Sas::Application
 {
 public:
 	Sandbox()
 	{
-		PushLayer(new GameLayer());
+		PushLayer(new SandBox2D());
 	}
 
 	~Sandbox()
