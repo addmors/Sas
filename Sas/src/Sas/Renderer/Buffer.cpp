@@ -4,6 +4,19 @@
 #include "Platform/OpenGL/OpenGLBuffer.h"
 
 namespace Sas {
+	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None: SS_CORE_ASSERT(false, "RendererAPI::None is currently not supported "); return nullptr;
+		case RendererAPI::API::Vulcak: SS_CORE_ASSERT(false, "RendererAPI::Vulcak is currently not supported "); return nullptr;
+		case RendererAPI::API::DirectX: SS_CORE_ASSERT(false, "RendererAPI::DirectX is currently not supported "); return nullptr;
+		case RendererAPI::API::OpenGL: return CreateRef<OpenGLVertexBuffer>(size);
+		}
+		SS_CORE_ASSERT(false, "Unknown RendererAPI! ");
+		return nullptr;
+	}
+
 
 	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size) {
 		switch (Renderer::GetAPI())

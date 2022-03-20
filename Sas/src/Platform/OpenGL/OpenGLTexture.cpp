@@ -97,7 +97,6 @@ namespace Sas {
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
 		SS_PROFILE_FUNCTION();
-
 		glBindTextureUnit(slot, m_RendererID);
 	}
 
