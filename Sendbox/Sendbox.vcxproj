@@ -135,6 +135,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Color.h" />
+    <ClInclude Include="src\GameLayer.h" />
+    <ClInclude Include="src\Level.h" />
+    <ClInclude Include="src\ParticleSystem.h" />
+    <ClInclude Include="src\Player.h" />
+    <ClInclude Include="src\Random.h" />
+    <ClInclude Include="src\SandBox2D.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="src\GameLayer.cpp" />
     <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\ParticleSystem.cpp" />
@@ -147,15 +156,6 @@
     <ProjectReference Include="..\Sas\Sas.vcxproj">
       <Project>{EC20880B-582A-887C-E1A5-9E7C4DAE937C}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\Color.h" />
-    <ClInclude Include="src\GameLayer.h" />
-    <ClInclude Include="src\Level.h" />
-    <ClInclude Include="src\ParticleSystem.h" />
-    <ClInclude Include="src\Player.h" />
-    <ClInclude Include="src\Random.h" />
-    <ClInclude Include="src\SandBox2D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
