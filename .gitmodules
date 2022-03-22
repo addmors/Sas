@@ -1,9 +1,6 @@
 [submodule "Sas/vendor/spdlog"]
 	path = Sas/vendor/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "Sas/vendor/GLFW"]
-	path = Sas/vendor/GLFW
-	url = https://github.com/addmors/glfw
 [submodule "Sas/vendor/imgui"]
 	path = Sas/vendor/imgui
 	url = https://github.com/addmors/imgui
