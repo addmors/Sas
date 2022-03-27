@@ -13,22 +13,15 @@ workspace "Sas"
 		"MultiProcessorCompile"
 	}
 
+
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
  
--- Include directories relative to root folder (solution directories)
-IncludeDir = {}
-IncludeDir["GLFW"] = "Sas/vendor/GLFW/include;"
-IncludeDir["GLad"] = "Sas/vendor/GLad/include;"
-IncludeDir["ImGui"] = "Sas/vendor/imgui;"
-IncludeDir["glm"] = "Sas/vendor/glm;"
-IncludeDir["stb_image"] = "Sas/vendor/stb_image;"
-
-
+include "Dependencies.lua"
 
 group "Dependencies"
-	include "Sas/vendor/GLFW"
-	include "Sas/vendor/GLAD"
-	include "Sas/vendor/imgui"
+include "Sas/vendor/GLFW"
+include "Sas/vendor/Glad"
+include "Sas/vendor/ImGui"
 group ""
 
 
@@ -47,7 +40,9 @@ project "Sas"
 	pchsource "Sas/src/ssph.cpp"
 
 	files{
-		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.h", 
+		"%{prj.name}/src/**.c", 
+		"%{prj.name}/src/**.hpp", 
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/stb_image/**.cpp",
@@ -60,17 +55,22 @@ project "Sas"
 		"%{prj.name}/src;",
 		"%{prj.name}/vendor/spdlog/include;",
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.GLad}",
+		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",		
 		"%{IncludeDir.glm}",		
-		"%{IncludeDir.stb_image}",		
+		"%{IncludeDir.stb_image}",	
+		"%{IncludeDir.VulkanSDK}",
+			
 	}
 
 	links {
 		"GLFW",
 		"GLad",
 		"ImGui",
-		"opengl32.lib"	
+		"opengl32.lib",
+
+		"%{Library.Vulkan}",
+		"%{Library.VulkanUtils}",
 	}
 	filter "system:windows"
 		systemversion "latest"
@@ -88,13 +88,29 @@ project "Sas"
 		defines {"SS_DEBUG", "SS_ENABLE_ASSERTS"}
 		runtime "Debug"
 		symbols "on"
+		links
+		{
+			"%{Library.ShaderC_Debug}",
+			"%{Library.ShaderC_Utils_Debug}",
+			"%{Library.SPIRV_Cross_Debug}",
+			"%{Library.SPIRV_Cross_GLSL_Debug}",
+			"%{Library.SPIRV_Tools_Debug}",
+		}
 	
 	filter "configurations:Release"
 		defines "SS_RELEASE"
 		runtime "Release"
 		optimize "on"
+	
+		links
+		{
+			"%{Library.ShaderC_Release}",
+			"%{Library.ShaderC_Utils_Release}",
+			"%{Library.SPIRV_Cross_Release}",
+			"%{Library.SPIRV_Cross_GLSL_Release}",
+		}
 
-		filter "configurations:Dist"
+	filter "configurations:Dist"
 		defines "SS_DIST"
 		runtime "Release"
 		optimize "on"

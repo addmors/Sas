@@ -5,8 +5,7 @@
 #include "Sas\Events\ApplicationEvent.h"
 #include "Sas\Events\MouseEvent.h"
 #include "Sas\Events\KeyEvent.h"
-
-#include "Platform/OpenGL/OpenGLContext.h"
+#include "Sas\Renderer\GraphicsContext.h"
 
 namespace Sas {
 	static bool is_GLFWInitialized = false;
@@ -54,7 +53,7 @@ namespace Sas {
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
 		}
 		glfwSetWindowPos(m_Window, (int)props.PosX, (int)props.PosY);
-		m_Context = new OpenGLContext(m_Window);
+		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);

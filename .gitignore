@@ -2,7 +2,7 @@
 .vs/
 **bin/
 bin-int/
-
+Sas/vendor/VulkanSDK
 #Files
 .user
 
