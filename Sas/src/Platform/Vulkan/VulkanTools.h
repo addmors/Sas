@@ -34,9 +34,10 @@ namespace Sas {
 		namespace tools {
 			
 			extern bool errorModeSilent = false;
-			
-			std::string errorString(VkResult errorCode);
 
+
+			VkBool32 getSupportedDepthFormat(VkPhysicalDevice physicalDevice, VkFormat* depthFormat);
+			std::string errorString(VkResult errorCode);
 			void exitFatal(const std::string& message, int32_t exitCode);
 			void exitFatal(const std::string& message, VkResult resultCode);
 		}

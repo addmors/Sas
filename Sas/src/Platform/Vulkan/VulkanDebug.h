@@ -45,5 +45,19 @@ namespace Sas {
 				VkDebugReportFlagsEXT flags,
 				VkDebugReportCallbackEXT callBack);
 		}
+
+		// Setup and functions for the VK_EXT_debug_marker_extension
+		// Extension spec can be found at https://github.com/KhronosGroup/Vulkan-Docs/blob/1.0-VK_EXT_debug_marker/doc/specs/vulkan/appendices/VK_EXT_debug_marker.txt
+		// Note that the extension will only be present if run from an offline debugging application
+		// The actual check for extension presence and enabling it on the device is done in the example base class
+		// See VulkanExampleBase::createInstance and VulkanExampleBase::createDevice (base/vulkanexamplebase.cpp)
+		namespace debugmarker
+		{
+			// Set to true if function pointer for the debug marker are available
+			extern bool active;
+
+			// Get function pointers for the debug report extensions from the device
+			void setup(VkDevice device);
+		}
 	}
 }

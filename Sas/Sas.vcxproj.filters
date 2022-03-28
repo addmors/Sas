@@ -1420,9 +1420,11 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Vulkan\VulkanBase.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanTools.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanDebug.h" />
     <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanInitializers.hpp" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanSwapChain.h" />
+    <ClInclude Include="src\Platform\Vulkan\VulkanTools.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1508,8 +1510,9 @@
     </ClCompile>
     <ClCompile Include="src\Sas\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanBase.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanTools.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanDebug.cpp" />
     <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanSwapChain.cpp" />
+    <ClCompile Include="src\Platform\Vulkan\VulkanTools.cpp" />
   </ItemGroup>
 </Project>
