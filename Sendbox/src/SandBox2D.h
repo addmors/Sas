@@ -17,5 +17,6 @@ private:
 	
 	Sas::Ref<Sas::Texture2D> m_CheckboardTexture;
 	
+	float time = 0;
 	glm::vec4 m_SquareColor = { 0.2f,0.3f,0.8f,1.0f};
 };

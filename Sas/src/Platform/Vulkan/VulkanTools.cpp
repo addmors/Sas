@@ -6,6 +6,7 @@ namespace Sas {
 	namespace vks
 	{
 		namespace tools{
+			bool errorModeSilent = false;
 			std::string errorString(VkResult errorCode)
 			{
 				switch (errorCode)

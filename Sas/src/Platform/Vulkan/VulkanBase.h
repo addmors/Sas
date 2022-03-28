@@ -24,10 +24,13 @@ namespace Sas {
 		void setupFrameBuffer();
 
 		void nextFrame();
-
+		void windowResize();
 		/** @brief (Virtual) Called when the camera view has changed */
 		virtual void viewChanged();
+		
+		void buildCommandBuffers();
 
+		void destroyCommandBuffers();
 
 	public:
 		VkResult createInstance(bool enableValidation);
@@ -59,6 +62,8 @@ namespace Sas {
 	protected:
 
 		bool prepared = false;
+		uint32_t width = 1280;
+		uint32_t height = 720;
 
 		// Frame counter to display fps
 		uint32_t frameCounter = 0;

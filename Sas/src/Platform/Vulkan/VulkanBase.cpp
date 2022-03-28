@@ -220,9 +220,9 @@ namespace Sas{
 					break;
 				}
 			}
-			if (prepared && !IsIconic(window)) {
-				nextFrame();
-			}
+			//if (prepared && !IsIconic(window)) {
+				//nextFrame();
+			//}
 		}
 #endif
 		// Flush device to make sure all resources can be freed
@@ -461,6 +461,58 @@ namespace Sas{
 		//updateOverlay();
 	}
 
+	void VulkanBase::windowResize()
+	{
+		if (!prepared)
+		{
+			return;
+		}
+		prepared = false;
+		//resized = true;
+
+		// Ensure all operations on the device have been finished before destroying resources
+		vkDeviceWaitIdle(device);
+
+		// Recreate swap chain
+		//width = destWidth;
+		//height = destHeight;
+		setupSwapChain();
+
+		// Recreate the frame buffers
+		vkDestroyImageView(device, depthStencil.view, nullptr);
+		vkDestroyImage(device, depthStencil.image, nullptr);
+		vkFreeMemory(device, depthStencil.mem, nullptr);
+		setupDepthStencil();
+		for (uint32_t i = 0; i < frameBuffers.size(); i++) {
+			vkDestroyFramebuffer(device, frameBuffers[i], nullptr);
+		}
+		setupFrameBuffer();
+
+		/*if ((width > 0.0f) && (height > 0.0f)) {
+			if (settings.overlay) {
+				UIOverlay.resize(width, height);
+			}
+		}*/
+
+		// Command buffers need to be recreated as they may store
+		// references to the recreated frame buffer
+		destroyCommandBuffers();
+		createCommandBuffers();
+		buildCommandBuffers();
+
+		vkDeviceWaitIdle(device);
+
+		/*if ((width > 0.0f) && (height > 0.0f)) {
+			camera.updateAspectRatio((float)width / (float)height);
+		}*/
+
+		// Notify derived class
+		//windowResized();
+		//viewChanged();
+
+		prepared = true;
+	}
+
 	void VulkanBase::renderFrame()
 	{
 		prepareFrame();
@@ -502,15 +554,22 @@ namespace Sas{
 
 	void VulkanBase::initSwapchain()
 	{
-		swapChain.initSurface();
+		//swapChain.initSurface();
 	}
 
 	void VulkanBase::setupSwapChain()
 	{
-		swapChain.create(&width, &height, settings.vsync);
+		//swapChain.create(&width, &height, settings.vsync);
+	}
+	void VulkanBase::destroyCommandBuffers()
+	{
+		vkFreeCommandBuffers(device, cmdPool, static_cast<uint32_t>(drawCmdBuffers.size()), drawCmdBuffers.data());
 	}
 
 	void VulkanBase::getEnabledFeatures() {};
 	void VulkanBase::viewChanged() {}
+
+	void VulkanBase::buildCommandBuffers() {}
+	
 
 }

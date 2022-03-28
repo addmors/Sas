@@ -33,8 +33,8 @@ namespace Sas {
 	{
 		namespace tools {
 			
-			extern bool errorModeSilent = false;
-
+			/** @brief Disable message boxes on fatal errors */
+			extern bool errorModeSilent;
 
 			VkBool32 getSupportedDepthFormat(VkPhysicalDevice physicalDevice, VkFormat* depthFormat);
 			std::string errorString(VkResult errorCode);

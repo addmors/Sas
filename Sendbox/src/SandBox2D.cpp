@@ -26,6 +26,7 @@ void SandBox2D::OnDetach()
 
 void SandBox2D::OnUpdate(Sas::Timestep ts)
 {
+	time += ts;
 	SS_PROFILE_FUNCTION(); 
 	m_CameraController.OnUpdate(ts);
 	Sas::Renderer2D::ResetStats();
@@ -43,15 +44,15 @@ void SandBox2D::OnUpdate(Sas::Timestep ts)
 		Sas::Renderer2D::DrawQuad({ -0.5f,-0.5f }, { 0.2f,0.8f }, { 0.3f,0.2f,0.8f,1.0f });
 		
 		Sas::Renderer2D::DrawQuad({ -0.0f,-0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckboardTexture, 10.0f); 
-		Sas::Renderer2D::DrawRotatedQuad({ 2.0f,0.0f}, {0.0f,0.0f}, -45.0f, m_CheckboardTexture,10.0f);
+		Sas::Renderer2D::DrawRotatedQuad({ 2.0f,0.0f}, {0.5f,0.5f}, -45.0f, m_CheckboardTexture,10.0f);
 
 		Sas::Renderer2D::EndScene();
 
 		Sas::Renderer2D::BeginScene(m_CameraController.GetCamera());
-		for (float y = -50.0f; y < 50.0f; y += 0.5f) {
-			for (float x = -50.0f; x < 50.0f; x += 0.5f) {
-				glm::vec4 rgba = { (x + 50.0f) / 100.0f, 0.4f,(y + 50.0f) / 100.0f , 0.5f };
-				Sas::Renderer2D::DrawQuad({ x,y }, { 0.45f, 0.45f }, rgba);
+		for (float y = -3.0f; y < 3.0f; y += 0.5f) {
+			for (float x = -3.0f; x < 3.0f; x += 0.5f) {
+				glm::vec4 rgba = { (x + 5.0f) / 10.0f, 0.4f,(y + 5.0f) / 10.0f , 0.5f };
+				Sas::Renderer2D::DrawRotatedQuad({ x,y }, { 0.45f, 0.45f },time, rgba);
 			}
 		}
 		Sas::Renderer2D::EndScene();
