@@ -19,6 +19,7 @@
 
 #include "Sas/Renderer/Buffer.h"
 #include "Sas/Renderer/Shader.h"
+#include "Sas/Renderer/FrameBuffer.h"
 #include "Sas/Renderer/VertexArray.h"
 #include "Sas/Renderer/Texture.h"
 #include "Sas/Renderer/OrthographicCamera.h"

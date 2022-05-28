@@ -1,323 +1,398 @@
 #include "ssph.h"
 #include "VulkanDevice.h"
-#include <unordered_set>
+#include "VulkanContext.h"
 
-namespace Sas{
-	namespace vks
+
+namespace Sas {
+	////////////////////////////////////////////////////////////////////////////////////
+	// Vulkan Physical Device
+	////////////////////////////////////////////////////////////////////////////////////
+	VulkanPhysicalDevice::VulkanPhysicalDevice()
 	{
-		/**
-		* Default constructor
-		*
-		* @param physicalDevice Physical device that is to be used
-		*/
-		VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice)
+		auto vkInstance = VulkanContext::GetInstance();
+
+		uint32_t gpuCount = 0;
+		// Get number of available physical devices
+		vkEnumeratePhysicalDevices(vkInstance, &gpuCount, nullptr);
+		SS_CORE_ASSERT(gpuCount > 0, "");
+		// Enumerate devices
+		std::vector<VkPhysicalDevice> physicalDevices(gpuCount);
+		VK_CHECK_RESULT(vkEnumeratePhysicalDevices(vkInstance, &gpuCount, physicalDevices.data()));
+
+		VkPhysicalDevice selectedPhysicalDevice = nullptr;
+		for (VkPhysicalDevice physicalDevice : physicalDevices)
 		{
-			assert(physicalDevice);
-			this->physicalDevice = physicalDevice;
-
-			// Store Properties features, limits and properties of the physical device for later use
-			// Device properties also contain limits and sparse properties
-			vkGetPhysicalDeviceProperties(physicalDevice, &properties);
-			// Features should be checked by the examples before using them
-			vkGetPhysicalDeviceFeatures(physicalDevice, &features);
-			// Memory properties are used regularly for creating all kinds of buffers
-			vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
-			// Queue family properties, used for setting up requested queues upon device creation
-			uint32_t queueFamilyCount;
-			vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
-			assert(queueFamilyCount > 0);
-			queueFamilyProperties.resize(queueFamilyCount);
-			vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilyProperties.data());
-
-			// Get list of supported extensions
-			uint32_t extCount = 0;
-			vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extCount, nullptr);
-			if (extCount > 0)
+			vkGetPhysicalDeviceProperties(physicalDevice, &m_Properties);
+			if (m_Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
 			{
-				std::vector<VkExtensionProperties> extensions(extCount);
-				if (vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extCount, &extensions.front()) == VK_SUCCESS)
-				{
-					for (auto ext : extensions)
-					{
-						supportedExtensions.push_back(ext.extensionName);
-					}
-				}
-			}
-		}
-		/**
-	* Get the index of a memory type that has all the requested property bits set
-	*
-	* @param typeBits Bit mask with bits set for each memory type supported by the resource to request for (from VkMemoryRequirements)
-	* @param properties Bit mask of properties for the memory type to request
-	* @param (Optional) memTypeFound Pointer to a bool that is set to true if a matching memory type has been found
-	*
-	* @return Index of the requested memory type
-	*
-	* @throw Throws an exception if memTypeFound is null and no memory type could be found that supports the requested properties
-	*/
-		uint32_t VulkanDevice::getMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32* memTypeFound) const
-		{
-			for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++)
-			{
-				if ((typeBits & 1) == 1)
-				{
-					if ((memoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
-					{
-						if (memTypeFound)
-						{
-							*memTypeFound = true;
-						}
-						return i;
-					}
-				}
-				typeBits >>= 1;
-			}
-
-			if (memTypeFound)
-			{
-				*memTypeFound = false;
-				return 0;
-			}
-			else
-			{
-				throw std::runtime_error("Could not find a matching memory type");
+				selectedPhysicalDevice = physicalDevice;
+				break;
 			}
 		}
 
-		/**
-	* Get the index of a queue family that supports the requested queue flags
-	*
-	* @param queueFlags Queue flags to find a queue family index for
-	*
-	* @return Index of the queue family index that matches the flags
-	*
-	* @throw Throws an exception if no queue family index could be found that supports the requested flags
-	*/
-		uint32_t VulkanDevice::getQueueFamilyIndex(VkQueueFlagBits queueFlags) const
+		if (!selectedPhysicalDevice)
 		{
-			// Dedicated queue for compute
-			// Try to find a queue family index that supports compute but not graphics
-			if (queueFlags & VK_QUEUE_COMPUTE_BIT)
-			{
-				for (uint32_t i = 0; i < static_cast<uint32_t>(queueFamilyProperties.size()); i++)
-				{
-					if ((queueFamilyProperties[i].queueFlags & queueFlags) && ((queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0))
-					{
-						return i;
-					}
-				}
-			}
-
-			// Dedicated queue for transfer
-			// Try to find a queue family index that supports transfer but not graphics and compute
-			if (queueFlags & VK_QUEUE_TRANSFER_BIT)
-			{
-				for (uint32_t i = 0; i < static_cast<uint32_t>(queueFamilyProperties.size()); i++)
-				{
-					if ((queueFamilyProperties[i].queueFlags & queueFlags) && ((queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0) && ((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) == 0))
-					{
-						return i;
-					}
-				}
-			}
-
-			// For other queue types or if no separate compute queue is present, return the first one to support the requested flags
-			for (uint32_t i = 0; i < static_cast<uint32_t>(queueFamilyProperties.size()); i++)
-			{
-				if (queueFamilyProperties[i].queueFlags & queueFlags)
-				{
-					return i;
-				}
-			}
-
-			throw std::runtime_error("Could not find a matching queue family index");
+			SS_CORE_TRACE("Could not find discrete GPU.");
+			selectedPhysicalDevice = physicalDevices.back();
 		}
 
-		/**
-	* Create the logical device based on the assigned physical device, also gets default queue family indices
-	*
-	* @param enabledFeatures Can be used to enable certain features upon device creation
-	* @param pNextChain Optional chain of pointer to extension structures
-	* @param useSwapChain Set to false for headless rendering to omit the swapchain device extensions
-	* @param requestedQueueTypes Bit flags specifying the queue types to be requested from the device
-	*
-	* @return VkResult of the device creation call
-	*/
-		VkResult VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures, std::vector<const char*> enabledExtensions, void* pNextChain, bool useSwapChain, VkQueueFlags requestedQueueTypes)
+		SS_CORE_ASSERT(selectedPhysicalDevice, "Could not find any physical devices!");
+		m_PhysicalDevice = selectedPhysicalDevice;
+
+		vkGetPhysicalDeviceFeatures(m_PhysicalDevice, &m_Features);
+		vkGetPhysicalDeviceMemoryProperties(m_PhysicalDevice, &m_MemoryProperties);
+
+		uint32_t queueFamilyCount;
+		vkGetPhysicalDeviceQueueFamilyProperties(m_PhysicalDevice, &queueFamilyCount, nullptr);
+		SS_CORE_ASSERT(queueFamilyCount > 0, "");
+		m_QueueFamilyProperties.resize(queueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(m_PhysicalDevice, &queueFamilyCount, m_QueueFamilyProperties.data());
+
+		uint32_t extCount = 0;
+		vkEnumerateDeviceExtensionProperties(m_PhysicalDevice, nullptr, &extCount, nullptr);
+		if (extCount > 0)
 		{
-			// Desired queues need to be requested upon logical device creation
-			// Due to differing queue family configurations of Vulkan implementations this can be a bit tricky, especially if the application
-			// requests different queue types
-
-			std::vector<VkDeviceQueueCreateInfo> queueCreateInfos{};
-
-			// Get queue family indices for the requested queue family types
-			// Note that the indices may overlap depending on the implementation
-
-			const float defaultQueuePriority(0.0f);
-
-			// Graphics queue
-			if (requestedQueueTypes & VK_QUEUE_GRAPHICS_BIT)
+			std::vector<VkExtensionProperties> extensions(extCount);
+			if (vkEnumerateDeviceExtensionProperties(m_PhysicalDevice, nullptr, &extCount, &extensions.front()) == VK_SUCCESS)
 			{
-				queueFamilyIndices.graphics = getQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+				SS_CORE_TRACE("Selected physical device has {0} extensions", extensions.size());
+				for (const auto& ext : extensions)
+				{
+					m_SupportedExtensions.emplace(ext.extensionName);
+					SS_CORE_TRACE("  {0}", ext.extensionName);
+				}
+			}
+		}
+
+		// Queue families
+		// Desired queues need to be requested upon logical device creation
+		// Due to differing queue family configurations of Vulkan implementations this can be a bit tricky, especially if the application
+		// requests different queue types
+
+		// Get queue family indices for the requested queue family types
+		// Note that the indices may overlap depending on the implementation
+
+		static const float defaultQueuePriority(0.0f);
+
+		int requestedQueueTypes = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT;
+		m_QueueFamilyIndices = GetQueueFamilyIndices(requestedQueueTypes);
+
+		// Graphics queue
+		if (requestedQueueTypes & VK_QUEUE_GRAPHICS_BIT)
+		{
+			VkDeviceQueueCreateInfo queueInfo{};
+			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueInfo.queueFamilyIndex = m_QueueFamilyIndices.Graphics;
+			queueInfo.queueCount = 1;
+			queueInfo.pQueuePriorities = &defaultQueuePriority;
+			m_QueueCreateInfos.push_back(queueInfo);
+		}
+
+		// Dedicated compute queue
+		if (requestedQueueTypes & VK_QUEUE_COMPUTE_BIT)
+		{
+			if (m_QueueFamilyIndices.Compute != m_QueueFamilyIndices.Graphics)
+			{
+				// If compute family index differs, we need an additional queue create info for the compute queue
 				VkDeviceQueueCreateInfo queueInfo{};
 				queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-				queueInfo.queueFamilyIndex = queueFamilyIndices.graphics;
+				queueInfo.queueFamilyIndex = m_QueueFamilyIndices.Compute;
 				queueInfo.queueCount = 1;
 				queueInfo.pQueuePriorities = &defaultQueuePriority;
-				queueCreateInfos.push_back(queueInfo);
+				m_QueueCreateInfos.push_back(queueInfo);
 			}
-			else
-			{
-				queueFamilyIndices.graphics = 0;
-			}
+		}
 
-			// Dedicated compute queue
-			if (requestedQueueTypes & VK_QUEUE_COMPUTE_BIT)
+		// Dedicated transfer queue
+		if (requestedQueueTypes & VK_QUEUE_TRANSFER_BIT)
+		{
+			if ((m_QueueFamilyIndices.Transfer != m_QueueFamilyIndices.Graphics) && (m_QueueFamilyIndices.Transfer != m_QueueFamilyIndices.Compute))
 			{
-				queueFamilyIndices.compute = getQueueFamilyIndex(VK_QUEUE_COMPUTE_BIT);
-				if (queueFamilyIndices.compute != queueFamilyIndices.graphics)
+				// If compute family index differs, we need an additional queue create info for the compute queue
+				VkDeviceQueueCreateInfo queueInfo{};
+				queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+				queueInfo.queueFamilyIndex = m_QueueFamilyIndices.Transfer;
+				queueInfo.queueCount = 1;
+				queueInfo.pQueuePriorities = &defaultQueuePriority;
+				m_QueueCreateInfos.push_back(queueInfo);
+			}
+		}
+
+		m_DepthFormat = FindDepthFormat();
+		SS_CORE_ASSERT(m_DepthFormat, "");
+	}
+
+	VulkanPhysicalDevice::~VulkanPhysicalDevice()
+	{
+	}
+	
+	bool VulkanPhysicalDevice::IsExtensionSupported(const std::string& extensionName) const
+	{
+		return m_SupportedExtensions.find(extensionName) != m_SupportedExtensions.end();
+	}
+
+	uint32_t VulkanPhysicalDevice::GetMemoryTypeIndex(uint32_t typeBits, VkMemoryPropertyFlags properties) const
+	{
+		// Iterate over all memory types available for the device used in this example
+		for (uint32_t i = 0; i < m_MemoryProperties.memoryTypeCount; i++)
+		{
+			if ((typeBits & 1) == 1)
+			{
+				if ((m_MemoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
+					return i;
+			}
+			typeBits >>= 1;
+		}
+
+		SS_CORE_ASSERT(false, "Could not find a suitable memory type!");
+		return UINT32_MAX;
+	}
+
+	Ref<VulkanPhysicalDevice> VulkanPhysicalDevice::Select()
+	{
+		return CreateRef<VulkanPhysicalDevice>();
+	}
+
+	VkFormat VulkanPhysicalDevice::FindDepthFormat() const
+	{
+		// Since all depth formats may be optional, we need to find a suitable depth format to use
+		// Start with the highest precision packed format
+		std::vector<VkFormat> depthFormats = {
+			VK_FORMAT_D32_SFLOAT_S8_UINT,
+			VK_FORMAT_D32_SFLOAT,
+			VK_FORMAT_D24_UNORM_S8_UINT,
+			VK_FORMAT_D16_UNORM_S8_UINT,
+			VK_FORMAT_D16_UNORM
+		};
+
+		// TODO: Move to VulkanPhysicalDevice
+		for (auto& format : depthFormats)
+		{
+			VkFormatProperties formatProps;
+			vkGetPhysicalDeviceFormatProperties(m_PhysicalDevice, format, &formatProps);
+			// Format must support depth stencil attachment for optimal tiling
+			if (formatProps.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+				return format;
+		}
+		return VK_FORMAT_UNDEFINED;
+	}
+	VulkanPhysicalDevice::QueueFamilyIndices VulkanPhysicalDevice::GetQueueFamilyIndices(int flags)
+	{
+		QueueFamilyIndices indices;
+
+		// Dedicated queue for compute
+		// Try to find a queue family index that supports compute but not graphics
+		if (flags & VK_QUEUE_COMPUTE_BIT)
+		{
+			for (uint32_t i = 0; i < m_QueueFamilyProperties.size(); i++)
+			{
+				auto& queueFamilyProperties = m_QueueFamilyProperties[i];
+				if ((queueFamilyProperties.queueFlags & VK_QUEUE_COMPUTE_BIT) && ((queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0))
 				{
-					// If compute family index differs, we need an additional queue create info for the compute queue
-					VkDeviceQueueCreateInfo queueInfo{};
-					queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-					queueInfo.queueFamilyIndex = queueFamilyIndices.compute;
-					queueInfo.queueCount = 1;
-					queueInfo.pQueuePriorities = &defaultQueuePriority;
-					queueCreateInfos.push_back(queueInfo);
+					indices.Compute = i;
+					break;
 				}
 			}
-			else
-			{
-				// Else we use the same queue
-				queueFamilyIndices.compute = queueFamilyIndices.graphics;
-			}
+		}
 
-			// Dedicated transfer queue
-			if (requestedQueueTypes & VK_QUEUE_TRANSFER_BIT)
+		// Dedicated queue for transfer
+		// Try to find a queue family index that supports transfer but not graphics and compute
+		if (flags & VK_QUEUE_TRANSFER_BIT)
+		{
+			for (uint32_t i = 0; i < m_QueueFamilyProperties.size(); i++)
 			{
-				queueFamilyIndices.transfer = getQueueFamilyIndex(VK_QUEUE_TRANSFER_BIT);
-				if ((queueFamilyIndices.transfer != queueFamilyIndices.graphics) && (queueFamilyIndices.transfer != queueFamilyIndices.compute))
+				auto& queueFamilyProperties = m_QueueFamilyProperties[i];
+				if ((queueFamilyProperties.queueFlags & VK_QUEUE_TRANSFER_BIT) && ((queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0) && ((queueFamilyProperties.queueFlags & VK_QUEUE_COMPUTE_BIT) == 0))
 				{
-					// If compute family index differs, we need an additional queue create info for the compute queue
-					VkDeviceQueueCreateInfo queueInfo{};
-					queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-					queueInfo.queueFamilyIndex = queueFamilyIndices.transfer;
-					queueInfo.queueCount = 1;
-					queueInfo.pQueuePriorities = &defaultQueuePriority;
-					queueCreateInfos.push_back(queueInfo);
+					indices.Transfer = i;
+					break;
 				}
 			}
-			else
-			{
-				// Else we use the same queue
-				queueFamilyIndices.transfer = queueFamilyIndices.graphics;
-			}
-
-			// Create the logical device representation
-			std::vector<const char*> deviceExtensions(enabledExtensions);
-			if (useSwapChain)
-			{
-				// If the device will be used for presenting to a display via a swapchain we need to request the swapchain extension
-				deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-			}
-
-			VkDeviceCreateInfo deviceCreateInfo = {};
-			deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-			deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());;
-			deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
-			deviceCreateInfo.pEnabledFeatures = &enabledFeatures;
-
-			// If a pNext(Chain) has been passed, we need to add it to the device creation info
-			VkPhysicalDeviceFeatures2 physicalDeviceFeatures2{};
-			if (pNextChain) {
-				physicalDeviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-				physicalDeviceFeatures2.features = enabledFeatures;
-				physicalDeviceFeatures2.pNext = pNextChain;
-				deviceCreateInfo.pEnabledFeatures = nullptr;
-				deviceCreateInfo.pNext = &physicalDeviceFeatures2;
-			}
-
-			// Enable the debug marker extension if it is present (likely meaning a debugging tool is present)
-			if (extensionSupported(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
-			{
-				deviceExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
-				enableDebugMarkers = true;
-			}
-
-			if (deviceExtensions.size() > 0)
-			{
-				for (const char* enabledExtension : deviceExtensions)
-				{
-					if (!extensionSupported(enabledExtension)) {
-						std::cerr << "Enabled device extension \"" << enabledExtension << "\" is not present at device level\n";
-					}
-				}
-
-				deviceCreateInfo.enabledExtensionCount = (uint32_t)deviceExtensions.size();
-				deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
-			}
-
-			this->enabledFeatures = enabledFeatures;
-
-			VkResult result = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &logicalDevice);
-			if (result != VK_SUCCESS)
-			{
-				return result;
-			}
-
-			// Create a default command pool for graphics command buffers
-			commandPool = createCommandPool(queueFamilyIndices.graphics);
-
-			return result;
 		}
 
-		/**
-	* Create a command pool for allocation command buffers from
-	*
-	* @param queueFamilyIndex Family index of the queue to create the command pool for
-	* @param createFlags (Optional) Command pool creation flags (Defaults to VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT)
-	*
-	* @note Command buffers allocated from the created pool can only be submitted to a queue with the same family index
-	*
-	* @return A handle to the created command buffer
-	*/
-		VkCommandPool VulkanDevice::createCommandPool(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags createFlags)
+		// For other queue types or if no separate compute queue is present, return the first one to support the requested flags
+		for (uint32_t i = 0; i < m_QueueFamilyProperties.size(); i++)
 		{
-			VkCommandPoolCreateInfo cmdPoolInfo = {};
-			cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-			cmdPoolInfo.queueFamilyIndex = queueFamilyIndex;
-			cmdPoolInfo.flags = createFlags;
-			VkCommandPool cmdPool;
-			VK_CHECK_RESULT(vkCreateCommandPool(logicalDevice, &cmdPoolInfo, nullptr, &cmdPool));
-			return cmdPool;
-		}
-
-
-		/**
-		* Check if an extension is supported by the (physical device)
-		*
-		* @param extension Name of the extension to check
-		*
-		* @return True if the extension is supported (present in the list read at device creation time)
-		*/
-		bool VulkanDevice::extensionSupported(std::string extension)
-		{
-			return (std::find(supportedExtensions.begin(), supportedExtensions.end(), extension) != supportedExtensions.end());
-		}
-
-
-		VulkanDevice::~VulkanDevice()
-		{
-			if (commandPool)
+			if ((flags & VK_QUEUE_TRANSFER_BIT) && indices.Transfer == -1)
 			{
-				vkDestroyCommandPool(logicalDevice, commandPool, nullptr);
+				if (m_QueueFamilyProperties[i].queueFlags & VK_QUEUE_TRANSFER_BIT)
+					indices.Transfer = i;
 			}
-			if (logicalDevice)
+
+			if ((flags & VK_QUEUE_COMPUTE_BIT) && indices.Compute == -1)
 			{
-				vkDestroyDevice(logicalDevice, nullptr);
+				if (m_QueueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT)
+					indices.Compute = i;
+			}
+
+			if (flags & VK_QUEUE_GRAPHICS_BIT)
+			{
+				if (m_QueueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+					indices.Graphics = i;
 			}
 		}
 
+		return indices;
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////
+	// Vulkan Device
+	////////////////////////////////////////////////////////////////////////////////////
+
+	VulkanDevice::VulkanDevice(const Ref<VulkanPhysicalDevice>& physicalDevice, VkPhysicalDeviceFeatures enabledFeatures)
+		: m_PhysicalDevice(physicalDevice), m_EnabledFeatures(enabledFeatures)
+	{
+		const bool enableAftermath = true;
+
+		// Do we need to enable any other extensions (eg. NV_RAYTRACING?)
+		std::vector<const char*> deviceExtensions;
+		// If the device will be used for presenting to a display via a swapchain we need to request the swapchain extension
+		SS_CORE_ASSERT(m_PhysicalDevice->IsExtensionSupported(VK_KHR_SWAPCHAIN_EXTENSION_NAME), "");
+		deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+
+		if (m_PhysicalDevice->IsExtensionSupported(VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME))
+			deviceExtensions.push_back(VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME);
+		if (m_PhysicalDevice->IsExtensionSupported(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME))
+			deviceExtensions.push_back(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);
+
+		VkDeviceDiagnosticsConfigCreateInfoNV aftermathInfo = {};
+		bool canEnableAftermath = enableAftermath && m_PhysicalDevice->IsExtensionSupported(VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME) && m_PhysicalDevice->IsExtensionSupported(VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME);
+		if (canEnableAftermath)
+		{
+			// Must be initialized ~before~ device has been created
+			//GpuCrashTracker* gpuCrashTracker = new GpuCrashTracker();
+			//gpuCrashTracker->Initialize();
+
+			VkDeviceDiagnosticsConfigFlagBitsNV aftermathFlags = (VkDeviceDiagnosticsConfigFlagBitsNV)(VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_RESOURCE_TRACKING_BIT_NV |
+				VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_AUTOMATIC_CHECKPOINTS_BIT_NV |
+				VK_DEVICE_DIAGNOSTICS_CONFIG_ENABLE_SHADER_DEBUG_INFO_BIT_NV);
+
+			aftermathInfo.sType = VK_STRUCTURE_TYPE_DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV;
+			aftermathInfo.flags = aftermathFlags;
+		}
+
+		VkDeviceCreateInfo deviceCreateInfo = {};
+		deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		if (canEnableAftermath)
+			deviceCreateInfo.pNext = &aftermathInfo;
+		deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(physicalDevice->m_QueueCreateInfos.size());;
+		deviceCreateInfo.pQueueCreateInfos = physicalDevice->m_QueueCreateInfos.data();
+		deviceCreateInfo.pEnabledFeatures = &enabledFeatures;
+
+		// If a pNext(Chain) has been passed, we need to add it to the device creation info
+		VkPhysicalDeviceFeatures2 physicalDeviceFeatures2{};
+
+		// Enable the debug marker extension if it is present (likely meaning a debugging tool is present)
+		if (m_PhysicalDevice->IsExtensionSupported(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
+		{
+			deviceExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
+			m_EnableDebugMarkers = true;
+		}
+
+		if (deviceExtensions.size() > 0)
+		{
+			deviceCreateInfo.enabledExtensionCount = (uint32_t)deviceExtensions.size();
+			deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
+		}
+
+		VkResult result = vkCreateDevice(m_PhysicalDevice->GetVulkanPhysicalDevice(), &deviceCreateInfo, nullptr, &m_LogicalDevice);
+		SS_CORE_ASSERT(result == VK_SUCCESS, "");
+
+		VkCommandPoolCreateInfo cmdPoolInfo = {};
+		cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		cmdPoolInfo.queueFamilyIndex = m_PhysicalDevice->m_QueueFamilyIndices.Graphics;
+		cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		VK_CHECK_RESULT(vkCreateCommandPool(m_LogicalDevice, &cmdPoolInfo, nullptr, &m_CommandPool));
+
+		cmdPoolInfo.queueFamilyIndex = m_PhysicalDevice->m_QueueFamilyIndices.Compute;
+		VK_CHECK_RESULT(vkCreateCommandPool(m_LogicalDevice, &cmdPoolInfo, nullptr, &m_ComputeCommandPool));
+
+		// Get a graphics queue from the device
+		vkGetDeviceQueue(m_LogicalDevice, m_PhysicalDevice->m_QueueFamilyIndices.Graphics, 0, &m_GraphicsQueue);
+		vkGetDeviceQueue(m_LogicalDevice, m_PhysicalDevice->m_QueueFamilyIndices.Compute, 0, &m_ComputeQueue);
+	}
+
+	VulkanDevice::~VulkanDevice()
+	{
+	}
+
+	void VulkanDevice::Destroy()
+	{
+		vkDestroyCommandPool(m_LogicalDevice, m_CommandPool, nullptr);
+		vkDestroyCommandPool(m_LogicalDevice, m_ComputeCommandPool, nullptr);
+
+		vkDeviceWaitIdle(m_LogicalDevice);
+		vkDestroyDevice(m_LogicalDevice, nullptr);
+	}
+
+	VkCommandBuffer VulkanDevice::GetCommandBuffer(bool begin, bool compute)
+	{
+		VkCommandBuffer cmdBuffer;
+
+		VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
+		cmdBufAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		cmdBufAllocateInfo.commandPool = compute ? m_ComputeCommandPool : m_CommandPool;
+		cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		cmdBufAllocateInfo.commandBufferCount = 1;
+
+		VK_CHECK_RESULT(vkAllocateCommandBuffers(m_LogicalDevice, &cmdBufAllocateInfo, &cmdBuffer));
+
+		// If requested, also start the new command buffer
+		if (begin)
+		{
+			VkCommandBufferBeginInfo cmdBufferBeginInfo{};
+			cmdBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			VK_CHECK_RESULT(vkBeginCommandBuffer(cmdBuffer, &cmdBufferBeginInfo));
+		}
+
+		return cmdBuffer;
+	}
+
+	void VulkanDevice::FlushCommandBuffer(VkCommandBuffer commandBuffer)
+	{
+		FlushCommandBuffer(commandBuffer, m_GraphicsQueue);
+	}
+
+	void VulkanDevice::FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue)
+	{
+		const uint64_t DEFAULT_FENCE_TIMEOUT = 100000000000;
+
+		SS_CORE_ASSERT(commandBuffer != VK_NULL_HANDLE, "");
+
+		VK_CHECK_RESULT(vkEndCommandBuffer(commandBuffer));
+
+		VkSubmitInfo submitInfo = {};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffer;
+
+		// Create fence to ensure that the command buffer has finished executing
+		VkFenceCreateInfo fenceCreateInfo = {};
+		fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceCreateInfo.flags = 0;
+		VkFence fence;
+		VK_CHECK_RESULT(vkCreateFence(m_LogicalDevice, &fenceCreateInfo, nullptr, &fence));
+
+		// Submit to the queue
+		VK_CHECK_RESULT(vkQueueSubmit(queue, 1, &submitInfo, fence));
+		// Wait for the fence to signal that command buffer has finished executing
+		VK_CHECK_RESULT(vkWaitForFences(m_LogicalDevice, 1, &fence, VK_TRUE, DEFAULT_FENCE_TIMEOUT));
+
+		vkDestroyFence(m_LogicalDevice, fence, nullptr);
+		vkFreeCommandBuffers(m_LogicalDevice, m_CommandPool, 1, &commandBuffer);
+	}
+
+	VkCommandBuffer VulkanDevice::CreateSecondaryCommandBuffer()
+	{
+		VkCommandBuffer cmdBuffer;
+
+		VkCommandBufferAllocateInfo cmdBufAllocateInfo = {};
+		cmdBufAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		cmdBufAllocateInfo.commandPool = m_CommandPool;
+		cmdBufAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+		cmdBufAllocateInfo.commandBufferCount = 1;
+
+		VK_CHECK_RESULT(vkAllocateCommandBuffers(m_LogicalDevice, &cmdBufAllocateInfo, &cmdBuffer));
+		return cmdBuffer;
 	}
 }

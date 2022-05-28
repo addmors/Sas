@@ -2,7 +2,7 @@
 #include "ssph.h"
 #include "Sas/Events/Event.h"
 #include "Sas/Core/Log.h"
-
+#include "Sas/Renderer/GraphicsContext.h"
 
 namespace Sas {
 
@@ -38,6 +38,7 @@ namespace Sas {
 		virtual bool IsVSync() const = 0;
 		virtual void* GetNativeWindow() = 0;
 
+		virtual Ref<GraphicsContext> GetContext() = 0;
 		static Scope<Window> Create(const WindowProps& props = WindowProps());
 	};
 }

@@ -6,6 +6,10 @@
 #include "Sas\Events\MouseEvent.h"
 #include "Sas\Events\KeyEvent.h"
 #include "Sas\Renderer\GraphicsContext.h"
+#include "Platform/Vulkan/VulkanContext.h"
+
+#include "Sas\Renderer\RendererAPI.h"
+
 
 namespace Sas {
 	static bool is_GLFWInitialized = false;
@@ -50,11 +54,22 @@ namespace Sas {
 		}
 		{
 			SS_PROFILE_SCOPE("glfwCreateWindow");
+			if (RendererAPI::GetAPI() == RendererAPI::API::Vulcak)
+				glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
 		}
 		glfwSetWindowPos(m_Window, (int)props.PosX, (int)props.PosY);
 		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
+
+		/*Ref<VulkanContext> context = Cast<VulkanContext>(m_Context);
+
+		m_SwapChain.Init(VulkanContext::GetInstance(), context->GetDevice());
+		m_SwapChain.InitSurface(m_Window);
+
+		uint32_t width = m_Data.Width, height = m_Data.Height;
+		m_SwapChain.Create(&width, &height, m_Data.vSync);*/
+
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);

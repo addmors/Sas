@@ -42,6 +42,10 @@ namespace Sas {
 	{
 		return std::make_unique<T>(std::forward<Args>(args)...);
 	}
+	template<typename T2, typename T>
+	constexpr Scope<T2> Cast(Scope<T> scope){
+		return std::static_pointer_cast<T2>(scope);
+	}
 
 	template<typename T>
 	using Ref = std::shared_ptr<T>;
@@ -49,6 +53,10 @@ namespace Sas {
 	constexpr Ref<T> CreateRef(Args&& ... args)
 	{
 		return std::make_shared<T>(std::forward<Args>(args)...);
+	}
+	template<typename T2, typename T>
+	constexpr Ref<T2> Cast(Ref<T> ref) {
+		return std::static_pointer_cast<T2>(ref);
 	}
 
 }

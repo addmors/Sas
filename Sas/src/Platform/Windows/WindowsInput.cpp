@@ -1,13 +1,11 @@
 #include "ssph.h"
-#include "WindowsInput.h"
 #include "Sas/Core/Application.h"
+#include "Sas/Core/Input.h" 
 #include "GLFW/glfw3.h"
 
 namespace Sas {
 
-	Input* Input::s_Instance = new WindowsInput();
-
-	bool WindowsInput::IsKeyPressedIMPL(KeyCode keycode)
+	bool Input::IsKeyPressed(KeyCode keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		int state = glfwGetKey(window, keycode);
@@ -15,7 +13,7 @@ namespace Sas {
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	} 
 
-	bool WindowsInput::IsMouseButtonPressedIMPL(MouseCode button)
+	bool Input::IsMouseButtonPressed(MouseCode button)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		int state = glfwGetMouseButton(window, button);
@@ -24,17 +22,17 @@ namespace Sas {
 
 	}
 
-	float WindowsInput::GetMouseXIMPL()
+	float Input::GetMouseX()
 	{
-		return GetMousePositionIMPL().first;
+		return GetMousePosition().first;
 	}
 
-	float WindowsInput::GetMouseYIMPL()
+	float Input::GetMouseY()
 	{
-		return GetMousePositionIMPL().second;
+		return GetMousePosition().second;
 	}
 
-	std::pair<float, float> WindowsInput::GetMousePositionIMPL()
+	std::pair<float, float> Input::GetMousePosition()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		double x, y;

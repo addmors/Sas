@@ -146,17 +146,11 @@
   <ItemGroup>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFrameBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanBase.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanDebug.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanInitializers.hpp" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanSwapChain.h" />
-    <ClInclude Include="src\Platform\Vulkan\VulkanTools.h" />
-    <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Sas\Core\Application.h" />
     <ClInclude Include="src\Sas\Core\Core.h" />
@@ -176,6 +170,7 @@
     <ClInclude Include="src\Sas\Events\MouseEvent.h" />
     <ClInclude Include="src\Sas\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Sas\Renderer\Buffer.h" />
+    <ClInclude Include="src\Sas\Renderer\FrameBuffer.h" />
     <ClInclude Include="src\Sas\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Sas\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Sas\Renderer\OrthographicCameraController.h" />
@@ -608,15 +603,11 @@
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFrameBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexAttay.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanBase.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanDebug.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanSwapChain.cpp" />
-    <ClCompile Include="src\Platform\Vulkan\VulkanTools.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Sas\Core\Application.cpp" />
@@ -627,6 +618,7 @@
     <ClCompile Include="src\Sas\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Sas\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Sas\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Sas\Renderer\FrameBuffer.cpp" />
     <ClCompile Include="src\Sas\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="src\Sas\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Sas\Renderer\OrthographicCameraController.cpp" />

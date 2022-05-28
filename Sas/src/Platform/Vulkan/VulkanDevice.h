@@ -6,48 +6,81 @@
 #include <exception>
 
 namespace Sas {
-	namespace vks {
-		struct VulkanDevice
+	class VulkanPhysicalDevice
+	{
+	public:
+		struct QueueFamilyIndices
 		{
-			/** @brief Physical device representation */
-			VkPhysicalDevice physicalDevice;
-			/** @brief Logical device representation (application's view of the device) */
-			VkDevice logicalDevice;
-			/** @brief Properties of the physical device including limits that the application can check against */
-			VkPhysicalDeviceProperties properties;
-			/** @brief Features of the physical device that an application can use to check if a feature is supported */
-			VkPhysicalDeviceFeatures features;
-			/** @brief Features that have been enabled for use on the physical device */
-			VkPhysicalDeviceFeatures enabledFeatures;
-			/** @brief Memory types and heaps of the physical device */
-			VkPhysicalDeviceMemoryProperties memoryProperties;
-			/** @brief Queue family properties of the physical device */
-			std::vector<VkQueueFamilyProperties> queueFamilyProperties;
-			/** @brief List of extensions supported by the device */
-			std::vector<std::string> supportedExtensions;
-			/** @brief Default command pool for the graphics queue family index */
-			VkCommandPool commandPool = VK_NULL_HANDLE;
-			/** @brief Set to true when the debug marker extension is detected */
-			bool enableDebugMarkers = false;
-			/** @brief Contains queue family indices */
-			struct
-			{
-				uint32_t graphics;
-				uint32_t compute;
-				uint32_t transfer;
-			} queueFamilyIndices;
-			operator VkDevice() const
-			{
-				return logicalDevice;
-			};
-			explicit VulkanDevice(VkPhysicalDevice physicalDevice);
-			uint32_t        getQueueFamilyIndex(VkQueueFlagBits queueFlags) const;
-			VkResult        createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures, std::vector<const char*> enabledExtensions, void* pNextChain, bool useSwapChain = true, VkQueueFlags requestedQueueTypes = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
-			VkCommandPool   createCommandPool(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags createFlags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
-			bool            extensionSupported(std::string extension);
-			uint32_t VulkanDevice::getMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32* memTypeFound = nullptr) const;
-
-			~VulkanDevice();
+			int32_t Graphics = -1;
+			int32_t Compute = -1;
+			int32_t Transfer = -1;
 		};
-	}
+	public:
+		VulkanPhysicalDevice();
+		~VulkanPhysicalDevice();
+
+		bool IsExtensionSupported(const std::string& extensionName) const;
+		uint32_t GetMemoryTypeIndex(uint32_t typeBits, VkMemoryPropertyFlags properties) const;
+
+		VkPhysicalDevice GetVulkanPhysicalDevice() const { return m_PhysicalDevice; }
+		const QueueFamilyIndices& GetQueueFamilyIndices() const { return m_QueueFamilyIndices; }
+
+		const VkPhysicalDeviceProperties& GetProperties() const { return m_Properties; }
+		const VkPhysicalDeviceLimits& GetLimits() const { return m_Properties.limits; }
+		const VkPhysicalDeviceMemoryProperties& GetMemoryProperties() const { return m_MemoryProperties; }
+
+		VkFormat GetDepthFormat() const { return m_DepthFormat; }
+
+		static Ref<VulkanPhysicalDevice> Select();
+	private:
+		VkFormat FindDepthFormat() const;
+		QueueFamilyIndices GetQueueFamilyIndices(int queueFlags);
+	private:
+		QueueFamilyIndices m_QueueFamilyIndices;
+
+		VkPhysicalDevice m_PhysicalDevice = nullptr;
+		VkPhysicalDeviceProperties m_Properties;
+		VkPhysicalDeviceFeatures m_Features;
+		VkPhysicalDeviceMemoryProperties m_MemoryProperties;
+
+		VkFormat m_DepthFormat = VK_FORMAT_UNDEFINED;
+
+		std::vector<VkQueueFamilyProperties> m_QueueFamilyProperties;
+		std::unordered_set<std::string> m_SupportedExtensions;
+		std::vector<VkDeviceQueueCreateInfo> m_QueueCreateInfos;
+
+		friend class VulkanDevice;
+	};
+
+	// Represents a logical device
+	class VulkanDevice
+	{
+	public:
+		VulkanDevice(const Ref<VulkanPhysicalDevice>& physicalDevice, VkPhysicalDeviceFeatures enabledFeatures);
+		~VulkanDevice();
+
+		void Destroy();
+
+		VkQueue GetGraphicsQueue() { return m_GraphicsQueue; }
+		VkQueue GetComputeQueue() { return m_ComputeQueue; }
+
+		VkCommandBuffer GetCommandBuffer(bool begin, bool compute = false);
+		void FlushCommandBuffer(VkCommandBuffer commandBuffer);
+		void FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue);
+
+		VkCommandBuffer CreateSecondaryCommandBuffer();
+
+		const Ref<VulkanPhysicalDevice>& GetPhysicalDevice() const { return m_PhysicalDevice; }
+		VkDevice GetVulkanDevice() const { return m_LogicalDevice; }
+	private:
+		VkDevice m_LogicalDevice = nullptr;
+		Ref<VulkanPhysicalDevice> m_PhysicalDevice;
+		VkPhysicalDeviceFeatures m_EnabledFeatures;
+		VkCommandPool m_CommandPool, m_ComputeCommandPool;
+
+		VkQueue m_GraphicsQueue;
+		VkQueue m_ComputeQueue;
+
+		bool m_EnableDebugMarkers = false;
+	};
 }

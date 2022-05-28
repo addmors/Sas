@@ -1,6 +1,5 @@
 #pragma once
 #include "SasPre.h"
-
 class SandBox2D : public Sas::Layer{
 public:
 	SandBox2D();
@@ -14,7 +13,6 @@ private:
 	Sas::OrthographicCameraController m_CameraController;
 	Sas::Ref<Sas::VertexArray> m_SquareVA;
 	Sas::Ref<Sas::Shader> m_FlatColor;
-	
 	Sas::Ref<Sas::Texture2D> m_CheckboardTexture;
 	
 	float time = 0;

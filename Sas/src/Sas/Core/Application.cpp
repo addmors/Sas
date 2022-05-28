@@ -13,13 +13,13 @@ namespace Sas {
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application()
+	Application::Application(const std::string& name)
 	{
 		SS_PROFILE_FUNCTION();
 
 		SS_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
-		m_Window = Window::Create();
+		m_Window = Window::Create(WindowProps(name));
 		m_Window->SetEventCallback(SS_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
@@ -33,6 +33,11 @@ namespace Sas {
 
 		SS_PROFILE_FUNCTION();
 		Renderer::Shutdown();
+	}
+
+	void Application::Close()
+	{
+		m_Running = false;
 	}
 
 	void Application::PushLayer(Layer* layer)

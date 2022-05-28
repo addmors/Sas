@@ -2,10 +2,10 @@
 #include "GraphicsContext.h"
 #include "Platform\OpenGL\OpenGLContext.h"
 #include "Renderer.h"
-
+#include <GLFW\glfw3.h>
 
 namespace Sas {
-	Scope<GraphicsContext> GraphicsContext::Create(GLFWwindow* window)
+	Ref<GraphicsContext> GraphicsContext::Create(GLFWwindow* window)
 	{
 		switch (Renderer::GetAPI())
 		{

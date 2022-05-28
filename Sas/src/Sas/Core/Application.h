@@ -16,18 +16,19 @@ namespace Sas {
 	class Application
 	{
 	public:
-		Application();
+		Application(const std::string& name = "Sas Engine");
 		virtual ~Application();
 
 		void Run();
 
 		void OnEvent(Event& e);
 
+		void Close();
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
 		inline Window& GetWindow() { return *m_Window; }
-
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; };
 		inline static Application& Get() { return *s_Instance; }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);

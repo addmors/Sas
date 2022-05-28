@@ -4,6 +4,8 @@
 
 #include "Sas/Renderer/OrthographicCamera.h"
 #include "Sas/Renderer/Shader.h"
+#include "Sas/Core/Application.h"
+#include "GraphicsContext.h"
 
 namespace Sas {
 
@@ -13,6 +15,10 @@ namespace Sas {
 		static void Init();
 		static void Shutdown();
 		
+		static Ref<GraphicsContext> GetContext()
+		{
+			return Application::Get().GetWindow().GetContext();
+		}
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
 		static void BeginScene(OrthographicCamera& camera);

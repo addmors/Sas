@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include <memory>
 #include <utility>
 #include <algorithm>
@@ -19,5 +17,5 @@
 
 
 #ifdef SS_PLATFORM_WINDOWS 
-#include <Windows.h>
+	#include <Windows.h>
 #endif

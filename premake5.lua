@@ -169,3 +169,58 @@ project "Sendbox"
 		defines "SS_DIST"
 		runtime "Release"
 		optimize "on"
+
+project "SasIunt"
+	location "SasIunt"
+	kind "ConsoleApp"
+	language "C++"	
+	cppdialect "C++17"
+	staticruntime "on"
+
+
+	targetdir("bin/" .. outputdir .. "/%{prj.name}")
+	objdir("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	files{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+	
+	includedirs
+	{
+
+		"Sas/src;",
+		"Sas/vendor/spdlog/include;",
+		"Sas/vendor",
+		"%{IncludeDir.glm}"		
+	}
+	
+	links {
+		"Sas"
+		
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+		defines 
+		{
+			"SS_PLATFORM_WINDOWS"
+			
+		}
+
+
+	filter "configurations:Debug"
+		defines {"SS_DEBUG", "SS_ENABLE_ASSERTS"}
+		runtime "Debug"
+		symbols "on"
+	
+	filter "configurations:Release"
+		defines "SS_RELEASE"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Dist"
+		defines "SS_DIST"
+		runtime "Release"
+		optimize "on"

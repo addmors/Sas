@@ -1,7 +1,7 @@
 #pragma once
 #include "Sas/Core/Window.h"
 #include "Sas/Renderer/GraphicsContext.h"
-
+#include "Platform\Vulkan\VulkanSwapChain.h"
 #include <GLFW/glfw3.h>
 
 namespace Sas {
@@ -26,13 +26,14 @@ namespace Sas {
 		void SetVSync(bool enable) override;
 		bool IsVSync() const override;
 		inline virtual void* GetNativeWindow() override { return m_Window; };
+		virtual Ref<GraphicsContext> GetContext() override { return m_Context; }
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void ShutDown();
 
 		GLFWwindow* m_Window;
 
-		Scope<GraphicsContext> m_Context;
+		Ref<GraphicsContext> m_Context;
 
 		struct WindowData
 		{
@@ -44,6 +45,7 @@ namespace Sas {
 		};
 
 		WindowData m_Data;
+		VulkanSwapChain m_SwapChain;
 	};
 
 }
