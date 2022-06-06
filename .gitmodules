@@ -10,3 +10,6 @@
 [submodule "Sas/vendor/imgui"]
 	path = Sas/vendor/imgui
 	url = https://github.com/addmors/imgui
+[submodule "Sas/vendor/ImGuizmo"]
+	path = Sas/vendor/ImGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo
