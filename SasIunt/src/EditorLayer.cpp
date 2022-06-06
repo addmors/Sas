@@ -6,6 +6,9 @@
 
 
 namespace Sas {
+
+	static bool ViewPortfocused = false;
+
 	EditorLayer::EditorLayer()
 		:Layer("Sendbox2D"), m_CameraController(1280.0f / 720.0f)
 	{
@@ -17,23 +20,56 @@ namespace Sas {
 
 		SS_PROFILE_FUNCTION();
 		m_CheckboardTexture = Sas::Texture2D::Create("assets/textures/Checkerboard.png");
-#ifdef ZERO
-		m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
-		m_Particle.ColorEnd = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };
-		m_Particle.SizeBegin = 0.2f, m_Particle.SizeVariation = 0.05f, m_Particle.SizeEnd = 0.0f;
-		m_Particle.LifeTime = 1.0f;
-		m_Particle.Velocity = { 0.0f, 0.0f };
-		m_Particle.VelocityVariation = { 3.0f, 1.0f };
-		m_Particle.Position = { 0.0f, 0.0f };
-#endif // ZERO
-		FramebufferTextureSpecification texspec{FramebufferTextureFormat::RGBA8};
-		FramebufferAttachmentSpecification attach { texspec };
-		FramebufferSpecification fbspec;
-		fbspec.Width = 1280;
-		fbspec.Height = 720;
-		fbspec.Attachments = attach;
 
-		m_Framebuffer = Sas::Framebuffer::Create(fbspec);
+		FramebufferSpecification fbSpec;
+		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+		fbSpec.Width = 1280;
+		fbSpec.Height = 720;
+		m_Framebuffer = Framebuffer::Create(fbSpec);
+
+		m_ActiveScene = CreateRef<Scene>();
+
+		//Entity
+		auto square = m_ActiveScene->CreateEntity("Red Square");
+		square.AddComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		m_SquareEntity = square;
+
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+		m_CameraEntity.AddComponent<CameraComponent>();
+		m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
+		auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
+		cc.Primary = false;
+
+		class CameraController : public ScriptableEntity
+		{
+		public:
+			void OnCreate() {
+
+			}
+			void OnDestroy() {
+
+			}
+			void OnUpdate(Timestep ts) {
+				if (ViewPortfocused) {
+					auto& transform = GetComponent<TransformComponent>().Transform;
+					float Speed = 5.0f;
+					if (Input::IsKeyPressed(Key::A))
+						transform[3][0] -= Speed * ts;
+					if (Input::IsKeyPressed(Key::D))
+						transform[3][0] += Speed * ts;
+					if (Input::IsKeyPressed(Key::W))
+						transform[3][1] += Speed * ts;
+					if (Input::IsKeyPressed(Key::S))
+						transform[3][1] -= Speed * ts;
+				}
+
+			}
+
+		};
+		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnDetach()
@@ -44,62 +80,31 @@ namespace Sas {
 
 	void EditorLayer::OnUpdate(Sas::Timestep ts)
 	{
-		time += ts;
 		SS_PROFILE_FUNCTION();
+
+		
+		
+		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+			m_ViewPortSize.x > 0.0f && m_ViewPortSize.y > 0.0f && // zero sized framebuffer is invalid
+			(spec.Width != m_ViewPortSize.x || spec.Height != m_ViewPortSize.y))
+		{
+			m_Framebuffer->Resize((uint32_t)m_ViewPortSize.x, (uint32_t)m_ViewPortSize.y);
+			m_CameraController.OnResize(m_ViewPortSize.x, m_ViewPortSize.y);
+			m_ActiveScene->OnViewPortResize((uint32_t)m_ViewPortSize.x, (uint32_t)m_ViewPortSize.y);
+		}
 		if(m_ViewPortFocused)
 			m_CameraController.OnUpdate(ts);
+		
+		//Update Scene
 		Sas::Renderer2D::ResetStats();
-		{
-			SS_PROFILE_SCOPE("EditorLayer clean");
-			m_Framebuffer->Bind();
-			Sas::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-			Sas::RenderCommand::Clear();
-		}
-
-		{
-			Sas::Renderer2D::BeginScene(m_CameraController.GetCamera());
-			SS_PROFILE_SCOPE("EditorLayer draw");
-			Sas::Renderer2D::DrawQuad({ -1.0f,0.0f }, { 1.0f,1.0f }, { 0.8f,0.2f,0.3f,1.0f });
-			Sas::Renderer2D::DrawQuad({ -0.5f,-0.5f }, { 0.2f,0.8f }, { 0.3f,0.2f,0.8f,1.0f });
-
-			Sas::Renderer2D::DrawQuad({ -0.0f,-0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckboardTexture, 10.0f);
-			Sas::Renderer2D::DrawRotatedQuad({ 2.0f,0.0f }, { 0.5f,0.5f }, -45.0f, m_CheckboardTexture, 10.0f);
-
-			Sas::Renderer2D::EndScene();
-
-			Sas::Renderer2D::BeginScene(m_CameraController.GetCamera());
-			for (float y = -3.0f; y < 3.0f; y += 0.5f) {
-				for (float x = -3.0f; x < 3.0f; x += 0.5f) {
-					glm::vec4 rgba = { (x + 5.0f) / 10.0f, 0.4f,(y + 5.0f) / 10.0f , 0.5f };
-					Sas::Renderer2D::DrawRotatedQuad({ x,y }, { 0.45f, 0.45f }, 0, rgba);
-				}
-			}
-			Sas::Renderer2D::EndScene();
-#ifdef ZERO 
-
-			if (Sas::Input::IsMouseButtonPressed(Sas::Mouse::ButtonRight)) {
-				auto [x, y] = Sas::Input::GetMousePosition();
-				auto width = Sas::Application::Get().GetWindow().GetWidth();
-				auto height = Sas::Application::Get().GetWindow().GetHeight();
-				auto bound = m_CameraController.GetBounds();
-				auto pos = m_CameraController.GetCamera().GetPosition();
-				x = (x / width) * bound.GetWidth() - bound.GetWidth() * 0.5;
-				y = bound.GetHeight() * 0.5 - (y / height) * bound.GetHeight();
-				m_Particle.Position = { x + pos.x,y + pos.y };
-				x_ = x;
-				y_ = y;
-				for (int i = 0; i < 1; i++)
-					m_ParticleSystem.Emit(m_Particle);
-
-			}
-			m_ParticleSystem.OnUpdate(ts);
-			Sas::Renderer2D::BeginScene(m_CameraController.GetCamera());
-			m_ParticleSystem.OnRender();
-			Sas::Renderer2D::EndScene();
-#endif // 0
-			m_Framebuffer->Unbind();
-		}
-
+		m_Framebuffer->Bind();
+		Sas::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+		Sas::RenderCommand::Clear();
+		
+		m_ActiveScene->OnUpdate(ts);
+		
+		m_Framebuffer->Unbind();
+		
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -170,6 +175,7 @@ namespace Sas {
 
 			ImGui::EndMenuBar();
 		}
+		m_SceneHierarchyPanel.OnImGuiRender();
 		auto stat = Sas::Renderer2D::GetStats();
 		ImGui::Begin("Setting");
 		ImGui::Text("Render2D stat");
@@ -178,25 +184,47 @@ namespace Sas {
 		ImGui::Text("Vertices: %df", stat.GetTotalVertexCount());
 		ImGui::Text("Indecies: %df", stat.GetTotalIndexCount());
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		uint32_t texID = m_Framebuffer->GetColorAttachmentRendererID();
+
+		//Set
+		if (m_SquareEntity) {
+			ImGui::Separator();
+
+			auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
+			ImGui::Text("%s", tag.c_str());
+			auto& color = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+			ImGui::ColorEdit4("Square Color", glm::value_ptr(color));
+			ImGui::Separator();
+		}
+		{
+		ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+		ImGui::Checkbox("Camera Editor", &m_PrimaryCamera);
+
+		m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+		m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+		}
+
+		{
+			auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
+			float ortho = camera.GetOrthographicSize();
+			if(ImGui::DragFloat("Second Camera Ort Size :", &ortho))
+				camera.SetOrthographicSize(ortho);
+		}
+		ImGui::End(); 
 		
-		ImGui::End();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});
 		ImGui::Begin("Viewport");
 		m_ViewPortFocused = ImGui::IsWindowFocused();
+		ViewPortfocused = m_ViewPortFocused;
 		m_ViewPortHovered = ImGui::IsWindowHovered();
 
 		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewPortFocused || !m_ViewPortHovered);
 		
-		ImVec2 viewPanelSize = ImGui::GetContentRegionAvail();
-		
-		if (m_ViewPortSize != *(glm::vec2*)&viewPanelSize && viewPanelSize.x>0 && viewPanelSize.y > 0) {
+		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+		m_ViewPortSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-			m_Framebuffer->Resize((uint32_t)viewPanelSize.x, (uint32_t)viewPanelSize.y);
-			m_ViewPortSize = { viewPanelSize.x,viewPanelSize.y };
-			m_CameraController.OnResize(viewPanelSize.x, viewPanelSize.y);
-		}
-		ImGui::Image((void*)texID, viewPanelSize, ImVec2(0, 1), ImVec2(1, 0));
+		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewPortSize.x, m_ViewPortSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		
 		ImGui::End();
 		ImGui::PopStyleVar();
 		ImGui::End();

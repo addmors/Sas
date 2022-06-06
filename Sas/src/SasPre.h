@@ -12,6 +12,12 @@
 
 #include "Sas\ImGui\ImGuiLayer.h"
 
+#include "Sas\Scene\Scene.h"
+#include "Sas\Scene\Entity.h"
+#include "Sas\Scene\ScriptableEntity.h"
+#include "Sas\Scene\Component.h"
+
+
 //---------------EntryPoint------------------
 #include "Sas/Renderer/Renderer.h"
 #include "Sas/Renderer/Renderer2D.h"

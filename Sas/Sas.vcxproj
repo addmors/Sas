@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>ssph.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SS_PLATFORM_WINDOWS;SS_BUILD_DLL;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;SS_DEBUG;SS_ENABLE_ASSERTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;;vendor\spdlog\include;;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;vendor\glm;vendor\stb_image;;C:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;;vendor\spdlog\include;;vendor\GLFW\include;vendor\Glad\include;vendor\entt\include;vendor\ImGui;vendor\glm;vendor\stb_image;C:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -99,7 +99,7 @@
       <PrecompiledHeaderFile>ssph.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SS_PLATFORM_WINDOWS;SS_BUILD_DLL;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;SS_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;;vendor\spdlog\include;;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;vendor\glm;vendor\stb_image;;C:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;;vendor\spdlog\include;;vendor\GLFW\include;vendor\Glad\include;vendor\entt\include;vendor\ImGui;vendor\glm;vendor\stb_image;C:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -124,7 +124,7 @@
       <PrecompiledHeaderFile>ssph.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SS_PLATFORM_WINDOWS;SS_BUILD_DLL;GLFW_INCLUDE_NONE;_CRT_SECURE_NO_WARNINGS;SS_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;;vendor\spdlog\include;;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;vendor\glm;vendor\stb_image;;C:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;;vendor\spdlog\include;;vendor\GLFW\include;vendor\Glad\include;vendor\entt\include;vendor\ImGui;vendor\glm;vendor\stb_image;C:\VulkanSDK\1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -144,6 +144,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Sas\Renderer\Camera.h" />
+    <ClInclude Include="src\Sas\Scene\Entity.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLFrameBuffer.h" />
@@ -181,7 +183,11 @@
     <ClInclude Include="src\Sas\Renderer\Shader.h" />
     <ClInclude Include="src\Sas\Renderer\Texture.h" />
     <ClInclude Include="src\Sas\Renderer\VertexArray.h" />
+    <ClInclude Include="src\Sas\Scene\Component.h" />
+    <ClInclude Include="src\Sas\Scene\Scene.h" />
     <ClInclude Include="src\SasPre.h" />
+    <ClInclude Include="src\Sas\Scene\SceneCamera.h" />
+    <ClInclude Include="src\Sas\Scene\ScriptableEntity.h" />
     <ClInclude Include="src\ssph.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -601,6 +607,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Sas\Scene\Entity.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLFrameBuffer.cpp" />
@@ -629,6 +636,8 @@
     <ClCompile Include="src\Sas\Renderer\Shader.cpp" />
     <ClCompile Include="src\Sas\Renderer\Texture.cpp" />
     <ClCompile Include="src\Sas\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Sas\Scene\Scene.cpp" />
+    <ClCompile Include="src\Sas\Scene\SceneCamera.cpp" />
     <ClCompile Include="src\ssph.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

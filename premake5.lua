@@ -56,10 +56,11 @@ project "Sas"
 		"%{prj.name}/vendor/spdlog/include;",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
+		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGui}",		
 		"%{IncludeDir.glm}",		
-		"%{IncludeDir.stb_image}",	
-		"%{IncludeDir.VulkanSDK}",
+		"%{IncludeDir.stb_image}",		
+		"%{IncludeDir.VulkanSDK}"
 			
 	}
 
@@ -137,6 +138,7 @@ project "Sendbox"
 		"Sas/src;",
 		"Sas/vendor/spdlog/include;",
 		"Sas/vendor",
+		"%{IncludeDir.entt}",
 		"%{IncludeDir.glm}"		
 	}
 	
@@ -192,6 +194,7 @@ project "SasIunt"
 		"Sas/src;",
 		"Sas/vendor/spdlog/include;",
 		"Sas/vendor",
+		"%{IncludeDir.entt}",	
 		"%{IncludeDir.glm}"		
 	}
 	

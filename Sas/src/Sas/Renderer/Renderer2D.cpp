@@ -119,6 +119,19 @@ namespace Sas {
 		StartBatch();
 	}
 
+
+	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
+	{
+		SS_PROFILE_FUNCTION();
+
+		glm::mat4 ViewProj = camera.GetProjection() * glm::inverse(transform);
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", ViewProj);
+
+		StartBatch();
+	}
+
+
 	void Renderer2D::EndScene()
 	{
 		SS_PROFILE_FUNCTION();
@@ -156,6 +169,7 @@ namespace Sas {
 		s_Data.Stats.DrawCalls++;
 	}
 
+	
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 	{

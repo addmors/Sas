@@ -75,6 +75,7 @@ void GameLayer::OnImGuiRender()
 		uint32_t playerScore = m_Level.GetPlayer().GetScore();
 		std::string scoreStr = std::string("Score: ") + std::to_string(playerScore);
 		ImGui::GetForegroundDrawList()->AddText(m_Font, 48.0f, { (float)posx,(float)posy }, 0xffffffff, scoreStr.c_str());
+		//ImGui::GetForegroundDrawList()->AddBezierCubic();
 		break;
 	}
 	case GameState::MainMenu:

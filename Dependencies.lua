@@ -6,11 +6,12 @@ VULKAN_SDK = os.getenv("VULKAN_SDK")
 IncludeDir = {}
 IncludeDir["GLFW"] = "%{wks.location}/Sas/vendor/GLFW/include"
 IncludeDir["Glad"] = "%{wks.location}/Sas/vendor/Glad/include"
+IncludeDir["entt"] = "%{wks.location}/Sas/vendor/entt/include"
 IncludeDir["ImGui"] = "%{wks.location}/Sas/vendor/ImGui"
 IncludeDir["glm"] = "%{wks.location}/Sas/vendor/glm"
 IncludeDir["shaderc"] = "%{wks.location}/Sas/vendor/shaderc/include"
 IncludeDir["SPIRV_Cross"] = "%{wks.location}/Sas/vendor/SPIRV-Cross"
-IncludeDir["stb_image"] = "%{wks.location}/Sas/vendor/stb_image;"
+IncludeDir["stb_image"] = "%{wks.location}/Sas/vendor/stb_image"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 
 LibraryDir = {}
