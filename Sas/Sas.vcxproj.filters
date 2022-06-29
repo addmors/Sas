@@ -84,6 +84,27 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanBase.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanContext.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanDebug.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanDevice.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanInitializers.hpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanSwapChain.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanTools.h">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
@@ -141,6 +162,9 @@
     <ClInclude Include="src\Sas\Renderer\Buffer.h">
       <Filter>src\Sas\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sas\Renderer\Camera.h">
+      <Filter>src\Sas\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sas\Renderer\FrameBuffer.h">
       <Filter>src\Sas\Renderer</Filter>
     </ClInclude>
@@ -177,7 +201,16 @@
     <ClInclude Include="src\Sas\Scene\Component.h">
       <Filter>src\Sas\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sas\Scene\Entity.h">
+      <Filter>src\Sas\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sas\Scene\Scene.h">
+      <Filter>src\Sas\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Scene\SceneCamera.h">
+      <Filter>src\Sas\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Scene\ScriptableEntity.h">
       <Filter>src\Sas\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\SasPre.h">
@@ -1434,10 +1467,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sas\Scene\Entity.h" />
-    <ClInclude Include="src\Sas\Renderer\Camera.h" />
-    <ClInclude Include="src\Sas\Scene\SceneCamera.h" />
-    <ClInclude Include="src\Sas\Scene\ScriptableEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1460,6 +1489,24 @@
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexAttay.cpp">
       <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanBase.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanDebug.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanDevice.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanSwapChain.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanTools.cpp">
+      <Filter>src\Platform\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
@@ -1524,7 +1571,16 @@
     <ClCompile Include="src\Sas\Renderer\VertexArray.cpp">
       <Filter>src\Sas\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sas\Scene\Entity.cpp">
+      <Filter>src\Sas\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Sas\Scene\Scene.cpp">
+      <Filter>src\Sas\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\Scene\SceneCamera.cpp">
+      <Filter>src\Sas\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\Scene\ScriptableEntity.cpp">
       <Filter>src\Sas\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\ssph.cpp">
@@ -1533,7 +1589,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sas\Scene\Entity.cpp" />
-    <ClCompile Include="src\Sas\Scene\SceneCamera.cpp" />
   </ItemGroup>
 </Project>
