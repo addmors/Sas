@@ -30,13 +30,16 @@ namespace Sas {
 		m_ActiveScene = CreateRef<Scene>();
 
 		//Entity
-		auto square = m_ActiveScene->CreateEntity("Red Square");
-		square.AddComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		auto square = m_ActiveScene->CreateEntity("Green Square");
+		square.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+
+		auto redSquare = m_ActiveScene->CreateEntity("Red Square");
+		redSquare.AddComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 		m_SquareEntity = square;
 
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
 		m_CameraEntity.AddComponent<CameraComponent>();
-		m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
+		m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
 		auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
 		cc.Primary = false;
 
@@ -44,23 +47,24 @@ namespace Sas {
 		{
 		public:
 			void OnCreate() {
-
+				auto& translation = GetComponent<TransformComponent>().Translation;
+				translation.x = rand() % 10 - 5;
 			}
 			void OnDestroy() {
 
 			}
 			void OnUpdate(Timestep ts) {
 				if (ViewPortfocused) {
-					auto& transform = GetComponent<TransformComponent>().Transform;
+					auto& translation = GetComponent<TransformComponent>().Translation;
 					float Speed = 5.0f;
 					if (Input::IsKeyPressed(Key::A))
-						transform[3][0] -= Speed * ts;
+						translation.x -= Speed * ts;
 					if (Input::IsKeyPressed(Key::D))
-						transform[3][0] += Speed * ts;
+						translation.x += Speed * ts;
 					if (Input::IsKeyPressed(Key::W))
-						transform[3][1] += Speed * ts;
+						translation.y += Speed * ts;
 					if (Input::IsKeyPressed(Key::S))
-						transform[3][1] -= Speed * ts;
+						translation.y -= Speed * ts;
 				}
 
 			}
@@ -177,7 +181,7 @@ namespace Sas {
 		}
 		m_SceneHierarchyPanel.OnImGuiRender();
 		auto stat = Sas::Renderer2D::GetStats();
-		ImGui::Begin("Setting");
+		ImGui::Begin("Stats");
 		ImGui::Text("Render2D stat");
 		ImGui::Text("Draw Call: %d", stat.DrawCalls);
 		ImGui::Text("Quad: %d", stat.QuadCount);
@@ -185,30 +189,7 @@ namespace Sas {
 		ImGui::Text("Indecies: %df", stat.GetTotalIndexCount());
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-		//Set
-		if (m_SquareEntity) {
-			ImGui::Separator();
-
-			auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
-			ImGui::Text("%s", tag.c_str());
-			auto& color = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-			ImGui::ColorEdit4("Square Color", glm::value_ptr(color));
-			ImGui::Separator();
-		}
-		{
-		ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
-		ImGui::Checkbox("Camera Editor", &m_PrimaryCamera);
-
-		m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-		m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-		}
-
-		{
-			auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
-			float ortho = camera.GetOrthographicSize();
-			if(ImGui::DragFloat("Second Camera Ort Size :", &ortho))
-				camera.SetOrthographicSize(ortho);
-		}
+		
 		ImGui::End(); 
 		
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});

@@ -1,7 +1,7 @@
 #pragma once
 #include "Sas/Core/Window.h"
 #include "Sas/Renderer/GraphicsContext.h"
-#include "Platform\Vulkan\VulkanSwapChain.h"
+//#include "Platform\Vulkan\VulkanSwapChain.h"
 #include <GLFW/glfw3.h>
 
 namespace Sas {
@@ -45,7 +45,7 @@ namespace Sas {
 		};
 
 		WindowData m_Data;
-		VulkanSwapChain m_SwapChain;
+		//VulkanSwapChain m_SwapChain;
 	};
 
 }

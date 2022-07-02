@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <vector>
 
-#include <vulkan/vulkan.h>
+//#include <vulkan/vulkan.h>
 #include "VulkanTools.h"
 #include "VulkanDevice.h"
 
