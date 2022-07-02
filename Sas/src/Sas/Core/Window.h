@@ -15,8 +15,8 @@ namespace Sas {
 		uint16_t PosY;
 
 		WindowProps(const std::string& title = "Sas Engine",
-			uint16_t height = 720,
-			uint16_t width = 1280, uint16_t posx = 100, uint16_t posy = 100)
+			uint16_t height = 900,
+			uint16_t width = 1600, uint16_t posx = 100, uint16_t posy = 100)
 			:Title(title),Height(height),Width(width),PosX(posx),PosY(posy)
 		{};
 	};

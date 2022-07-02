@@ -80,7 +80,6 @@ namespace Sas {
 			data.Height = height;
 			data.Width = width;
 			WindowResizeEvent event(width, height);
-			SS_CORE_WARN("{0}, {1}", width, height);
 			data.EventCallback(event);
 			
 			});
@@ -89,7 +88,6 @@ namespace Sas {
 			data.PosX = posx;
 			data.PosY = posy;
 			WindowMovedEvent event(posx, posy);
-			SS_CORE_WARN("{0}, {1}", posx, posy);
 			data.EventCallback(event);
 			});
 
