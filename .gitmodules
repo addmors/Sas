@@ -13,3 +13,6 @@
 [submodule "Sas/vendor/imgui"]
 	path = Sas/vendor/imgui
 	url = https://github.com/addmors/imgui
+[submodule "Sas/vendor/yaml-cpp"]
+	path = Sas/vendor/yaml-cpp
+	url = https://github.com/addmors/yaml-cpp
