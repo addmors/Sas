@@ -25,7 +25,7 @@ namespace Sas {
 		case ShaderDataType::Bool:     return 1;
 		}
 
-		SS_CORE_ASSERT(false, "Unknown ShaderDataType!");
+		SS_CORE_ASSERT(false);
 		return 0;
 	};
 

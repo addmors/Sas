@@ -24,7 +24,9 @@ namespace Sas {
 		void OnComponentAdded(Entity entity, T& component);
 		entt::registry m_Registry;
 		uint32_t m_ViewPortWidth = 0, m_ViewPortHeight = 0;
+
 		friend class Entity;
+		friend class SceneSerializer;
 		friend class SceneHierarchyPanel;
 	};
 

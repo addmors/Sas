@@ -22,6 +22,8 @@ group "Dependencies"
 include "Sas/vendor/GLFW"
 include "Sas/vendor/Glad"
 include "Sas/vendor/ImGui"
+include "Sas/vendor/yaml-cpp"
+
 group ""
 
 
@@ -59,7 +61,8 @@ project "Sas"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGui}",		
 		"%{IncludeDir.glm}",		
-		"%{IncludeDir.stb_image}",		
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.yaml_cpp}",		
 		"%{IncludeDir.VulkanSDK}"
 			
 	}
@@ -68,6 +71,7 @@ project "Sas"
 		"GLFW",
 		"GLad",
 		"ImGui",
+		"yaml-cpp",
 		"opengl32.lib",
 
 		"%{Library.Vulkan}",
@@ -81,7 +85,8 @@ project "Sas"
 			"SS_PLATFORM_WINDOWS",
 			"SS_BUILD_DLL",
 			"GLFW_INCLUDE_NONE",
-			"_CRT_SECURE_NO_WARNINGS"
+			"_CRT_SECURE_NO_WARNINGS",
+			"YAML_CPP_STATIC_DEFINE"
 		}
 
 

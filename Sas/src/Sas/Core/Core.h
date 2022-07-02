@@ -17,17 +17,21 @@
 #endif
 
 #ifdef SS_DEBUG
-	#define SS_ENABLE_ASSERTS
-#endif
-
-#ifdef SS_ENABLE_ASSERTS
-	#define SS_ASSERT(x, ...) {if(!(x)) {SS_ERROR("Assert Failed: {0}", __VA_ARGS__); __debugbreak();} }
-	#define SS_CORE_ASSERT(x, ...) {if(!(x)) {SS_CORE_ERROR("Assert Failed: {0}", __VA_ARGS__); __debugbreak();} }
+	#if defined(SS_PLATFORM_WINDOWS)
+		#define SS_DEBUGBREAK() __debugbreak()
+	#elif defined(SS_PLATFORM_LINUX)
+		#include <signal.h>
+		#define SS_DEBUGBREAK() raise(SIGTRAP)
+	#else
+		#error "Platform doesn't support debugbreak yet!"
+	#endif
+		#define HZ_ENABLE_ASSERTS
 #else
-	#define SS_ASSERT(x, ...)
-	#define SS_CORE_ASSERT(x, ...)
-
+#define SS_DEBUGBREAK()
 #endif
+
+#define SS_EXPAND_MACRO(x) x
+#define SS_STRINGIFY_MACRO(x) #x
 
 #define BIT(x) (1<<x)
 
@@ -60,3 +64,6 @@ namespace Sas {
 	}
 
 }
+
+#include "Sas/Core/Log.h"
+#include "Sas/Core/Assert.h"

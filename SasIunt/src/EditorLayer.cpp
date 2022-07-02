@@ -5,6 +5,8 @@
 #include "glm/gtc/type_ptr.hpp"
 
 
+#include "Sas/Scene/SceneSerializer.h"
+
 namespace Sas {
 
 	static bool ViewPortfocused = false;
@@ -28,7 +30,7 @@ namespace Sas {
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		m_ActiveScene = CreateRef<Scene>();
-
+#if 0
 		//Entity
 		auto square = m_ActiveScene->CreateEntity("Green Square");
 		square.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
@@ -71,8 +73,8 @@ namespace Sas {
 
 		};
 		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-
-
+		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+#endif
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
@@ -172,11 +174,22 @@ namespace Sas {
 
 		if (ImGui::BeginMenuBar())
 		{
-			if (ImGui::BeginMenu("Options"))
+			if (ImGui::BeginMenu("File"))
 			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows,
+				// Disabling full screen would allow the window to be moved to the front of other windows,
 				// which we can't undo at the moment without finer window depth/z control.
+				if (ImGui::MenuItem("Serialize")) 
+				{
+					SceneSerializer serializer(m_ActiveScene);
+					serializer.Serialize("assets/scenes/Example.hazel");
+				}
+				if (ImGui::MenuItem("Deserialize"))
+				{
+					SceneSerializer serializer(m_ActiveScene);
+					serializer.Deserialize("assets/scenes/Example.hazel");
+				}
 				if (ImGui::MenuItem("Exit")) Sas::Application::Get().Close();
+
 
 				ImGui::EndMenu();
 			}

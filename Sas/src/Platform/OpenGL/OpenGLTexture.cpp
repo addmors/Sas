@@ -37,7 +37,7 @@ namespace Sas {
 			SS_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
 			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 		}
-		SS_CORE_ASSERT(data, "Failed to load image in to the path: {0}", path);
+
 		if (data)
 		{
 			m_IsLoaded = true;

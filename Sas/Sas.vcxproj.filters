@@ -90,6 +90,9 @@
     <ClInclude Include="src\Sas\Core\Application.h">
       <Filter>src\Sas\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sas\Core\Assert.h">
+      <Filter>src\Sas\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Sas\Core\Core.h">
       <Filter>src\Sas\Core</Filter>
     </ClInclude>
@@ -187,6 +190,9 @@
       <Filter>src\Sas\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Scene\SceneCamera.h">
+      <Filter>src\Sas\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\Scene\SceneSerializer.h">
       <Filter>src\Sas\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Scene\ScriptableEntity.h">
@@ -1539,6 +1545,9 @@
       <Filter>src\Sas\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Sas\Scene\SceneCamera.cpp">
+      <Filter>src\Sas\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\Scene\SceneSerializer.cpp">
       <Filter>src\Sas\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Sas\Scene\ScriptableEntity.cpp">
