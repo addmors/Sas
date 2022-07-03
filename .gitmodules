@@ -7,9 +7,6 @@
 [submodule "Sas/vendor/spdlog"]
 	path = Sas/vendor/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "Sas/vendor/ImGuizmo"]
-	path = Sas/vendor/ImGuizmo
-	url = https://github.com/CedricGuillemet/ImGuizmo
 [submodule "Sas/vendor/imgui"]
 	path = Sas/vendor/imgui
 	url = https://github.com/addmors/imgui
