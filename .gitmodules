@@ -13,3 +13,6 @@
 [submodule "Sas/vendor/yaml-cpp"]
 	path = Sas/vendor/yaml-cpp
 	url = https://github.com/addmors/yaml-cpp
+[submodule "Sas/vendor/ImGuizmo"]
+	path = Sas/vendor/ImGuizmo
+	url = https://github.com/addmors/ImGuizmo
