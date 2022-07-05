@@ -1,3 +1,4 @@
+include "./vendor/premake/premake_customization/solution_items.lua"
 workspace "Sas"
 	architecture "x64"
 	startproject "Sendbox"
@@ -8,6 +9,11 @@ workspace "Sas"
 		"Dist"
 
 	}
+	solution_items
+	{
+		".editorconfig"
+	}
+
 	flags
 	{
 		"MultiProcessorCompile"
@@ -32,7 +38,7 @@ project "Sas"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	
@@ -49,7 +55,9 @@ project "Sas"
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"		
+		"%{prj.name}/vendor/glm/glm/**.inl",		
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",		
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"		
 	}
 	
 	includedirs
@@ -60,6 +68,7 @@ project "Sas"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGui}",		
+		"%{IncludeDir.ImGuizmo}",		
 		"%{IncludeDir.glm}",		
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.yaml_cpp}",		
@@ -67,16 +76,18 @@ project "Sas"
 			
 	}
 
-	links {
+	links
+	{
 		"GLFW",
-		"GLad",
+		"Glad",
 		"ImGui",
 		"yaml-cpp",
-		"opengl32.lib",
-
-		"%{Library.Vulkan}",
-		"%{Library.VulkanUtils}",
+		"opengl32.lib"
 	}
+
+	filter "files:Sas/vendor/ImGuizmo/**.cpp"
+		flags {"NoPCH"}
+
 	filter "system:windows"
 		systemversion "latest"
 
@@ -94,6 +105,7 @@ project "Sas"
 		defines {"SS_DEBUG", "SS_ENABLE_ASSERTS"}
 		runtime "Debug"
 		symbols "on"
+
 		links
 		{
 			"%{Library.ShaderC_Debug}",
@@ -106,7 +118,7 @@ project "Sas"
 	filter "configurations:Release"
 		defines "SS_RELEASE"
 		runtime "Release"
-		optimize "on"
+		optimize "off"
 	
 		links
 		{
@@ -121,12 +133,21 @@ project "Sas"
 		runtime "Release"
 		optimize "on"
 
+		links
+		{
+			"%{Library.ShaderC_Release}",
+			"%{Library.ShaderC_Utils_Release}",
+			"%{Library.SPIRV_Cross_Release}",
+			"%{Library.SPIRV_Cross_GLSL_Release}",
+		}		
+
+
 project "Sendbox"
 	location "Sendbox"
 	kind "ConsoleApp"
 	language "C++"	
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
@@ -182,7 +203,7 @@ project "SasIunt"
 	kind "ConsoleApp"
 	language "C++"	
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
@@ -200,7 +221,8 @@ project "SasIunt"
 		"Sas/vendor/spdlog/include;",
 		"Sas/vendor",
 		"%{IncludeDir.entt}",	
-		"%{IncludeDir.glm}"		
+		"%{IncludeDir.glm}"	,
+		"%{IncludeDir.ImGuizmo}"	
 	}
 	
 	links {

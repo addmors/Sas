@@ -7,8 +7,8 @@ namespace Sas {
 	class SasEditor : public Sas::Application
 	{
 	public:
-		SasEditor()
-			:Application("Sas Editor")
+		SasEditor(ApplicationCommandLineArgs args)
+			: Application("SasEditor", args)
 		{
 			PushLayer(new EditorLayer());
 		}
@@ -18,8 +18,8 @@ namespace Sas {
 		}
 	};
 
-	Sas::Application* CreateApplication()
+	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
-		return new SasEditor();
+		return new SasEditor(args);
 	}
 }

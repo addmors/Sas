@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "Component.h"
 #include "Sas\Renderer\Renderer2D.h"
+
 namespace Sas {
 	Scene::Scene()
 	{
@@ -26,7 +27,20 @@ namespace Sas {
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::OnUpdate(Timestep ts)
+	void Scene::OnUpdateEditor(Timestep ts, EditorCamera camera)
+	{
+		Renderer2D::BeginScene(camera);
+		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+
+		for (auto entity : group) {
+			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+		}
+		Renderer2D::EndScene();
+	}
+
+
+	void Scene::OnUpdateRuntime(Timestep ts)
 	{
 		//Update script 
 		{
@@ -72,6 +86,9 @@ namespace Sas {
 			Renderer2D::EndScene();
 		}
 	}
+
+
+
 	void Scene::OnViewPortResize(uint32_t width, uint32_t height)
 	{
 		m_ViewPortWidth = width;
@@ -87,6 +104,19 @@ namespace Sas {
 		}
 	}
 
+	Sas::Entity Scene::GetPrimaryCameraEntity()
+	{
+		auto view = m_Registry.view<CameraComponent>();
+
+		for (auto entity : view) 
+		{
+			const auto& camera = view.get<CameraComponent>(entity);
+			if (camera.Primary)
+				return Entity{ entity, this };
+		}
+		return {};
+	}
+
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component) {
 		static_assert(false);
@@ -99,7 +129,8 @@ namespace Sas {
 	template< >
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component) {
 
-		component.Camera.SetViewPortSize(m_ViewPortWidth, m_ViewPortHeight);
+		if (m_ViewPortWidth > 0 && m_ViewPortHeight > 0)
+			component.Camera.SetViewPortSize(m_ViewPortWidth, m_ViewPortHeight);
 	};
 
 	template< >

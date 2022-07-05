@@ -15,6 +15,7 @@ namespace Sas {
 	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
 	{
 		m_Context = context;
+		m_SelectionContext = {};
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()
@@ -47,6 +48,10 @@ namespace Sas {
 		}
 		ImGui::End();
 
+	}
+	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
+	{
+		m_SelectionContext = entity;
 	}
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{

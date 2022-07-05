@@ -62,15 +62,6 @@ namespace Sas {
 		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 
-		/*Ref<VulkanContext> context = Cast<VulkanContext>(m_Context);
-
-		m_SwapChain.Init(VulkanContext::GetInstance(), context->GetDevice());
-		m_SwapChain.InitSurface(m_Window);
-
-		uint32_t width = m_Data.Width, height = m_Data.Height;
-		m_SwapChain.Create(&width, &height, m_Data.vSync);*/
-
-
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 

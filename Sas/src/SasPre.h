@@ -3,6 +3,7 @@
 #include "Sas/Core/Application.h"
 #include "Sas/Core/Layer.h"
 #include "Sas/Core/Log.h"
+#include "Sas/Core/Assert.h"
 #include "Sas/Core/Timestep.h"
 
 #include "Sas/Core/Input.h"

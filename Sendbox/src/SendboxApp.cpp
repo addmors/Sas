@@ -3,21 +3,23 @@
 
 #include "SandBox2D.h"
 
-
-class Sandbox : public Sas::Application
-{
-public:
-	Sandbox()
+namespace Sas {
+	class Sandbox : public Sas::Application
 	{
-		PushLayer(new SandBox2D());
-	}
+	public:
+		Sandbox(ApplicationCommandLineArgs args)
+			: Application("Hazelnut", args)
+		{
+			PushLayer(new SandBox2D());
+		}
 
-	~Sandbox()
+		~Sandbox()
+		{
+		}
+	};
+
+	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
+		return new Sandbox(args);
 	}
-};
-
-Sas::Application* Sas::CreateApplication()
-{
-	return new Sandbox();
 }

@@ -2,7 +2,7 @@
 
 #include "entt.hpp"
 #include "Sas\Core\Timestep.h"
-
+#include "Sas\Renderer\EditorCamera.h"
 namespace Sas {
 	class Entity;
 	class Scene
@@ -14,10 +14,11 @@ namespace Sas {
 		Entity CreateEntity(const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
 
-		void OnUpdate(Timestep ts);
+		void OnUpdateRuntime(Timestep ts);
+		void OnUpdateEditor(Timestep ts, EditorCamera camera);
 		void OnViewPortResize(uint32_t width, uint32_t height);
 
-		
+		Entity  GetPrimaryCameraEntity();
 
 	private:
 		template<typename T>
