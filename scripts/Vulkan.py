@@ -11,8 +11,8 @@ from zipfile import ZipFile
 
 VULKAN_SDK = os.environ.get('VULKAN_SDK')
 VULKAN_SDK_INSTALLER_URL = 'https://sdk.lunarg.com/sdk/download/1.2.170.0/windows/vulkan_sdk.exe'
-HAZEL_VULKAN_VERSION = '1.2.189.0'
-VULKAN_SDK_EXE_PATH = 'Hazel/vendor/VulkanSDK/VulkanSDK.exe'
+Sas_VULKAN_VERSION = '1.2.189.0'
+VULKAN_SDK_EXE_PATH = 'Sas/vendor/VulkanSDK/VulkanSDK.exe'
 
 def InstallVulkanSDK():
     print('Downloading {} to {}'.format(VULKAN_SDK_INSTALLER_URL, VULKAN_SDK_EXE_PATH))
@@ -34,9 +34,9 @@ def CheckVulkanSDK():
         print("You don't have the Vulkan SDK installed!")
         InstallVulkanPrompt()
         return False
-    elif (HAZEL_VULKAN_VERSION not in VULKAN_SDK):
+    elif (Sas_VULKAN_VERSION not in VULKAN_SDK):
         print(f"Located Vulkan SDK at {VULKAN_SDK}")
-        print(f"You don't have the correct Vulkan SDK version! (Hazel requires {HAZEL_VULKAN_VERSION})")
+        print(f"You don't have the correct Vulkan SDK version! (Sas requires {Sas_VULKAN_VERSION})")
         InstallVulkanPrompt()
         return False
     
@@ -44,7 +44,7 @@ def CheckVulkanSDK():
     return True
 
 VulkanSDKDebugLibsURL = 'https://files.lunarg.com/SDK-1.2.170.0/VulkanSDK-1.2.189.0-DebugLibs.zip'
-OutputDirectory = "Hazel/vendor/VulkanSDK"
+OutputDirectory = "Sas/vendor/VulkanSDK"
 TempZipFile = f"{OutputDirectory}/VulkanSDK.zip"
 
 def CheckVulkanSDKDebugLibs():

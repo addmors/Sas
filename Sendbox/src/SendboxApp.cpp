@@ -8,7 +8,7 @@ namespace Sas {
 	{
 	public:
 		Sandbox(ApplicationCommandLineArgs args)
-			: Application("Hazelnut", args)
+			: Application("Sas", args)
 		{
 			PushLayer(new SandBox2D());
 		}
