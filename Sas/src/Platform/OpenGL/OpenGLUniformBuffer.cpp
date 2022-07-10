@@ -4,7 +4,6 @@
 #include <glad/glad.h>
 
 namespace Sas {
-
 	OpenGLUniformBuffer::OpenGLUniformBuffer(uint32_t size, uint32_t binding)
 	{
 		glCreateBuffers(1, &m_RendererID);
@@ -17,10 +16,9 @@ namespace Sas {
 		glDeleteBuffers(1, &m_RendererID);
 	}
 
-
 	void OpenGLUniformBuffer::SetData(const void* data, uint32_t size, uint32_t offset)
 	{
+		glBindBuffer(GL_UNIFORM_BUFFER, m_RendererID);
 		glNamedBufferSubData(m_RendererID, offset, size, data);
 	}
-
 }

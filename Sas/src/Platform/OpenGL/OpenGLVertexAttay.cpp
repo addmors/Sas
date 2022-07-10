@@ -1,5 +1,6 @@
 #include "ssph.h"
-#include "OpenGLVertexArray.h"
+#include "Platform/OpenGL/OpenGLVertexArray.h"
+
 #include <glad/glad.h>
 
 namespace Sas {
@@ -53,11 +54,9 @@ namespace Sas {
 		glBindVertexArray(0);
 	}
 
-
-	void OpenGLVertexArray::AddVertexBufer(const Ref<VertexBuffer>& vertexBuffer)
+	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
 		SS_PROFILE_FUNCTION();
-
 
 		SS_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 
@@ -82,7 +81,6 @@ namespace Sas {
 					layout.GetStride(),
 					(const void*)element.Offset);
 				m_VertexBufferIndex++;
-
 				break;
 			}
 			case ShaderDataType::Int:
@@ -126,16 +124,14 @@ namespace Sas {
 		m_VertexBuffers.push_back(vertexBuffer);
 	}
 
-
-	void OpenGLVertexArray::SetIndexBufer(const Ref<IndexBuffer>& indexBuffer) 
+	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
 		SS_PROFILE_FUNCTION();
 
-			
-			glBindVertexArray(m_RendererID);
-			indexBuffer->Bind();
+		glBindVertexArray(m_RendererID);
+		indexBuffer->Bind();
 
-			m_IndexBuffer = indexBuffer;
-
+		m_IndexBuffer = indexBuffer;
 	}
+
 }

@@ -5,10 +5,12 @@
 struct GLFWwindow;
 
 namespace Sas {
+
 	class OpenGLContext : public GraphicsContext
 	{
 	public:
-		OpenGLContext(GLFWwindow* window);
+		OpenGLContext(GLFWwindow* windowHandle);
+
 		virtual void Init() override;
 		virtual void SwapBuffers() override;
 	private:

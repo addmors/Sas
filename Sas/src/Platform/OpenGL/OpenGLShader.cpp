@@ -13,7 +13,9 @@
 #include "Sas/Core/Timer.h"
 
 namespace Sas {
+
 	namespace Utils {
+
 		static GLenum ShaderTypeFromString(const std::string& type)
 		{
 			if (type == "vertex")
@@ -21,9 +23,10 @@ namespace Sas {
 			if (type == "fragment" || type == "pixel")
 				return GL_FRAGMENT_SHADER;
 
-			SS_CORE_ASSERT(false);
+			SS_CORE_ASSERT(false, "Unknown shader type!");
 			return 0;
 		}
+
 		static shaderc_shader_kind GLShaderStageToShaderC(GLenum stage)
 		{
 			switch (stage)
@@ -81,49 +84,77 @@ namespace Sas {
 			return "";
 		}
 
+		static const bool IsAmdGpu()
+		{
+			const char* vendor = (char*)glGetString(GL_VENDOR);
+			return strstr(vendor, "ATI") != nullptr;
+		}
+
 	}
+
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 		: m_FilePath(filepath)
 	{
 		SS_PROFILE_FUNCTION();
+
 		Utils::CreateCacheDirectoryIfNeeded();
 
-		std::string source(ReadFile(filepath));
+		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 
 		{
 			Timer timer;
 			CompileOrGetVulkanBinaries(shaderSources);
-			CompileOrGetOpenGLBinaries();
-			CreateProgram();
+			if (Utils::IsAmdGpu()) {
+				CreateProgramForAmd();
+			}
+			else {
+				CompileOrGetOpenGLBinaries();
+				CreateProgram();
+			}
 			SS_CORE_WARN("Shader creation took {0} ms", timer.ElapsedMillis());
 		}
 
+		// Extract name from filepath
 		auto lastSlash = filepath.find_last_of("/\\");
 		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
 		auto lastDot = filepath.rfind('.');
 		auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
 		m_Name = filepath.substr(lastSlash, count);
-
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertPath, const std::string& fragPath)
-		:m_Name(name)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+		: m_Name(name)
 	{
 		SS_PROFILE_FUNCTION();
-		std::unordered_map<GLenum, std::string>  sources;
-		sources[GL_VERTEX_SHADER] = vertPath;
-		sources[GL_FRAGMENT_SHADER] = fragPath;
+
+		std::unordered_map<GLenum, std::string> sources;
+		sources[GL_VERTEX_SHADER] = vertexSrc;
+		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
+
 		CompileOrGetVulkanBinaries(sources);
-		CompileOrGetOpenGLBinaries();
-		CreateProgram();
+		if (Utils::IsAmdGpu()) {
+			CreateProgramForAmd();
+		}
+		else {
+			CompileOrGetOpenGLBinaries();
+			CreateProgram();
+		}
 	}
 
-	std::string OpenGLShader::ReadFile(const std::string path)
+	OpenGLShader::~OpenGLShader()
 	{
 		SS_PROFILE_FUNCTION();
+
+		glDeleteProgram(m_RendererID);
+	}
+
+	std::string OpenGLShader::ReadFile(const std::string& filepath)
+	{
+		SS_PROFILE_FUNCTION();
+
 		std::string result;
-		std::ifstream in(path, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
+		std::ifstream in(filepath, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
 		if (in)
 		{
 			in.seekg(0, std::ios::end);
@@ -136,18 +167,18 @@ namespace Sas {
 			}
 			else
 			{
-				SS_CORE_ERROR("Could not read from file '{0}'", path);
+				SS_CORE_ERROR("Could not read from file '{0}'", filepath);
 			}
 		}
 		else
 		{
-			SS_CORE_ERROR("Could not open file '{0}'", path);
+			SS_CORE_ERROR("Could not open file '{0}'", filepath);
 		}
 
 		return result;
 	}
 
-	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(std::string source)
+	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
 		SS_PROFILE_FUNCTION();
 
@@ -176,8 +207,7 @@ namespace Sas {
 
 	void OpenGLShader::CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
-
-		GLuint programm = glCreateProgram();
+		GLuint program = glCreateProgram();
 
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
@@ -194,8 +224,8 @@ namespace Sas {
 		{
 			std::filesystem::path shaderFilePath = m_FilePath;
 			std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + Utils::GLShaderStageCachedVulkanFileExtension(stage));
+
 			std::ifstream in(cachedPath, std::ios::in | std::ios::binary);
-			
 			if (in.is_open())
 			{
 				in.seekg(0, std::ios::end);
@@ -206,7 +236,6 @@ namespace Sas {
 				data.resize(size / sizeof(uint32_t));
 				in.read((char*)data.data(), size);
 			}
-
 			else
 			{
 				shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, Utils::GLShaderStageToShaderC(stage), m_FilePath.c_str(), options);
@@ -227,9 +256,10 @@ namespace Sas {
 					out.close();
 				}
 			}
-			for (auto&& [stage, data] : shaderData)
-				Reflect(stage, data);
 		}
+
+		for (auto&& [stage, data] : shaderData)
+			Reflect(stage, data);
 	}
 
 	void OpenGLShader::CompileOrGetOpenGLBinaries()
@@ -288,8 +318,8 @@ namespace Sas {
 				}
 			}
 		}
-
 	}
+
 	void OpenGLShader::CreateProgram()
 	{
 		GLuint program = glCreateProgram();
@@ -331,6 +361,127 @@ namespace Sas {
 		m_RendererID = program;
 	}
 
+	static bool VerifyProgramLink(GLenum& program)
+	{
+		int isLinked = 0;
+		glGetProgramiv(program, GL_LINK_STATUS, (int*)&isLinked);
+		if (isLinked == GL_FALSE)
+		{
+			int maxLength = 0;
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+			std::vector<char> infoLog(maxLength);
+			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+
+			glDeleteProgram(program);
+
+			SS_CORE_ERROR("{0}", infoLog.data());
+			SS_CORE_ASSERT(false, "[OpenGL] Shader link failure!");
+			return false;
+		}
+		return true;
+	}
+
+	void OpenGLShader::CreateProgramForAmd()
+	{
+		GLuint program = glCreateProgram();
+
+		std::filesystem::path cacheDirectory = Utils::GetCacheDirectory();
+		std::filesystem::path shaderFilePath = m_FilePath;
+		std::filesystem::path cachedPath = cacheDirectory / (shaderFilePath.filename().string() + ".cached_opengl.pgr");
+		std::ifstream in(cachedPath, std::ios::ate | std::ios::binary);
+
+		if (in.is_open())
+		{
+			auto size = in.tellg();
+			in.seekg(0);
+
+			auto data = std::vector<char>(size);
+			uint32_t format = 0;
+			in.read((char*)&format, sizeof(uint32_t));
+			in.read((char*)data.data(), size);
+			glProgramBinary(program, format, data.data(), data.size());
+
+			bool linked = VerifyProgramLink(program);
+
+			if (!linked)
+				return;
+		}
+		else
+		{
+			std::array<uint32_t, 2> glShadersIDs;
+			CompileOpenGLBinariesForAmd(program, glShadersIDs);
+			glLinkProgram(program);
+
+			bool linked = VerifyProgramLink(program);
+
+			if (linked)
+			{
+				// Save program data
+				GLint formats = 0;
+				glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats);
+				SS_CORE_ASSERT(formats > 0, "Driver does not support binary format");
+				Utils::CreateCacheDirectoryIfNeeded();
+				GLint length = 0;
+				glGetProgramiv(program, GL_PROGRAM_BINARY_LENGTH, &length);
+				auto shaderData = std::vector<char>(length);
+				uint32_t format = 0;
+				glGetProgramBinary(program, length, nullptr, &format, shaderData.data());
+				std::ofstream out(cachedPath, std::ios::out | std::ios::binary);
+				if (out.is_open())
+				{
+					out.write((char*)&format, sizeof(uint32_t));
+					out.write(shaderData.data(), shaderData.size());
+					out.flush();
+					out.close();
+				}
+			}
+
+			for (auto& id : glShadersIDs)
+				glDetachShader(program, id);
+		}
+
+		m_RendererID = program;
+	}
+
+	void OpenGLShader::CompileOpenGLBinariesForAmd(GLenum& program, std::array<uint32_t, 2>& glShadersIDs)
+	{
+		int glShaderIDIndex = 0;
+		for (auto&& [stage, spirv] : m_VulkanSPIRV)
+		{
+			spirv_cross::CompilerGLSL glslCompiler(spirv);
+			std::string source = glslCompiler.compile();
+
+			uint32_t shader;
+
+			shader = glCreateShader(stage);
+
+			const GLchar* sourceCStr = source.c_str();
+			glShaderSource(shader, 1, &sourceCStr, 0);
+
+			glCompileShader(shader);
+
+			int isCompiled = 0;
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+			if (isCompiled == GL_FALSE)
+			{
+				int maxLength = 0;
+				glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+				std::vector<char> infoLog(maxLength);
+				glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
+
+				glDeleteShader(shader);
+
+				SS_CORE_ERROR("{0}", infoLog.data());
+				SS_CORE_ASSERT(false, "[OpenGL] Shader compilation failure!");
+				return;
+			}
+			glAttachShader(program, shader);
+			glShadersIDs[glShaderIDIndex++] = shader;
+		}
+	}
+
 	void OpenGLShader::Reflect(GLenum stage, const std::vector<uint32_t>& shaderData)
 	{
 		spirv_cross::Compiler compiler(shaderData);
@@ -355,66 +506,64 @@ namespace Sas {
 		}
 	}
 
-	OpenGLShader::~OpenGLShader()
-	{
-		SS_PROFILE_FUNCTION();
-		glDeleteProgram(m_RendererID);
-	}
-
-
 	void OpenGLShader::Bind() const
 	{
-
 		SS_PROFILE_FUNCTION();
+
 		glUseProgram(m_RendererID);
 	}
 
 	void OpenGLShader::Unbind() const
 	{
-
 		SS_PROFILE_FUNCTION();
+
 		glUseProgram(0);
 	}
 
 	void OpenGLShader::SetInt(const std::string& name, int value)
 	{
 		SS_PROFILE_FUNCTION();
+
 		UploadUniformInt(name, value);
 	}
 
 	void OpenGLShader::SetIntArray(const std::string& name, int* values, uint32_t count)
 	{
-		SS_PROFILE_FUNCTION();
 		UploadUniformIntArray(name, values, count);
 	}
 
 	void OpenGLShader::SetFloat(const std::string& name, float value)
 	{
 		SS_PROFILE_FUNCTION();
+
 		UploadUniformFloat(name, value);
 	}
 
 	void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& value)
 	{
 		SS_PROFILE_FUNCTION();
+
 		UploadUniformFloat2(name, value);
 	}
 
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
 		SS_PROFILE_FUNCTION();
+
 		UploadUniformFloat3(name, value);
 	}
 
 	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{
 		SS_PROFILE_FUNCTION();
+
 		UploadUniformFloat4(name, value);
 	}
 
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 	{
 		SS_PROFILE_FUNCTION();
+
 		UploadUniformMat4(name, value);
 	}
 
@@ -465,4 +614,5 @@ namespace Sas {
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
+
 }

@@ -1,23 +1,26 @@
 #include "ssph.h"
-#include "Renderer2D.h"
-#include "VertexArray.h"
-#include "RenderCommand.h"
-#include "Shader.h"
+#include "Sas/Renderer/Renderer2D.h"
+
+#include "Sas/Renderer/VertexArray.h"
+#include "Sas/Renderer/Shader.h"
 #include "Sas/Renderer/UniformBuffer.h"
+#include "Sas/Renderer/RenderCommand.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 namespace Sas {
-	struct QuadVertex {
+
+	struct QuadVertex
+	{
 		glm::vec3 Position;
 		glm::vec4 Color;
 		glm::vec2 TexCoord;
 		float TexIndex;
 		float TilingFactor;
 
-		//Editor only
-		int EntityID = -1;
+		// Editor-only
+		int EntityID;
 	};
 
 	struct Renderer2DData
@@ -25,21 +28,19 @@ namespace Sas {
 		static const uint32_t MaxQuads = 20000;
 		static const uint32_t MaxVertices = MaxQuads * 4;
 		static const uint32_t MaxIndices = MaxQuads * 6;
-		static const uint32_t MaxTextureSlots = 32;
+		static const uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
+
 		Ref<VertexArray> QuadVertexArray;
 		Ref<VertexBuffer> QuadVertexBuffer;
-
 		Ref<Shader> TextureShader;
 		Ref<Texture2D> WhiteTexture;
 
-
 		uint32_t QuadIndexCount = 0;
-	
 		QuadVertex* QuadVertexBufferBase = nullptr;
 		QuadVertex* QuadVertexBufferPtr = nullptr;
 
 		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
-		uint32_t TextureSlotIndex = 1; //0-WhiteTexture;
+		uint32_t TextureSlotIndex = 1; // 0 = white texture
 
 		glm::vec4 QuadVertexPositions[4];
 
@@ -63,21 +64,19 @@ namespace Sas {
 
 		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
 		s_Data.QuadVertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float4, "a_Color" },
-			{ ShaderDataType::Float2, "a_TexCoord" },
-			{ ShaderDataType::Float, "a_TexIndex" },
-			{ ShaderDataType::Float, "a_TilingFactor" },
-			{ ShaderDataType::Int, "a_EntityID" },
-
+			{ ShaderDataType::Float3, "a_Position"     },
+			{ ShaderDataType::Float4, "a_Color"        },
+			{ ShaderDataType::Float2, "a_TexCoord"     },
+			{ ShaderDataType::Float,  "a_TexIndex"     },
+			{ ShaderDataType::Float,  "a_TilingFactor" },
+			{ ShaderDataType::Int,    "a_EntityID"     }
 			});
-		s_Data.QuadVertexArray->AddVertexBufer(s_Data.QuadVertexBuffer);
-		
+		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
+
 		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
 
-		
 		uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
-		
+
 		uint32_t offset = 0;
 		for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
 		{
@@ -92,21 +91,21 @@ namespace Sas {
 			offset += 4;
 		}
 
-		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices,s_Data.MaxIndices);
-		s_Data.QuadVertexArray->SetIndexBufer(quadIB);
-		delete [] quadIndices;
-		
+		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
+		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
+		delete[] quadIndices;
+
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 
+		int32_t samplers[s_Data.MaxTextureSlots];
+		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
+			samplers[i] = i;
 
-		int samples[s_Data.MaxTextureSlots];
-		for (int i = 0; i < s_Data.MaxTextureSlots; i++) {
-			samples[i] = i;
-		}
 		s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
 
+		// Set first texture slot to 0
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
 		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
@@ -120,18 +119,19 @@ namespace Sas {
 	void Renderer2D::Shutdown()
 	{
 		SS_PROFILE_FUNCTION();
+
+		delete[] s_Data.QuadVertexBufferBase;
 	}
 
-	
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		SS_PROFILE_FUNCTION();
+
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
 		StartBatch();
 	}
-
 
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
 	{
@@ -139,13 +139,14 @@ namespace Sas {
 
 		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
+
 		StartBatch();
 	}
-
 
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
 		SS_PROFILE_FUNCTION();
+
 		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
@@ -155,9 +156,9 @@ namespace Sas {
 	void Renderer2D::EndScene()
 	{
 		SS_PROFILE_FUNCTION();
+
 		Flush();
 	}
-	
 
 	void Renderer2D::StartBatch()
 	{
@@ -165,13 +166,6 @@ namespace Sas {
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
 
 		s_Data.TextureSlotIndex = 1;
-	}
-
-
-	void Renderer2D::NextBatch()
-	{
-		Flush();
-		StartBatch();
 	}
 
 	void Renderer2D::Flush()
@@ -182,16 +176,20 @@ namespace Sas {
 		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
 		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
+		// Bind textures
 		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 			s_Data.TextureSlots[i]->Bind(i);
-		
 
 		s_Data.TextureShader->Bind();
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 		s_Data.Stats.DrawCalls++;
 	}
 
-	
+	void Renderer2D::NextBatch()
+	{
+		Flush();
+		StartBatch();
+	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 	{
@@ -222,7 +220,6 @@ namespace Sas {
 
 		DrawQuad(transform, texture, tilingFactor, tintColor);
 	}
-
 
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
@@ -298,13 +295,9 @@ namespace Sas {
 		s_Data.Stats.QuadCount++;
 	}
 
-
-
-
-
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
 	{
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, color);
+		DrawRotatedQuad({position.x, position.y, 0.0f}, size, rotation, color);
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
@@ -326,7 +319,6 @@ namespace Sas {
 	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tilingFactor, const glm::vec4& tintColor)
 	{
 		SS_PROFILE_FUNCTION();
-
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0.0f, 0.0f, 1.0f })
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
