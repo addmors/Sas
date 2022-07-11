@@ -17,3 +17,6 @@
 	path = Sas/vendor/ImGuizmo
 	url = https://github.com/addmors/ImGuizmo
 
+[submodule "Sas/vendor/msdf-atlas-gen"]
+	path = Sas/vendor/msdf-atlas-gen
+	url = https://github.com/addmors/msdf-atlas-gen
