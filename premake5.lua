@@ -29,7 +29,8 @@ include "Sas/vendor/GLFW"
 include "Sas/vendor/Glad"
 include "Sas/vendor/ImGui"
 include "Sas/vendor/yaml-cpp"
-
+group "Dependencies/msdf"
+include "Sas/vendor/msdf-atlas-gen"
 group ""
 
 
@@ -71,7 +72,10 @@ project "Sas"
 		"%{IncludeDir.ImGuizmo}",		
 		"%{IncludeDir.glm}",		
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.yaml_cpp}",		
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.msdf_atlas_gen}",
+		"%{IncludeDir.msdfgen}",
+		
 		"%{IncludeDir.VulkanSDK}"
 			
 	}
@@ -82,6 +86,7 @@ project "Sas"
 		"Glad",
 		"ImGui",
 		"yaml-cpp",
+		"msdf-atlas-gen",
 		"opengl32.lib"
 	}
 

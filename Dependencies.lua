@@ -14,6 +14,8 @@ IncludeDir["shaderc"] = "%{wks.location}/Sas/vendor/shaderc/include"
 IncludeDir["stb_image"] = "%{wks.location}/Sas/vendor/stb_image"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 IncludeDir["yaml_cpp"] = "%{wks.location}/Sas/vendor/yaml-cpp/include"
+IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Sas/vendor/msdf-atlas-gen/msdf-atlas-gen"
+IncludeDir["msdfgen"] = "%{wks.location}/Sas/vendor/msdf-atlas-gen/msdfgen"
 
 
 LibraryDir = {}
@@ -35,4 +37,3 @@ Library["ShaderC_Release"] = "%{LibraryDir.VulkanSDK}/shaderc_shared.lib"
 Library["ShaderC_Utils_Release"] = "%{LibraryDir.VulkanSDK}/shaderc_util.lib"
 Library["SPIRV_Cross_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-core.lib"
 Library["SPIRV_Cross_GLSL_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-glsl.lib"
-
