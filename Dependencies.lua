@@ -16,7 +16,7 @@ IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 IncludeDir["yaml_cpp"] = "%{wks.location}/Sas/vendor/yaml-cpp/include"
 IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Sas/vendor/msdf-atlas-gen/msdf-atlas-gen"
 IncludeDir["msdfgen"] = "%{wks.location}/Sas/vendor/msdf-atlas-gen/msdfgen"
-
+IncludeDir["ImGuiNodeEditor"] = "%{wks.location}/Sas/vendor/imgui-node-editor"
 
 LibraryDir = {}
 

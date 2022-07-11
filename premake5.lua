@@ -58,7 +58,10 @@ project "Sas"
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",		
 		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",		
-		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"		
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp",
+		"%{prj.name}/vendor/imgui-node-editor/**.cpp",
+		"%{prj.name}/vendor/imgui-node-editor/**.h",
+		"%{prj.name}/vendor/imgui-node-editor/**.inl"
 	}
 	
 	includedirs
@@ -69,7 +72,8 @@ project "Sas"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGui}",		
-		"%{IncludeDir.ImGuizmo}",		
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.ImGuiNodeEditor}",		
 		"%{IncludeDir.glm}",		
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.yaml_cpp}",
@@ -90,7 +94,7 @@ project "Sas"
 		"opengl32.lib"
 	}
 
-	filter "files:Sas/vendor/ImGuizmo/**.cpp"
+	filter "files:Sas/vendor/ImGuizmo/**.cpp or files:Sas/vendor/imgui-node-editor/**.cpp"
 		flags {"NoPCH"}
 
 	filter "system:windows"
@@ -170,7 +174,8 @@ project "Sendbox"
 		"Sas/vendor/spdlog/include;",
 		"Sas/vendor",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.glm}"		
+		"%{IncludeDir.glm}"	,
+		"%{IncludeDir.ImGuiNodeEditor}",	
 	}
 	
 	links {
@@ -227,7 +232,8 @@ project "SasIunt"
 		"Sas/vendor",
 		"%{IncludeDir.entt}",	
 		"%{IncludeDir.glm}"	,
-		"%{IncludeDir.ImGuizmo}"	
+		"%{IncludeDir.ImGuizmo}",
+		"%{IncludeDir.ImGuiNodeEditor}",	
 	}
 	
 	links {
