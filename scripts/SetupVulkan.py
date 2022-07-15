@@ -10,8 +10,8 @@ from urllib.request import urlopen
 
 class VulkanConfiguration:
     requiredVulkanVersion = "1.2."
-    installVulkanVersion = "1.2.189.0"
-    vulkanDirectory = "./Hazel/vendor/VulkanSDK"
+    installVulkanVersion = "1.2.189.2"
+    vulkanDirectory = "./Sas/vendor/VulkanSDK"
 
     @classmethod
     def Validate(cls):

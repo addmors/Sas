@@ -1,6 +1,14 @@
 #include "EditorLayer.h"
 #include <imgui/imgui.h>
 
+
+//TEMP TODO gen class  imgui-node-editor
+# define IMGUI_DEFINE_MATH_OPERATORS
+# include <imgui/imgui_internal.h>
+# include <imgui_node_editor.h>
+// ------
+
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -16,6 +24,13 @@ namespace Sas {
 	
 	extern const std::filesystem::path g_AssetPath;
 
+
+	namespace ed = ax::NodeEditor;
+
+	static ed::EditorContext* g_Context = nullptr;
+
+
+
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f), m_SquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
 	{
@@ -24,6 +39,13 @@ namespace Sas {
 	void EditorLayer::OnAttach()
 	{
 		SS_PROFILE_FUNCTION();
+
+		//TEMP
+		ed::Config config;
+		config.SettingsFile = "Simple.json";
+		g_Context = ed::CreateEditor(&config);
+		//
+
 
 		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
@@ -105,6 +127,8 @@ namespace Sas {
 	void EditorLayer::OnDetach()
 	{
 		SS_PROFILE_FUNCTION();
+
+		ed::DestroyEditor(g_Context);
 	}
 
 	void EditorLayer::OnUpdate(Timestep ts)
@@ -255,7 +279,31 @@ namespace Sas {
 		m_SceneHierarchyPanel.OnImGuiRender();
 		
 
-		ImGui::ShowDemoWindow();
+		ImGui::Begin("Node Editor");
+
+		ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
+
+		ImGui::Separator();
+
+		ed::SetCurrentEditor(g_Context);
+		ed::Begin("My Editor", ImVec2(0.0, 0.0f));
+		int uniqueId = 1;
+		// Start drawing nodes.
+		ed::BeginNode(uniqueId++);
+			ImGui::Text("Node A");
+			ed::BeginPin(uniqueId++, ed::PinKind::Input);
+				ImGui::Text("-> In");
+			ed::EndPin();
+			ImGui::SameLine();
+			ed::BeginPin(uniqueId++, ed::PinKind::Output);
+				ImGui::Text("Out ->");
+			ed::EndPin();
+		ed::EndNode();
+		ed::End();
+		ed::SetCurrentEditor(nullptr);
+		ImGui::End();
+
+		//ImGui::ShowDemoWindow();
 		ImGui::Begin("Stats");
 
 		std::string name = "None";
