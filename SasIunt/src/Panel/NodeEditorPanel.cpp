@@ -1,9 +1,11 @@
+#include <imgui/imgui_internal.h>
+#include <imgui\imgui.h>
 #include "ssph.h"
 #include "NodeEditorPanel.h"
+#include "Sas/NodeEditot/Widgets.h"
 
-# define IMGUI_DEFINE_MATH_OPERATORS
-#include <imgui\imgui.h>
-# include <imgui/imgui_internal.h>
+#define IMGUI_DEFINE_MATH_OPERATORS
+
 
 namespace Sas {
 	int NodeEditorPanel::s_NextId = 1;
@@ -95,6 +97,48 @@ namespace Sas {
 
 		return true;
 	}
+	
+	ImColor NodeEditorPanel::GetIconColor(PinType type)
+	{
+		{
+			switch (type)
+			{
+			default:
+			case PinType::Flow:     return ImColor(255, 255, 255);
+			case PinType::Bool:     return ImColor(220, 48, 48);
+			case PinType::Int:      return ImColor(68, 201, 156);
+			case PinType::Float:    return ImColor(147, 226, 74);
+			case PinType::String:   return ImColor(124, 21, 153);
+			case PinType::Object:   return ImColor(51, 150, 215);
+			case PinType::Function: return ImColor(218, 0, 183);
+			case PinType::Delegate: return ImColor(255, 48, 48);
+			}
+		};
+	}
+
+	void NodeEditorPanel::DrawPinIcon(const Pin& pin, bool connected, int alpha)
+	{
+			Drawing::IconType iconType;
+			ImColor  color = GetIconColor(pin.Type);
+			color.Value.w = alpha / 255.0f;
+			
+			switch (pin.Type)
+			{
+			case PinType::Flow:     iconType = Drawing::IconType::Flow;   break;
+			case PinType::Bool:     iconType = Drawing::IconType::Circle; break;
+			case PinType::Int:      iconType = Drawing::IconType::Circle; break;
+			case PinType::Float:    iconType = Drawing::IconType::Circle; break;
+			case PinType::String:   iconType = Drawing::IconType::Circle; break;
+			case PinType::Object:   iconType = Drawing::IconType::Circle; break;
+			case PinType::Function: iconType = Drawing::IconType::Circle; break;
+			case PinType::Delegate: iconType = Drawing::IconType::Square; break;
+			default:
+				return;
+			}
+
+			Widgets::Icon(ImVec2(s_PinIconSize, s_PinIconSize), iconType, connected, color, ImColor(32, 32, 32, alpha));
+	}
+
 
 	NodeEditorPanel::NodeEditorPanel()
 	{
@@ -106,6 +150,13 @@ namespace Sas {
 		ed::Config config;
 		config.SettingsFile = "Simple.json"; //TODO: What is it?
 		m_Context = ed::CreateEditor(&config);
+		ed::SetCurrentEditor(m_Context);
+
+		Node* node;
+		node = SpawnInputActionNode();      ed::SetNodePosition(node->ID, ImVec2(-252, 220));
+		node = SpawnBranchNode();           ed::SetNodePosition(node->ID, ImVec2(-300, 351));
+
+		ed::NavigateToContent();	
 	};
 
 	void NodeEditorPanel::OnDetach() {
@@ -125,65 +176,168 @@ namespace Sas {
 
 		ed::SetCurrentEditor(m_Context);
 
-		// Start interaction with editor.
-		ed::Begin("My Editor", ImVec2(0.0, 0.0f));
+		ed::NodeId contextNodeId = 0;
+		ed::LinkId contextLinkId = 0;
+		ed::PinId  contextPinId = 0;
+		bool createNewNode = false;
+		Pin* newNodeLinkPin = nullptr;
+		Pin* newLinkPin = nullptr;
 
-		int uniqueId = 1;
+		float leftPaneWidth = 400.0f;
+		float rightPaneWidth = 800.0f;
+		
+		
+		ImGui::SameLine(0.0f, 12.0f);
 
-		//
-		// 1) Commit known data to editor
-		//
+		ed::Begin("Node editor");
+		{
+			auto cursorTopLeft = ImGui::GetCursorScreenPos();
+			for (auto& node : m_Nodes)
+			{
+				if (node.Type != NodeType::Blueprint && node.Type != NodeType::Simple)
+					continue;
 
-		// Submit Node A
-		ed::NodeId nodeA_Id = uniqueId++;
-		ed::PinId  nodeA_InputPinId = uniqueId++;
-		ed::PinId  nodeA_OutputPinId = uniqueId++;
+				const auto isSimple = node.Type == NodeType::Simple;
 
-		if (m_FirstFrame)
-			ed::SetNodePosition(nodeA_Id, ImVec2(10, 10));
-		ed::BeginNode(nodeA_Id);
-		ImGui::Text("Node A");
-		ed::BeginPin(nodeA_InputPinId, ed::PinKind::Input);
-		ImGui::Text("-> In");
-		ed::EndPin();
-		ImGui::SameLine();
-		ed::BeginPin(nodeA_OutputPinId, ed::PinKind::Output);
-		ImGui::Text("Out ->");
-		ed::EndPin();
-		ed::EndNode();
+				bool hasOutputDelegates = false;
+				for (auto& output : node.Outputs)
+					if (output.Type == PinType::Delegate)
+						hasOutputDelegates = true;
 
-		// Submit Node B
-		ed::NodeId nodeB_Id = uniqueId++;
-		ed::PinId  nodeB_InputPinId1 = uniqueId++;
-		ed::PinId  nodeB_InputPinId2 = uniqueId++;
-		ed::PinId  nodeB_OutputPinId = uniqueId++;
+				m_BuilderNode->Begin(node.ID);
+				if (!isSimple)
+				{
+					m_BuilderNode->Header(node.Color);
+					ImGui::Spring(0);
+					ImGui::TextUnformatted(node.Name.c_str());
+					ImGui::Spring(1);
+					ImGui::Dummy(ImVec2(0, 28));
+					if (hasOutputDelegates)
+					{
+						ImGui::BeginVertical("delegates", ImVec2(0, 28));
+						ImGui::Spring(1, 0);
+						for (auto& output : node.Outputs)
+						{
+							if (output.Type != PinType::Delegate)
+								continue;
 
-		if (m_FirstFrame)
-			ed::SetNodePosition(nodeB_Id, ImVec2(210, 60));
-		ed::BeginNode(nodeB_Id);
-		ImGui::Text("Node B");
-		ImGuiEx_BeginColumn();
-		ed::BeginPin(nodeB_InputPinId1, ed::PinKind::Input);
-		ImGui::Text("-> In1");
-		ed::EndPin();
-		ed::BeginPin(nodeB_InputPinId2, ed::PinKind::Input);
-		ImGui::Text("-> In2");
-		ed::EndPin();
-		ImGuiEx_NextColumn();
-		ed::BeginPin(nodeB_OutputPinId, ed::PinKind::Output);
-		ImGui::Text("Out ->");
-		ed::EndPin();
-		ImGuiEx_EndColumn();
-		ed::EndNode();
+							auto alpha = ImGui::GetStyle().Alpha;
+							if (newLinkPin && !CanCreateLink(newLinkPin, &output) && &output != newLinkPin)
+								alpha = alpha * (48.0f / 255.0f);
 
-		// Submit Links
-		for (auto& linkInfo : m_Links)
-			ed::Link(linkInfo.ID, linkInfo.StartPinID, linkInfo.EndPinID);
+							ed::BeginPin(output.ID, ed::PinKind::Output);
+							ed::PinPivotAlignment(ImVec2(1.0f, 0.5f));
+							ed::PinPivotSize(ImVec2(0, 0));
+							ImGui::BeginHorizontal(output.ID.AsPointer());
+							ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+							if (!output.Name.empty())
+							{
+								ImGui::TextUnformatted(output.Name.c_str());
+								ImGui::Spring(0);
+							}
+							DrawPinIcon(output, IsPinLinked(output.ID), (int)(alpha * 255));
+							ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
+							ImGui::EndHorizontal();
+							ImGui::PopStyleVar();
+							ed::EndPin();
 
-		if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Z)))
-			for (auto& link : m_Links)
-				ed::Flow(link.ID);
+							//DrawItemRect(ImColor(255, 0, 0));
+						}
+						ImGui::Spring(1, 0);
+						ImGui::EndVertical();
+						ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
+					}
+					else
+						ImGui::Spring(0);
+					m_BuilderNode->EndHeader();
+				}
 
+				for (auto& input : node.Inputs)
+				{
+					auto alpha = ImGui::GetStyle().Alpha;
+					if (newLinkPin && !CanCreateLink(newLinkPin, &input) && &input != newLinkPin)
+						alpha = alpha * (48.0f / 255.0f);
+
+					m_BuilderNode->Input(input.ID);
+					ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+					DrawPinIcon(input, IsPinLinked(input.ID), (int)(alpha * 255));
+					ImGui::Spring(0);
+					if (!input.Name.empty())
+					{
+						ImGui::TextUnformatted(input.Name.c_str());
+						ImGui::Spring(0);
+					}
+					if (input.Type == PinType::Bool)
+					{
+						ImGui::Button("Hello");
+						ImGui::Spring(0);
+					}
+					ImGui::PopStyleVar();
+					m_BuilderNode->EndInput();
+				}
+
+				if (isSimple)
+				{
+					m_BuilderNode->Middle();
+
+					ImGui::Spring(1, 0);
+					ImGui::TextUnformatted(node.Name.c_str());
+					ImGui::Spring(1, 0);
+				}
+
+				for (auto& output : node.Outputs)
+				{
+					if (!isSimple && output.Type == PinType::Delegate)
+						continue;
+
+					auto alpha = ImGui::GetStyle().Alpha;
+					if (newLinkPin && !CanCreateLink(newLinkPin, &output) && &output != newLinkPin)
+						alpha = alpha * (48.0f / 255.0f);
+
+					ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
+					m_BuilderNode->Output(output.ID);
+					if (output.Type == PinType::String)
+					{
+						static char buffer[128] = "Edit Me\nMultiline!";
+						static bool wasActive = false;
+
+						ImGui::PushItemWidth(100.0f);
+						ImGui::InputText("##edit", buffer, 127);
+						ImGui::PopItemWidth();
+						if (ImGui::IsItemActive() && !wasActive)
+						{
+							ed::EnableShortcuts(false);
+							wasActive = true;
+						}
+						else if (!ImGui::IsItemActive() && wasActive)
+						{
+							ed::EnableShortcuts(true);
+							wasActive = false;
+						}
+						ImGui::Spring(0);
+					}
+					if (!output.Name.empty())
+					{
+						ImGui::Spring(0);
+						ImGui::TextUnformatted(output.Name.c_str());
+					}
+					ImGui::Spring(0);
+					DrawPinIcon(output, IsPinLinked(output.ID), (int)(alpha * 255));
+					ImGui::PopStyleVar();
+					m_BuilderNode->EndOutput();
+				}
+
+				m_BuilderNode->End();
+			}
+			// Submit Links
+			for (auto& linkInfo : m_Links)
+				ed::Link(linkInfo.ID, linkInfo.StartPinID, linkInfo.EndPinID);
+
+			if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Z)))
+				for (auto& link : m_Links)
+					ed::Flow(link.ID);
+		}
+		
 		//
 		// 2) Handle interactions
 		//
@@ -261,7 +415,7 @@ namespace Sas {
 
 		if (m_FirstFrame)
 			ed::NavigateToContent(0.0f);
-
+		 
 		ed::SetCurrentEditor(nullptr);
 
 		m_FirstFrame = false;

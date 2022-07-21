@@ -10,20 +10,24 @@
     <ClInclude Include="src\Panel\ContentBrowserPanel.h">
       <Filter>Panel</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panel\NodeEditorPanel.h">
+      <Filter>Panel</Filter>
+    </ClInclude>
     <ClInclude Include="src\Panel\SceneHierarchyPanel.h">
       <Filter>Panel</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panel\NodeEditorPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorLayer.cpp" />
     <ClCompile Include="src\Panel\ContentBrowserPanel.cpp">
       <Filter>Panel</Filter>
     </ClCompile>
+    <ClCompile Include="src\Panel\NodeEditorPanel.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
     <ClCompile Include="src\Panel\SceneHierarchyPanel.cpp">
       <Filter>Panel</Filter>
     </ClCompile>
     <ClCompile Include="src\SasEditorApp.cpp" />
-    <ClCompile Include="src\Panel\NodeEditorPanel.cpp" />
   </ItemGroup>
 </Project>

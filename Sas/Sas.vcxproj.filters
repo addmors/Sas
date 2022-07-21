@@ -31,6 +31,9 @@
     <Filter Include="src\Sas\ImGui">
       <UniqueIdentifier>{EDF89282-59B9-0EB9-22F4-57368E735395}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Sas\NodeEditot">
+      <UniqueIdentifier>{E109573A-CDED-1790-364E-12E322510212}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Sas\Renderer">
       <UniqueIdentifier>{89D4151A-75CD-346C-9EFF-19F18A571478}</UniqueIdentifier>
     </Filter>
@@ -158,6 +161,15 @@
     </ClInclude>
     <ClInclude Include="src\Sas\Math.h">
       <Filter>src\Sas</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\NodeEditot\BuilderNode.h">
+      <Filter>src\Sas\NodeEditot</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\NodeEditot\Drawing.h">
+      <Filter>src\Sas\NodeEditot</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sas\NodeEditot\Widgets.h">
+      <Filter>src\Sas\NodeEditot</Filter>
     </ClInclude>
     <ClInclude Include="src\Sas\Renderer\Buffer.h">
       <Filter>src\Sas\Renderer</Filter>
@@ -1509,9 +1521,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sas\NodeEditot\BuilderNode.h" />
-    <ClInclude Include="src\Sas\NodeEditot\Drawing.h" />
-    <ClInclude Include="src\Sas\NodeEditot\Widgets.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1570,6 +1579,15 @@
     </ClCompile>
     <ClCompile Include="src\Sas\Math.cpp">
       <Filter>src\Sas</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\NodeEditot\BuilderNode.cpp">
+      <Filter>src\Sas\NodeEditot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\NodeEditot\Drawing.cpp">
+      <Filter>src\Sas\NodeEditot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sas\NodeEditot\Widgets.cpp">
+      <Filter>src\Sas\NodeEditot</Filter>
     </ClCompile>
     <ClCompile Include="src\Sas\Renderer\Buffer.cpp">
       <Filter>src\Sas\Renderer</Filter>
@@ -1649,8 +1667,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sas\NodeEditot\BuilderNode.cpp" />
-    <ClCompile Include="src\Sas\NodeEditot\Drawing.cpp" />
-    <ClCompile Include="src\Sas\NodeEditot\Widgets.cpp" />
   </ItemGroup>
 </Project>

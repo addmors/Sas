@@ -3,6 +3,7 @@
 # include "Sas/NodeEditot/BuilderNode.h"
 
 #include "Sas/Renderer/Texture.h"
+
 namespace Sas {
 	namespace ed = ax::NodeEditor;
 
@@ -116,8 +117,11 @@ namespace Sas {
 		Ref<Texture> m_Background;
 		Ref<BuilderNode> m_BuilderNode;
 	
+	private:
 
+		void DrawPinIcon(const Pin& pin, bool connected, int alpha);
 
+		ImColor GetIconColor(PinType type);
 	private:
 		static const int s_PinIconSize = 24;
 		static int s_NextId;
