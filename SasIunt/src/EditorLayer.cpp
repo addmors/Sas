@@ -2,13 +2,6 @@
 #include <imgui/imgui.h>
 
 
-//TEMP TODO gen class  imgui-node-editor
-# define IMGUI_DEFINE_MATH_OPERATORS
-# include <imgui/imgui_internal.h>
-# include <imgui_node_editor.h>
-// ------
-
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -25,12 +18,6 @@ namespace Sas {
 	extern const std::filesystem::path g_AssetPath;
 
 
-	namespace ed = ax::NodeEditor;
-
-	static ed::EditorContext* g_Context = nullptr;
-
-
-
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f), m_SquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
 	{
@@ -39,13 +26,6 @@ namespace Sas {
 	void EditorLayer::OnAttach()
 	{
 		SS_PROFILE_FUNCTION();
-
-		//TEMP
-		ed::Config config;
-		config.SettingsFile = "Simple.json";
-		g_Context = ed::CreateEditor(&config);
-		//
-
 
 		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
@@ -122,13 +102,15 @@ namespace Sas {
 #endif
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+		m_NodeEditorPanel.OnAttach();
 	}
 
 	void EditorLayer::OnDetach()
 	{
 		SS_PROFILE_FUNCTION();
+		m_NodeEditorPanel.OnDetach();
 
-		ed::DestroyEditor(g_Context);
 	}
 
 	void EditorLayer::OnUpdate(Timestep ts)
@@ -277,33 +259,10 @@ namespace Sas {
 
 		m_ContentBrowserPanel.OnImGuiRender();
 		m_SceneHierarchyPanel.OnImGuiRender();
-		
+		m_NodeEditorPanel.OnImGuiRender();
 
-		ImGui::Begin("Node Editor");
 
-		ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
-
-		ImGui::Separator();
-
-		ed::SetCurrentEditor(g_Context);
-		ed::Begin("My Editor", ImVec2(0.0, 0.0f));
-		int uniqueId = 1;
-		// Start drawing nodes.
-		ed::BeginNode(uniqueId++);
-			ImGui::Text("Node A");
-			ed::BeginPin(uniqueId++, ed::PinKind::Input);
-				ImGui::Text("-> In");
-			ed::EndPin();
-			ImGui::SameLine();
-			ed::BeginPin(uniqueId++, ed::PinKind::Output);
-				ImGui::Text("Out ->");
-			ed::EndPin();
-		ed::EndNode();
-		ed::End();
-		ed::SetCurrentEditor(nullptr);
-		ImGui::End();
-
-		//ImGui::ShowDemoWindow();
+		ImGui::ShowDemoWindow();
 		ImGui::Begin("Stats");
 
 		std::string name = "None";
@@ -349,53 +308,56 @@ namespace Sas {
 
 		// Gizmo's
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-		if (selectedEntity && m_GizmoType != -1)
-		{
-			ImGuizmo::SetOrthographic(false);
-			ImGuizmo::SetDrawlist();
-
-			ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
-
-			// Camera
-
-			// Runtime camera from entity
-			// auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			// const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
-			// const glm::mat4& cameraProjection = camera.GetProjection();
-			// glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
-
-			// Editor camera
-			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
-			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
-
-			// Entity transform
-			auto& tc = selectedEntity.GetComponent<TransformComponent>();
-			glm::mat4 transform = tc.GetTransform();
-
-			// Snapping
-			bool snap = Input::IsKeyPressed(Key::LeftControl);
-			float snapValue = 0.5f; // Snap to 0.5m for translation/scale
-			// Snap to 45 degrees for rotation
-			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
-				snapValue = 45.0f;
-
-			float snapValues[3] = { snapValue, snapValue, snapValue };
-
-			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-				(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
-				nullptr, snap ? snapValues : nullptr);
-
-			if (ImGuizmo::IsUsing())
+		if (m_SceneState == SceneState::Edit) {
+			if (selectedEntity && m_GizmoType != -1)
 			{
-				glm::vec3 translation, rotation, scale;
-				Math::DecomposeTransform(transform, translation, rotation, scale);
+				ImGuizmo::SetOrthographic(false);
+				ImGuizmo::SetDrawlist();
 
-				glm::vec3 deltaRotation = rotation - tc.Rotation;
-				tc.Translation = translation;
-				tc.Rotation += deltaRotation;
-				tc.Scale = scale;
+				ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
+
+				// Camera
+
+				// Runtime camera from entity
+				// auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+				// const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+				// const glm::mat4& cameraProjection = camera.GetProjection();
+				// glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+				// Editor camera
+				const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+				glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
+
+				// Entity transform
+				auto& tc = selectedEntity.GetComponent<TransformComponent>();
+				glm::mat4 transform = tc.GetTransform();
+
+				// Snapping
+				bool snap = Input::IsKeyPressed(Key::LeftControl);
+				float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+				// Snap to 45 degrees for rotation
+				if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+					snapValue = 45.0f;
+
+				float snapValues[3] = { snapValue, snapValue, snapValue };
+
+				ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+					(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+					nullptr, snap ? snapValues : nullptr);
+
+				if (ImGuizmo::IsUsing())
+				{
+					glm::vec3 translation, rotation, scale;
+					Math::DecomposeTransform(transform, translation, rotation, scale);
+
+					glm::vec3 deltaRotation = rotation - tc.Rotation;
+					tc.Translation = translation;
+					tc.Rotation += deltaRotation;
+					tc.Scale = scale;
+				}
 			}
 		}
+
 		ImGui::End();
 		ImGui::PopStyleVar();
 		

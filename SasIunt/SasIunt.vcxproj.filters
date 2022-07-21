@@ -13,6 +13,7 @@
     <ClInclude Include="src\Panel\SceneHierarchyPanel.h">
       <Filter>Panel</Filter>
     </ClInclude>
+    <ClInclude Include="src\Panel\NodeEditorPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorLayer.cpp" />
@@ -23,5 +24,6 @@
       <Filter>Panel</Filter>
     </ClCompile>
     <ClCompile Include="src\SasEditorApp.cpp" />
+    <ClCompile Include="src\Panel\NodeEditorPanel.cpp" />
   </ItemGroup>
 </Project>

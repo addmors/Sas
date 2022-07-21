@@ -168,6 +168,9 @@
     <ClInclude Include="src\Sas\Events\MouseEvent.h" />
     <ClInclude Include="src\Sas\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Sas\Math.h" />
+    <ClInclude Include="src\Sas\NodeEditot\BuilderNode.h" />
+    <ClInclude Include="src\Sas\NodeEditot\Drawing.h" />
+    <ClInclude Include="src\Sas\NodeEditot\Widgets.h" />
     <ClInclude Include="src\Sas\Renderer\Buffer.h" />
     <ClInclude Include="src\Sas\Renderer\Camera.h" />
     <ClInclude Include="src\Sas\Renderer\EditorCamera.h" />
@@ -639,6 +642,9 @@
     <ClCompile Include="src\Sas\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Sas\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Sas\Math.cpp" />
+    <ClCompile Include="src\Sas\NodeEditot\BuilderNode.cpp" />
+    <ClCompile Include="src\Sas\NodeEditot\Drawing.cpp" />
+    <ClCompile Include="src\Sas\NodeEditot\Widgets.cpp" />
     <ClCompile Include="src\Sas\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Sas\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Sas\Renderer\FrameBuffer.cpp" />

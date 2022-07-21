@@ -1509,6 +1509,9 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\Sas\NodeEditot\BuilderNode.h" />
+    <ClInclude Include="src\Sas\NodeEditot\Drawing.h" />
+    <ClInclude Include="src\Sas\NodeEditot\Widgets.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1646,5 +1649,8 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sas\NodeEditot\BuilderNode.cpp" />
+    <ClCompile Include="src\Sas\NodeEditot\Drawing.cpp" />
+    <ClCompile Include="src\Sas\NodeEditot\Widgets.cpp" />
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 #include "SasPre.h"
 #include "Panel/SceneHierarchyPanel.h"
 #include "Panel/ContentBrowserPanel.h"
-
+#include "Panel/NodeEditorPanel.h"
 #include "Sas/Renderer/EditorCamera.h"
 
 namespace Sas {
@@ -68,6 +68,7 @@ namespace Sas {
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
+		NodeEditorPanel m_NodeEditorPanel;
 		enum class SceneState {
 			Edit = 0, Play = 1
 		};
