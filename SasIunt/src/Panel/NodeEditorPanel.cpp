@@ -1,10 +1,10 @@
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui/imgui_internal.h>
 #include <imgui\imgui.h>
 #include "ssph.h"
 #include "NodeEditorPanel.h"
 #include "Sas/NodeEditot/Widgets.h"
 
-#define IMGUI_DEFINE_MATH_OPERATORS
 
 
 namespace Sas {
@@ -155,6 +155,8 @@ namespace Sas {
 		Node* node;
 		node = SpawnInputActionNode();      ed::SetNodePosition(node->ID, ImVec2(-252, 220));
 		node = SpawnBranchNode();           ed::SetNodePosition(node->ID, ImVec2(-300, 351));
+		node = SpawnOutputActionNode();     ed::SetNodePosition(node->ID, ImVec2(71, 80));
+
 
 		ed::NavigateToContent();	
 	};
@@ -331,84 +333,139 @@ namespace Sas {
 			}
 			// Submit Links
 			for (auto& linkInfo : m_Links)
-				ed::Link(linkInfo.ID, linkInfo.StartPinID, linkInfo.EndPinID);
+				ed::Link(linkInfo.ID, linkInfo.StartPinID, linkInfo.EndPinID, linkInfo.Color, 2.0f);
 
 			if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Z)))
 				for (auto& link : m_Links)
 					ed::Flow(link.ID);
-		}
 		
-		//
+
+			//
 		// 2) Handle interactions
 		//
 
 		// Handle creation action, returns true if editor want to create new object (node or link)
-		if (ed::BeginCreate())
-		{
-			ed::PinId inputPinId, outputPinId;
-			if (ed::QueryNewLink(&inputPinId, &outputPinId))
+			if (!createNewNode)
 			{
-				// QueryNewLink returns true if editor want to create new link between pins.
-				//
-				// Link can be created only for two valid pins, it is up to you to
-				// validate if connection make sense. Editor is happy to make any.
-				//
-				// Link always goes from input to output. User may choose to drag
-				// link from output pin or input pin. This determine which pin ids
-				// are valid and which are not:
-				//   * input valid, output invalid - user started to drag new ling from input pin
-				//   * input invalid, output valid - user started to drag new ling from output pin
-				//   * input valid, output valid   - user dragged link over other pin, can be validated
-
-				if (inputPinId && outputPinId) // both are valid, let's accept link
+				if (ed::BeginCreate(ImColor(255, 255, 255), 2.0f))
 				{
-					// ed::AcceptNewItem() return true when user release mouse button.
-					if (ed::AcceptNewItem())
+					auto showLabel = [](const char* label, ImColor color)
 					{
-						// Since we accepted new link, lets add one to our list of links.
-						m_Links.push_back({ ed::LinkId(m_NextLinkId++), inputPinId, outputPinId });
+						ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetTextLineHeight());
+						auto size = ImGui::CalcTextSize(label);
 
-						// Draw new link.
-						ed::Link(m_Links.back().ID, m_Links.back().StartPinID, m_Links.back().EndPinID);
+						auto padding = ImGui::GetStyle().FramePadding;
+						auto spacing = ImGui::GetStyle().ItemSpacing;
+
+						ImGui::SetCursorPos(ImGui::GetCursorPos() + ImVec2(spacing.x, -spacing.y));
+
+						auto rectMin = ImGui::GetCursorScreenPos() - padding;
+						auto rectMax = ImGui::GetCursorScreenPos() + size + padding;
+
+						auto drawList = ImGui::GetWindowDrawList();
+						drawList->AddRectFilled(rectMin, rectMax, color, size.y * 0.15f);
+						ImGui::TextUnformatted(label);
+					};
+
+					ed::PinId startPinId = 0, endPinId = 0;
+					if (ed::QueryNewLink(&startPinId, &endPinId))
+					{
+						auto startPin = FindPin(startPinId);
+						auto endPin = FindPin(endPinId);
+
+						newLinkPin = startPin ? startPin : endPin;
+
+						if (startPin->Kind == PinKind::Input)
+						{
+							std::swap(startPin, endPin);
+							std::swap(startPinId, endPinId);
+						}
+
+						if (startPin && endPin)
+						{
+							if (endPin == startPin)
+							{
+								ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
+							}
+							else if (endPin->Kind == startPin->Kind)
+							{
+								showLabel("x Incompatible Pin Kind", ImColor(45, 32, 32, 180));
+								ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
+							}
+							//else if (endPin->Node == startPin->Node)
+							//{
+							//    showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
+							//    ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
+							//}
+							else if (endPin->Type != startPin->Type)
+							{
+								showLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
+								ed::RejectNewItem(ImColor(255, 128, 128), 1.0f);
+							}
+							else
+							{
+								showLabel("+ Create Link", ImColor(32, 45, 32, 180));
+								if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f))
+								{
+									m_Links.emplace_back(Link(GetNextId(), startPinId, endPinId));
+									m_Links.back().Color = GetIconColor(startPin->Type);
+								}
+							}
+						}
 					}
 
-					// You may choose to reject connection between these nodes
-					// by calling ed::RejectNewItem(). This will allow editor to give
-					// visual feedback by changing link thickness and color.
+					ed::PinId pinId = 0;
+					if (ed::QueryNewNode(&pinId))
+					{
+						newLinkPin = FindPin(pinId);
+						if (newLinkPin)
+							showLabel("+ Create Node", ImColor(32, 45, 32, 180));
+
+						if (ed::AcceptNewItem())
+						{
+							createNewNode = true;
+							newNodeLinkPin = FindPin(pinId);
+							newLinkPin = nullptr;
+							ed::Suspend();
+							ImGui::OpenPopup("Create New Node");
+							ed::Resume();
+						}
+					}
 				}
-			}
-		}
-		ed::EndCreate(); // Wraps up object creation action handling.
+				else
+					newLinkPin = nullptr;
 
+				ed::EndCreate();
 
-		// Handle deletion action
-		if (ed::BeginDelete())
-		{
-			ed::LinkId linkId = 0;
-			while (ed::QueryDeletedLink(&linkId))
-			{
-				if (ed::AcceptDeletedItem())
+				if (ed::BeginDelete())
 				{
-					auto id = std::find_if(m_Links.begin(), m_Links.end(), [linkId](auto& link) { return link.ID == linkId; });
-					if (id != m_Links.end())
-						m_Links.erase(id);
-				}
-			}
+					ed::LinkId linkId = 0;
+					while (ed::QueryDeletedLink(&linkId))
+					{
+						if (ed::AcceptDeletedItem())
+						{
+							auto id = std::find_if(m_Links.begin(), m_Links.end(), [linkId](auto& link) { return link.ID == linkId; });
+							if (id != m_Links.end())
+								m_Links.erase(id);
+						}
+					}
 
-			ed::NodeId nodeId = 0;
-			while (ed::QueryDeletedNode(&nodeId))
-			{
-				if (ed::AcceptDeletedItem())
-				{
-					auto id = std::find_if(m_Nodes.begin(), m_Nodes.end(), [nodeId](auto& node) { return node.ID == nodeId; });
-					if (id != m_Nodes.end())
-						m_Nodes.erase(id);
+					ed::NodeId nodeId = 0;
+					while (ed::QueryDeletedNode(&nodeId))
+					{
+						if (ed::AcceptDeletedItem())
+						{
+							auto id = std::find_if(m_Nodes.begin(), m_Nodes.end(), [nodeId](auto& node) { return node.ID == nodeId; });
+							if (id != m_Nodes.end())
+								m_Nodes.erase(id);
+						}
+					}
 				}
+				ed::EndDelete();
 			}
+			ImGui::SetCursorScreenPos(cursorTopLeft);
 		}
-		ed::EndDelete();
-
-
+		
 
 		// End of interaction with editor.
 		ed::End();
@@ -428,6 +485,18 @@ namespace Sas {
 		m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Delegate);
 		m_Nodes.back().Outputs.emplace_back(GetNextId(), "Pressed", PinType::Flow);
 		m_Nodes.back().Outputs.emplace_back(GetNextId(), "Released", PinType::Flow);
+
+		BuildNode(&m_Nodes.back());
+
+		return &m_Nodes.back();
+	}
+
+	NodeEditorPanel::Node * NodeEditorPanel::SpawnOutputActionNode()
+	{
+		m_Nodes.emplace_back(GetNextId(), "OutputAction");
+		m_Nodes.back().Inputs.emplace_back(GetNextId(), "Sample", PinType::Float);
+		m_Nodes.back().Outputs.emplace_back(GetNextId(), "Condition", PinType::Bool);
+		m_Nodes.back().Inputs.emplace_back(GetNextId(), "Event", PinType::Delegate);
 
 		BuildNode(&m_Nodes.back());
 

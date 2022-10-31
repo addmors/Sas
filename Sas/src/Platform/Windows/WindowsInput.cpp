@@ -22,6 +22,14 @@ namespace Sas {
 
 	}
 
+	bool Input::IsMouseButtonRepeat(MouseCode button)
+	{
+		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		int state = glfwGetMouseButton(window, button);
+
+		return state == GLFW_REPEAT;
+
+	}
 	float Input::GetMouseX()
 	{
 		return GetMousePosition().first;

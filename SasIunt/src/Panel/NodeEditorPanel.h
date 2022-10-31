@@ -96,6 +96,7 @@ namespace Sas {
 		void OnImGuiRender();
 
 		Node* SpawnInputActionNode();
+		Node* SpawnOutputActionNode();
 		Node* SpawnBranchNode();
 	
 		Node* FindNode(ed::NodeId id);

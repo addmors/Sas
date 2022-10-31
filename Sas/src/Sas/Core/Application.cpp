@@ -87,17 +87,17 @@ namespace Sas {
 			if (!m_Minimized)
 			{
 				{
-					SS_PROFILE_SCOPE("Layer::OnUpdate");
-					for (Layer* layer : m_LayerStack)
-						layer->OnUpdate(timestep);
-					
-				}
-				{
 					SS_PROFILE_SCOPE("Layer::OnImGUIRender");
 					m_ImGuiLayer->Begin();
 					for (Layer* layer : m_LayerStack)
 						layer->OnImGuiRender();
 					m_ImGuiLayer->End();
+				}
+				{
+					SS_PROFILE_SCOPE("Layer::OnUpdate");
+					for (Layer* layer : m_LayerStack)
+						layer->OnUpdate(timestep);
+					
 				}
 
 			}

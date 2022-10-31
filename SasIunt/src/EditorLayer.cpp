@@ -129,10 +129,10 @@ namespace Sas {
 		}
 
 		// Update
-		if (m_ViewportFocused)
-			m_CameraController.OnUpdate(ts);
+		//if (m_ViewportFocused)
+			//m_CameraController.OnUpdate(ts);
 
-		m_EditorCamera.OnUpdate(ts);
+		//m_EditorCamera.OnUpdate(ts);
 
 		// Render
 		Renderer2D::ResetStats();
@@ -148,10 +148,11 @@ namespace Sas {
 		{
 		case SceneState::Edit:
 		{
-			if (m_ViewportFocused)
-				m_CameraController.OnUpdate(ts);
+			//if (m_ViewportFocused)
+				//m_CameraController.OnUpdate(ts);
 
-			m_EditorCamera.OnUpdate(ts);
+			if(m_ViewportFocused)
+				m_EditorCamera.OnUpdate(ts);
 
 			m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 			break;
@@ -264,7 +265,8 @@ namespace Sas {
 
 		ImGui::ShowDemoWindow();
 		ImGui::Begin("Stats");
-
+		ImGui::Text("MousePosX: %f", m_EditorCamera.GetMousePosition().x);
+		ImGui::Text("MousePosY: %f", m_EditorCamera.GetMousePosition().y);
 		std::string name = "None";
 		if (m_HoveredEntity)
 			name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
