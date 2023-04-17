@@ -17,11 +17,14 @@ IncludeDir["yaml_cpp"] = "%{wks.location}/Sas/vendor/yaml-cpp/include"
 IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Sas/vendor/msdf-atlas-gen/msdf-atlas-gen"
 IncludeDir["msdfgen"] = "%{wks.location}/Sas/vendor/msdf-atlas-gen/msdfgen"
 IncludeDir["ImGuiNodeEditor"] = "%{wks.location}/Sas/vendor/imgui-node-editor"
+IncludeDir["CPP_Parser"] = "%{wks.location}/Sas/vendor/cppparser/CppParser/pub"
 
 LibraryDir = {}
 
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
 LibraryDir["VulkanSDK_Debug"] = "%{wks.location}/Sas/vendor/VulkanSDK/Lib"
+LibraryDir["CPP_ParserDir"] = "%{wks.location}/Sas/vendor/cppparser/CppParser/build"
+LibraryDir["CPP_ParserBoostDir"] = "%{LibraryDir.CPP_ParserDir}/boost"
 
 Library = {}
 Library["Vulkan"] = "%{LibraryDir.VulkanSDK}/vulkan-1.lib"
@@ -37,3 +40,15 @@ Library["ShaderC_Release"] = "%{LibraryDir.VulkanSDK}/shaderc_shared.lib"
 Library["ShaderC_Utils_Release"] = "%{LibraryDir.VulkanSDK}/shaderc_util.lib"
 Library["SPIRV_Cross_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-core.lib"
 Library["SPIRV_Cross_GLSL_Release"] = "%{LibraryDir.VulkanSDK}/spirv-cross-glsl.lib"
+
+Library["CPP_Parser_Debug"] = "%{LibraryDir.CPP_ParserDir}/Debug/cppparser.lib"
+
+Library["CPP_Parser_Release"] = "%{LibraryDir.CPP_ParserDir}/Release/cppparser.lib"
+
+
+Library["CPP_Parser_boost_program_options_Debug"] = "%{LibraryDir.CPP_ParserBoostDir}/Debug/boost_program_options.lib"
+Library["CPP_Parser_boost_system_Debug"] = "%{LibraryDir.CPP_ParserBoostDir}/Debug/boost_system.lib"
+
+Library["CPP_Parser_boost_program_options_Release"] = "%{LibraryDir.CPP_ParserBoostDir}/Release/boost_program_options.lib"
+Library["CPP_Parser_boost_system_Release"] = "%{LibraryDir.CPP_ParserBoostDir}/Release/boost_system.lib"
+

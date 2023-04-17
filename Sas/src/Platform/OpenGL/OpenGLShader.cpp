@@ -142,6 +142,10 @@ namespace Sas {
 		}
 	}
 
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc, const std::string& geomSrc)
+	{
+	}
+
 	OpenGLShader::~OpenGLShader()
 	{
 		SS_PROFILE_FUNCTION();

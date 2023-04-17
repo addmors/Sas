@@ -12,7 +12,8 @@ layout(location = 5) in int a_EntityID;
 
 layout(std140, binding = 0) uniform Camera
 {
-	mat4 u_ViewProjection;
+	mat4 u_Projection;
+	mat4 u_View;
 };
 
 struct VertexOutput
@@ -28,13 +29,17 @@ layout (location = 4) out flat int v_EntityID;
 
 void main()
 {
+	mat4 m = mat4(2, 0, 0, 0,
+					0, 2, 0, 0,
+					0, 0, 2, 0,
+					0, 0, 0, 1);
+
 	Output.Color = a_Color;
 	Output.TexCoord = a_TexCoord;
 	Output.TilingFactor = a_TilingFactor;
 	v_TexIndex = a_TexIndex;
 	v_EntityID = a_EntityID;
-
-	gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+	gl_Position = u_Projection * u_View *  vec4(a_Position, 1.0);
 }
 
 #type fragment
@@ -58,6 +63,7 @@ layout (binding = 0) uniform sampler2D u_Textures[32];
 
 void main()
 {
+
 	vec4 texColor = Input.Color;
 
 	switch(int(v_TexIndex))

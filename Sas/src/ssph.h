@@ -8,9 +8,12 @@
 #include <functional>
 #include<string>
 #include<vector>
+#include <map>
+#include <set>
 
 #include <unordered_map>
 #include <unordered_set>
+
 
 #include "Sas/Core/Log.h"
 #include "Sas/Debug/Instrumentor.h"

@@ -38,7 +38,7 @@ project "Sas"
 	location "Sas"
 	kind "StaticLib"
 	language "C++"
-	cppdialect "C++17"
+	cppdialect "C++20"
 	staticruntime "off"
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
@@ -79,7 +79,8 @@ project "Sas"
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.msdf_atlas_gen}",
 		"%{IncludeDir.msdfgen}",
-		
+		"%{IncludeDir.CPP_Parser}",
+
 		"%{IncludeDir.VulkanSDK}"
 			
 	}
@@ -91,7 +92,17 @@ project "Sas"
 		"ImGui",
 		"yaml-cpp",
 		"msdf-atlas-gen",
-		"opengl32.lib"
+		"opengl32.lib",
+		"kernel32.lib",
+		"user32.lib",
+		"gdi32.lib",
+		"winspool.lib",
+		"shell32.lib",
+		"ole32.lib",
+		"oleaut32.lib",
+		"uuid.lib",
+		"comdlg32.lib",
+		"advapi32.lib"
 	}
 
 	filter "files:Sas/vendor/ImGuizmo/**.cpp or files:Sas/vendor/imgui-node-editor/**.cpp"
@@ -122,6 +133,10 @@ project "Sas"
 			"%{Library.SPIRV_Cross_Debug}",
 			"%{Library.SPIRV_Cross_GLSL_Debug}",
 			"%{Library.SPIRV_Tools_Debug}",
+			
+			"%{Library.CPP_Parser_Debug}",
+			"%{Library.CPP_Parser_boost_program_options_Debug}",
+			"%{Library.CPP_Parser_boost_system_Debug}"	
 		}
 	
 	filter "configurations:Release"
@@ -135,6 +150,10 @@ project "Sas"
 			"%{Library.ShaderC_Utils_Release}",
 			"%{Library.SPIRV_Cross_Release}",
 			"%{Library.SPIRV_Cross_GLSL_Release}",
+
+			"%{Library.CPP_Parser_Release}",
+			"%{Library.CPP_Parser_boost_program_options_Release}",
+			"%{Library.CPP_Parser_boost_system_Release}"		
 		}
 
 	filter "configurations:Dist"
@@ -148,6 +167,10 @@ project "Sas"
 			"%{Library.ShaderC_Utils_Release}",
 			"%{Library.SPIRV_Cross_Release}",
 			"%{Library.SPIRV_Cross_GLSL_Release}",
+
+			"%{Library.CPP_Parser_Release}",
+			"%{Library.CPP_Parser_boost_program_options_Release}",
+			"%{Library.CPP_Parser_boost_system_Release}"		
 		}		
 
 
@@ -155,7 +178,7 @@ project "Sendbox"
 	location "Sendbox"
 	kind "ConsoleApp"
 	language "C++"	
-	cppdialect "C++17"
+	cppdialect "C++20"
 	staticruntime "off"
 
 
@@ -175,7 +198,8 @@ project "Sendbox"
 		"Sas/vendor",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.glm}"	,
-		"%{IncludeDir.ImGuiNodeEditor}",	
+		"%{IncludeDir.ImGuiNodeEditor}",
+		"%{IncludeDir.CPP_Parser}"	
 	}
 	
 	links {
@@ -212,7 +236,7 @@ project "SasIunt"
 	location "SasIunt"
 	kind "ConsoleApp"
 	language "C++"	
-	cppdialect "C++17"
+	cppdialect "C++20"
 	staticruntime "off"
 
 
@@ -233,7 +257,8 @@ project "SasIunt"
 		"%{IncludeDir.entt}",	
 		"%{IncludeDir.glm}"	,
 		"%{IncludeDir.ImGuizmo}",
-		"%{IncludeDir.ImGuiNodeEditor}",	
+		"%{IncludeDir.ImGuiNodeEditor}",
+		"%{IncludeDir.CPP_Parser}"	
 	}
 	
 	links {

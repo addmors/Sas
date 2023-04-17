@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Sas/Core/Core.h"
 
 
 namespace Sas {

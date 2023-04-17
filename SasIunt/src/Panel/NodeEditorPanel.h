@@ -1,15 +1,23 @@
 #pragma once
-# include <imgui_node_editor.h>
-# include "Sas/NodeEditot/BuilderNode.h"
+#include <imgui_node_editor.h>
+#include "Sas/NodeEditot/BuilderNode.h"
 
 #include "Sas/Renderer/Texture.h"
+
+#include <cppparser.h>
+#include <cppwriter.h>
 
 namespace Sas {
 	namespace ed = ax::NodeEditor;
 
-
 	class NodeEditorPanel
 	{
+	public:
+		enum class PinKind
+		{
+			Output,
+			Input
+		};
 	private:
 		enum class PinType
 		{
@@ -23,11 +31,7 @@ namespace Sas {
 			Delegate,
 		};
 
-		enum class PinKind
-		{
-			Output,
-			Input
-		};
+		
 
 		enum class NodeType
 		{
@@ -93,12 +97,14 @@ namespace Sas {
 
 		void OnAttach();
 		void OnDetach();
-		void OnImGuiRender();
+		void OnImGuiRender(int i, ImVec2 size);
 
 		Node* SpawnInputActionNode();
 		Node* SpawnOutputActionNode();
 		Node* SpawnBranchNode();
-	
+		Node* SpawnEmpty(const std::string& Name);
+
+		void AddPin(Node* node, const PinKind kind, const std::string& name);
 		Node* FindNode(ed::NodeId id);
 		Link* FindLink(ed::LinkId id);
 		Pin* FindPin(ed::PinId id);
@@ -110,6 +116,8 @@ namespace Sas {
 
 	private:
 		ed::EditorContext*   m_Context = nullptr;    // Editor context, required to trace a editor state.
+		ed::EditorContext*   m_Context2 = nullptr;    // Editor context, required to trace a editor state.
+
 		bool                 m_FirstFrame = true;    // Flag set for first frame only, some action need to be executed once.
 		std::vector<Link>    m_Links;                // List of live links. It is dynamic unless you want to create read-only view over nodes.
 		std::vector<Node>    m_Nodes;
@@ -130,5 +138,34 @@ namespace Sas {
 
 	public:
 		static void BuildNode(Node* node);
+	};
+
+
+	class FunctionPaser
+	{
+	public:
+		FunctionPaser();
+		Ref<NodeEditorPanel> AddNodePanel(Ref<NodeEditorPanel> panel, const std::string& Name);
+		void OnDetach();
+		void OnImGuiRender();
+	private:
+		std::vector<std::string> m_Names;
+		std::vector<Ref<NodeEditorPanel>> m_Panels;
+	};
+
+	class EditorCppPaser
+	{
+	public:
+		EditorCppPaser();
+		Ref<NodeEditorPanel> AddNodePanel(Ref<NodeEditorPanel> panel, const std::string& Name);
+
+		Ref<FunctionPaser> AddFunctionPanel(Ref<FunctionPaser> panel, const std::string& Name);
+		void OnDetach();
+		void OnImGuiRender();
+	private:
+		std::vector<std::string> m_Names;
+		std::vector<Ref<NodeEditorPanel>> m_Panels;
+		std::vector<std::string> m_NamesFunc;
+		std::vector<Ref<FunctionPaser>> m_Function;
 	};
 }

@@ -1,6 +1,6 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui/imgui_internal.h>
-#include <imgui\imgui.h>
+#include <imgui/imgui.h>
 #include "ssph.h"
 #include "NodeEditorPanel.h"
 #include "Sas/NodeEditot/Widgets.h"
@@ -40,6 +40,15 @@ namespace Sas {
 			output.Kind = PinKind::Output;
 		}
 	};
+
+	void NodeEditorPanel::AddPin(Node* node, const PinKind kind, const std::string& name)
+	{
+		if(kind == PinKind::Input)
+			node->Inputs.emplace_back(GetNextId(), name.c_str(), PinType::Flow);
+		else
+			node->Outputs.emplace_back(GetNextId(), name.c_str(), PinType::Flow);
+		BuildNode(node);
+	}
 
 	NodeEditorPanel::Node* NodeEditorPanel::FindNode(ed::NodeId id)
 	{
@@ -147,36 +156,21 @@ namespace Sas {
 	}
 
 	void NodeEditorPanel::OnAttach() {
-		ed::Config config;
-		config.SettingsFile = "Simple.json"; //TODO: What is it?
-		m_Context = ed::CreateEditor(&config);
+		m_Context = ed::CreateEditor();
 		ed::SetCurrentEditor(m_Context);
-
-		Node* node;
-		node = SpawnInputActionNode();      ed::SetNodePosition(node->ID, ImVec2(-252, 220));
-		node = SpawnBranchNode();           ed::SetNodePosition(node->ID, ImVec2(-300, 351));
-		node = SpawnOutputActionNode();     ed::SetNodePosition(node->ID, ImVec2(71, 80));
-
-
-		ed::NavigateToContent();	
+		ed::NavigateToContent();
 	};
 
 	void NodeEditorPanel::OnDetach() {
 		ed::DestroyEditor(m_Context);
 	};
 
-	void NodeEditorPanel::OnImGuiRender()
+	void NodeEditorPanel::OnImGuiRender(int i, ImVec2 size)
 	{
-		ImGui::Begin("Node Editor");
-
-		
-		auto& io = ImGui::GetIO();
-
-		ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
-
-		ImGui::Separator();
-
 		ed::SetCurrentEditor(m_Context);
+
+		if(m_FirstFrame)
+			ed::NavigateToContent();
 
 		ed::NodeId contextNodeId = 0;
 		ed::LinkId contextLinkId = 0;
@@ -190,8 +184,8 @@ namespace Sas {
 		
 		
 		ImGui::SameLine(0.0f, 12.0f);
-
-		ed::Begin("Node editor");
+		std::string s = "NE" + std::to_string(i);
+		ed::Begin(s.c_str(),size);
 		{
 			auto cursorTopLeft = ImGui::GetCursorScreenPos();
 			for (auto& node : m_Nodes)
@@ -256,6 +250,7 @@ namespace Sas {
 
 				for (auto& input : node.Inputs)
 				{
+
 					auto alpha = ImGui::GetStyle().Alpha;
 					if (newLinkPin && !CanCreateLink(newLinkPin, &input) && &input != newLinkPin)
 						alpha = alpha * (48.0f / 255.0f);
@@ -276,6 +271,7 @@ namespace Sas {
 					}
 					ImGui::PopStyleVar();
 					m_BuilderNode->EndInput();
+
 				}
 
 				if (isSimple)
@@ -340,7 +336,7 @@ namespace Sas {
 					ed::Flow(link.ID);
 		
 
-			//
+		//
 		// 2) Handle interactions
 		//
 
@@ -368,6 +364,7 @@ namespace Sas {
 					};
 
 					ed::PinId startPinId = 0, endPinId = 0;
+
 					if (ed::QueryNewLink(&startPinId, &endPinId))
 					{
 						auto startPin = FindPin(startPinId);
@@ -466,19 +463,17 @@ namespace Sas {
 			ImGui::SetCursorScreenPos(cursorTopLeft);
 		}
 		
-
+		if (m_FirstFrame)
+			ed::NavigateToContent();
 		// End of interaction with editor.
 		ed::End();
-
-		if (m_FirstFrame)
-			ed::NavigateToContent(0.0f);
 		 
 		ed::SetCurrentEditor(nullptr);
 
 		m_FirstFrame = false;
 
-		ImGui::End();
 	}
+
 	NodeEditorPanel::Node* NodeEditorPanel::SpawnInputActionNode()
 	{
 		m_Nodes.emplace_back(GetNextId(), "InputAction Fire", ImColor(255, 128, 128));
@@ -514,6 +509,103 @@ namespace Sas {
 		BuildNode(&m_Nodes.back());
 
 		return &m_Nodes.back();
+	}
+
+	NodeEditorPanel::Node* NodeEditorPanel::SpawnEmpty(const std::string& Name)
+	{
+		m_Nodes.emplace_back(GetNextId(), Name.c_str());
+		BuildNode(&m_Nodes.back());
+		return &m_Nodes.back();
 	};
+
+
+	EditorCppPaser::EditorCppPaser()
+	{
+	}
+
+	Ref<NodeEditorPanel> EditorCppPaser::AddNodePanel(Ref<NodeEditorPanel> panel, const std::string& Name)
+	{
+		m_Panels.push_back(panel);
+		m_Names.push_back(Name);
+		m_Panels.back()->OnAttach();
+		return m_Panels.back();
+	}
+
+	Ref<FunctionPaser> EditorCppPaser::AddFunctionPanel(Ref<FunctionPaser> panel, const std::string& Name)
+	{
+		m_Function.push_back(panel);
+		m_NamesFunc.push_back(Name);
+		return m_Function.back();
+	}
+
+	void EditorCppPaser::OnDetach()
+	{
+		for (auto& panel : m_Panels)
+			panel->OnDetach();
+	}
+
+	void EditorCppPaser::OnImGuiRender()
+	{
+		ImGui::Begin("CppEditor", (bool*)0);
+		int i = 0;
+			for (auto panel : m_Panels) {
+				std::string child_window = "Panel " + std::to_string(i);
+
+				if ( ImGui::CollapsingHeader((m_Names[i] + "###" + std::to_string(i)).c_str()) )
+				{
+					ImVec2 reg = ImVec2(ImGui::GetWindowSize().x,ImGui::GetWindowSize().y/2) - ImGui::GetWindowSize() / 40;
+					ImGui::BeginChild(child_window.c_str(), reg, false);
+					panel->OnImGuiRender(i,reg - reg/80);
+					ImGui::EndChild();
+				}
+				i++;
+			}
+		i = 0;
+			for (auto m_Func : m_Function) {
+				std::string child_window = "Func " + std::to_string(i); //TEMP + 10
+				if (ImGui::CollapsingHeader((m_NamesFunc[i] + "###" + std::to_string(i + 100)).c_str())) {
+					ImVec2 reg = ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y) - ImGui::GetWindowSize() / 40;
+					ImGui::BeginChild(child_window.c_str(), reg, false);
+					m_Func->OnImGuiRender();
+					ImGui::EndChild();
+				}
+			}
+		ImGui::End();
+	}
+
+	FunctionPaser::FunctionPaser()
+	{
+	}
+
+	Ref<NodeEditorPanel> FunctionPaser::AddNodePanel(Ref<NodeEditorPanel> panel, const std::string& Name)
+	{
+		m_Panels.push_back(panel);
+		m_Names.push_back(Name);
+		m_Panels.back()->OnAttach();
+		return m_Panels.back();
+	}
+
+	void FunctionPaser::OnDetach()
+	{
+		for (auto& panel : m_Panels)
+			panel->OnDetach();
+	}
+
+	void FunctionPaser::OnImGuiRender()
+	{
+		int i = 0;
+		for (auto panel : m_Panels) {
+			std::string child_window = "Func " + std::to_string(i);
+			// TEMP +1000;
+			if (ImGui::CollapsingHeader((m_Names[i] + "###" + std::to_string(i + 100 )).c_str()))
+			{
+				ImVec2 reg = ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y/2) - ImGui::GetWindowSize() / 40;
+				ImGui::BeginChild(child_window.c_str(), reg, false);
+				panel->OnImGuiRender(i, reg - reg / 80);
+				ImGui::EndChild();
+			}
+			i++;
+		}
+	}
 
 }

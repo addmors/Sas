@@ -14,7 +14,9 @@
 #include "Sas/Math.h"
 
 namespace Sas {
-	
+
+	bool stats_open = true;
+
 	extern const std::filesystem::path g_AssetPath;
 
 
@@ -102,14 +104,46 @@ namespace Sas {
 #endif
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+		Ref<NodeEditorPanel> current_panel = nullptr;
 
-		m_NodeEditorPanel.OnAttach();
+		current_panel = m_EditorCppParse.AddNodePanel(CreateRef<NodeEditorPanel>(), "include");
+		NodeEditorPanel::Node* node = current_panel->SpawnEmpty("include");
+		current_panel->AddPin(node, NodeEditorPanel::PinKind::Output, "<algorithm>");
+		
+		current_panel = m_EditorCppParse.AddNodePanel(CreateRef<NodeEditorPanel>(), "include");
+		node = current_panel->SpawnEmpty("include");
+		current_panel->AddPin(node, NodeEditorPanel::PinKind::Output, "<iostream>");
+
+		Ref<FunctionPaser> func= m_EditorCppParse.AddFunctionPanel(CreateRef<FunctionPaser>(), "function main");
+		current_panel = func->AddNodePanel(CreateRef<NodeEditorPanel>(),"Var int");
+		node = current_panel->SpawnEmpty("int");
+		current_panel->AddPin(node, NodeEditorPanel::PinKind::Output, "a");
+		node = current_panel->SpawnEmpty("int");
+		current_panel->AddPin(node, NodeEditorPanel::PinKind::Output, "b");
+
+		current_panel = func->AddNodePanel(CreateRef<NodeEditorPanel>(), "if");
+		node = current_panel->SpawnEmpty(">");
+		current_panel->AddPin(node, NodeEditorPanel::PinKind::Output, "_1");
+		current_panel->AddPin(node, NodeEditorPanel::PinKind::Output, "_2");
+		node = current_panel->SpawnEmpty("a");
+		current_panel->AddPin(node, NodeEditorPanel::PinKind::Input, "_1");
+		node = current_panel->SpawnEmpty("5");
+		current_panel->AddPin(node, NodeEditorPanel::PinKind::Input, "_2");
+
+		current_panel = func->AddNodePanel(CreateRef<NodeEditorPanel>(), "then");
+		node = current_panel->SpawnEmpty("++");
+		current_panel->AddPin(node, NodeEditorPanel::PinKind::Output, "a");
+
+		current_panel = func->AddNodePanel(CreateRef<NodeEditorPanel>(), "else");
+		node = current_panel->SpawnEmpty("--");
+		current_panel->AddPin(node, NodeEditorPanel::PinKind::Output, "a");
+
 	}
 
 	void EditorLayer::OnDetach()
 	{
 		SS_PROFILE_FUNCTION();
-		m_NodeEditorPanel.OnDetach();
+		m_EditorCppParse.OnDetach();
 
 	}
 
@@ -205,7 +239,7 @@ namespace Sas {
 			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 		}
-
+		
 		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background and handle the pass-thru hole, so we ask Begin() to not render a background.
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
 			window_flags |= ImGuiWindowFlags_NoBackground;
@@ -232,7 +266,7 @@ namespace Sas {
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
-
+		
 		style.WindowMinSize.x = minWinSizeX;
 
 		if (ImGui::BeginMenuBar())
@@ -260,11 +294,11 @@ namespace Sas {
 
 		m_ContentBrowserPanel.OnImGuiRender();
 		m_SceneHierarchyPanel.OnImGuiRender();
-		m_NodeEditorPanel.OnImGuiRender();
+		m_EditorCppParse.OnImGuiRender();
 
 
 		ImGui::ShowDemoWindow();
-		ImGui::Begin("Stats");
+		ImGui::Begin("Stats",&stats_open);
 		ImGui::Text("MousePosX: %f", m_EditorCamera.GetMousePosition().x);
 		ImGui::Text("MousePosY: %f", m_EditorCamera.GetMousePosition().y);
 		std::string name = "None";
@@ -298,6 +332,7 @@ namespace Sas {
 
 		uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))

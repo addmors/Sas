@@ -1,12 +1,7 @@
 #pragma once
 #include "Sas/Renderer/Buffer.h"
-#include <glad/glad.h>
-
 
 namespace Sas {
-
-
-	
 
 	class OpenGLVertexBuffer : public VertexBuffer {
 	public:
@@ -23,11 +18,9 @@ namespace Sas {
 		virtual void SetLayout(const BufferLayout& layout) override { m_Layout = layout; };
 	private:
 		uint32_t m_RendererID;
-
 		BufferLayout m_Layout;
 	};
 	
-
 	class OpenGLIndexBuffer : public IndexBuffer {
 	public:
 		OpenGLIndexBuffer(uint32_t* indices, uint32_t count);
@@ -39,7 +32,6 @@ namespace Sas {
 	private:
 		uint32_t m_RendererID;
 		uint32_t m_Count;
-		
 	};
 
 }

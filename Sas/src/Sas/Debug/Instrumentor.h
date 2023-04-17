@@ -122,7 +122,8 @@ namespace Sas {
 	};
 }
 
-#define SS_PROFILE 0
+
+#define SS_PROFILE 1
 #if SS_PROFILE
 #define SS_PROFILE_BEGIN_SESSION(name, filepath) ::Sas::Instrumentor::Get().BeginSession(name, filepath)
 #define SS_PROFILE_END_SESSION() ::Sas::Instrumentor::Get().EndSession()

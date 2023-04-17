@@ -22,6 +22,12 @@ namespace Sas {
 	};
 
 	class SAS_API Window {
+
+		enum class WINDOW_API
+		{
+			None = 0, GLFW = 1, WIN_32 = 2, X_11 = 3
+		};
+
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;
 		virtual ~Window() {}

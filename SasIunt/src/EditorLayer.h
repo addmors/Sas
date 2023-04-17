@@ -68,7 +68,7 @@ namespace Sas {
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
-		NodeEditorPanel m_NodeEditorPanel;
+		EditorCppPaser m_EditorCppParse;
 		enum class SceneState {
 			Edit = 0, Play = 1
 		};

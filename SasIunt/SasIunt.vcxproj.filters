@@ -4,6 +4,9 @@
     <Filter Include="Panel">
       <UniqueIdentifier>{95BADD0D-01CF-05BF-CA50-A91E362402F0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Parse2Node">
+      <UniqueIdentifier>{989D2A55-8455-6CA2-ED5C-45FED9330793}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\EditorLayer.h" />

@@ -48,7 +48,8 @@ namespace Sas {
 
 		struct CameraData
 		{
-			glm::mat4 ViewProjection;
+			glm::mat4 Projection;
+			glm::mat4 View;
 		};
 		CameraData CameraBuffer;
 		Ref<UniformBuffer> CameraUniformBuffer;
@@ -137,8 +138,8 @@ namespace Sas {
 	{
 		SS_PROFILE_FUNCTION();
 
-		s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
-		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
+		//s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
+		//s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartBatch();
 	}
@@ -147,7 +148,8 @@ namespace Sas {
 	{
 		SS_PROFILE_FUNCTION();
 
-		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
+		s_Data.CameraBuffer.Projection = camera.GetProjection();
+		s_Data.CameraBuffer.View = camera.GetViewMatrix();
 		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
 		StartBatch();
