@@ -544,6 +544,17 @@ namespace Sas {
 			panel->OnDetach();
 	}
 
+	void EditorCppPaser::LoadFile(const std::string& path)
+	{
+		CppParser parser;
+
+		m_Compound = parser.parseFile(path);
+		if (!m_Compound)
+			SS_ASSERT(0, "error parse");
+
+		cppWriter.emit(m_Compound.get(), std::cout); //show to console;
+	}
+
 	void EditorCppPaser::OnImGuiRender()
 	{
 		ImGui::Begin("CppEditor", (bool*)0);

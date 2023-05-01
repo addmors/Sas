@@ -285,6 +285,9 @@ namespace Sas {
 				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
 					SaveSceneAs();
 
+				if (ImGui::MenuItem("Load C / C++..."))
+					OpenCFile();
+
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
 				ImGui::EndMenu();
 			}
@@ -294,8 +297,8 @@ namespace Sas {
 
 		m_ContentBrowserPanel.OnImGuiRender();
 		m_SceneHierarchyPanel.OnImGuiRender();
-		m_EditorCppParse.OnImGuiRender();
-
+		//m_EditorCppParse.OnImGuiRender();
+		m_Cpp2Node.OnImGuiRender();
 
 		ImGui::ShowDemoWindow();
 		ImGui::Begin("Stats",&stats_open);
@@ -533,6 +536,11 @@ namespace Sas {
 		std::string filepath = FileDialogs::OpenFile("Sas Scene (*.sas)\0*.sas\0");
 		if (!filepath.empty())
 			OpenScene(filepath);
+	}
+	void EditorLayer::OpenCFile()
+	{
+		std::string filepath = FileDialogs::OpenFile("File Source (*.cpp)\0*.cpp\0");
+		m_Cpp2Node.LoadFile(filepath);
 	}
 
 	void EditorLayer::OpenScene(const std::filesystem::path& path)

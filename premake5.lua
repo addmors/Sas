@@ -38,7 +38,7 @@ project "Sas"
 	location "Sas"
 	kind "StaticLib"
 	language "C++"
-	cppdialect "C++20"
+	cppdialect "C++17"
 	staticruntime "off"
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
@@ -142,7 +142,7 @@ project "Sas"
 	filter "configurations:Release"
 		defines "SS_RELEASE"
 		runtime "Release"
-		optimize "off"
+		optimize "on"
 	
 		links
 		{
@@ -159,7 +159,7 @@ project "Sas"
 	filter "configurations:Dist"
 		defines "SS_DIST"
 		runtime "Release"
-		optimize "on"
+		optimize "off"
 
 		links
 		{
@@ -280,13 +280,31 @@ project "SasIunt"
 		defines {"SS_DEBUG", "SS_ENABLE_ASSERTS"}
 		runtime "Debug"
 		symbols "on"
+		links
+		{
+			"%{Library.CPP_Parser_Debug}",
+			"%{Library.CPP_Parser_boost_program_options_Debug}",
+			"%{Library.CPP_Parser_boost_system_Debug}"		
+		}
 	
 	filter "configurations:Release"
 		defines "SS_RELEASE"
 		runtime "Release"
 		optimize "on"
+		links
+		{
+			"%{Library.CPP_Parser_Release}",
+			"%{Library.CPP_Parser_boost_program_options_Release}",
+			"%{Library.CPP_Parser_boost_system_Release}"		
+		}
 
 	filter "configurations:Dist"
 		defines "SS_DIST"
 		runtime "Release"
 		optimize "on"
+		links
+		{
+			"%{Library.CPP_Parser_Release}",
+			"%{Library.CPP_Parser_boost_program_options_Release}",
+			"%{Library.CPP_Parser_boost_system_Release}"		
+		}

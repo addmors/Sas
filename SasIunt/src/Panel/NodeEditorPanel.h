@@ -161,8 +161,12 @@ namespace Sas {
 
 		Ref<FunctionPaser> AddFunctionPanel(Ref<FunctionPaser> panel, const std::string& Name);
 		void OnDetach();
+		void LoadFile(const std::string& path);
 		void OnImGuiRender();
 	private:
+		CppWriter cppWriter;
+		CppCompoundPtr m_Compound;
+
 		std::vector<std::string> m_Names;
 		std::vector<Ref<NodeEditorPanel>> m_Panels;
 		std::vector<std::string> m_NamesFunc;

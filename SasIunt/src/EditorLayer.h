@@ -5,6 +5,7 @@
 #include "Panel/ContentBrowserPanel.h"
 #include "Panel/NodeEditorPanel.h"
 #include "Sas/Renderer/EditorCamera.h"
+#include "Parse2Node/Cpp2Node.h"
 
 namespace Sas {
 
@@ -31,7 +32,8 @@ namespace Sas {
 
 		void OnScenePlay();
 		void OnSceneStop();
-
+		
+		void OpenCFile();
 		//ui panel
 		void UI_Toolbar();
 	private:
@@ -69,6 +71,7 @@ namespace Sas {
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
 		EditorCppPaser m_EditorCppParse;
+		Cpp2Node m_Cpp2Node;
 		enum class SceneState {
 			Edit = 0, Play = 1
 		};

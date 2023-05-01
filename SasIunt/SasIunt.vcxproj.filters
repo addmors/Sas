@@ -19,6 +19,12 @@
     <ClInclude Include="src\Panel\SceneHierarchyPanel.h">
       <Filter>Panel</Filter>
     </ClInclude>
+    <ClInclude Include="src\Parse2Node\Cpp2Node.h">
+      <Filter>Parse2Node</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Parse2Node\ListGenerator.h">
+      <Filter>Parse2Node</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorLayer.cpp" />
@@ -30,6 +36,12 @@
     </ClCompile>
     <ClCompile Include="src\Panel\SceneHierarchyPanel.cpp">
       <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Parse2Node\Cpp2Node.cpp">
+      <Filter>Parse2Node</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Parse2Node\ListGenerator.cpp">
+      <Filter>Parse2Node</Filter>
     </ClCompile>
     <ClCompile Include="src\SasEditorApp.cpp" />
   </ItemGroup>

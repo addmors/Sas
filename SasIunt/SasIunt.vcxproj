@@ -90,6 +90,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>..\Sas\vendor\cppparser\CppParser\build\Debug\cppparser.lib;..\Sas\vendor\cppparser\CppParser\build\boost\Debug\boost_program_options.lib;..\Sas\vendor\cppparser\CppParser\build\boost\Debug\boost_system.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -111,6 +112,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>..\Sas\vendor\cppparser\CppParser\build\Release\cppparser.lib;..\Sas\vendor\cppparser\CppParser\build\boost\Release\boost_program_options.lib;..\Sas\vendor\cppparser\CppParser\build\boost\Release\boost_system.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -132,6 +134,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>..\Sas\vendor\cppparser\CppParser\build\Release\cppparser.lib;..\Sas\vendor\cppparser\CppParser\build\boost\Release\boost_program_options.lib;..\Sas\vendor\cppparser\CppParser\build\boost\Release\boost_system.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -139,12 +142,16 @@
     <ClInclude Include="src\Panel\ContentBrowserPanel.h" />
     <ClInclude Include="src\Panel\NodeEditorPanel.h" />
     <ClInclude Include="src\Panel\SceneHierarchyPanel.h" />
+    <ClInclude Include="src\Parse2Node\Cpp2Node.h" />
+    <ClInclude Include="src\Parse2Node\ListGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorLayer.cpp" />
     <ClCompile Include="src\Panel\ContentBrowserPanel.cpp" />
     <ClCompile Include="src\Panel\NodeEditorPanel.cpp" />
     <ClCompile Include="src\Panel\SceneHierarchyPanel.cpp" />
+    <ClCompile Include="src\Parse2Node\Cpp2Node.cpp" />
+    <ClCompile Include="src\Parse2Node\ListGenerator.cpp" />
     <ClCompile Include="src\SasEditorApp.cpp" />
   </ItemGroup>
   <ItemGroup>
